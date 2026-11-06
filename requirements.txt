@@ -1,0 +1,11 @@
+# Core
+numpy>=1.24
+scipy>=1.10
+yt-dlp>=2024.4.9
+basic-pitch>=0.4.0
+pretty_midi>=0.2.10
+soundfile>=0.12
+
+# Optional but recommended: guitar stem separation (large, needs torch)
+# demucs>=4.0.1
+# torch>=2.0
