@@ -67,4 +67,4 @@ pyinstaller --name tabs --noconsole --collect-all basic_pitch ^
 - ポリフォニックな解析(コードの完全な指板配置の最適化)は簡易実装です。同時発音の衝突時は後続ノートを優先します
 - アコースティック/クリーンギター向けです。激しいディストーションや高速演奏は精度が落ちます
 
-Created in DeepAI Code.
+
