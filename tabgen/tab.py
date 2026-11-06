@@ -18,7 +18,7 @@ class TabOptions:
     bars_per_line: int = 4
     capo: int = 0
     difficulty: str = "standard"   # easy / standard / advanced
-    chord_beats: int = 2           # rhythm chord recognition interval
+    chord_beats: int = 2           # preferred chord duration; strong changes may be shorter
     suppress_chord_attacks: bool = True
     lead_start_seconds: float = 0. # manual intro exclusion, 0 = automatic only
     audio_lead_detection: bool = True

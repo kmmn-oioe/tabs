@@ -6,7 +6,7 @@ from dataclasses import dataclass, replace
 import numpy as np
 
 from .audio import load_audio
-from .rhythm import ChordChange, _rank_chords
+from .rhythm import ChordChange, QUALITIES, _rank_chords
 from .tab import TabOptions
 
 
@@ -76,13 +76,112 @@ def _key_prior(chroma):
     return candidates[0][1] * confidence
 
 
-def chords_from_chroma(features: ChromaFeatures, opts: TabOptions) -> list[ChordChange]:
-    """Decode candidates jointly over beats, allowing changes inside old 2/4-beat blocks.
+def _decode_chord_segments(observations, prior, opts, beat):
+    """Semi-Markov decoding: jointly choose chord identities and their durations.
 
-    Silence and unsupported single-pitch regions force N.C. The transition cost
-    falls when adjacent chroma vectors change, while a weak key prior and
-    persistence cost discourage flickering on passing tones.
+    Pooling evidence within each candidate span lets arpeggios describe one
+    chord. Silence prevents a chord span from crossing a real rest; ambiguous
+    audible frames do not automatically force a new N.C. segment.
     """
+    labels = [(None, "", ())] + [(root, suffix, intervals)
+              for root in range(12) for suffix, intervals in QUALITIES]
+    lookup = {label: i for i, label in enumerate(labels)}
+    size, count = len(labels), len(observations)
+    times = [observations[0][0]] + [o[1] for o in observations]
+    durations = np.diff(times) / beat
+    chroma = np.array([o[2] for o in observations])
+    bass = np.array([o[3] for o in observations])
+    silent = np.array([o[4] for o in observations])
+    chroma_sum = np.vstack([np.zeros(12), np.cumsum(chroma * durations[:, None], axis=0)])
+    bass_sum = np.vstack([np.zeros(12), np.cumsum(bass * durations[:, None], axis=0)])
+    silence_sum = np.r_[0, np.cumsum(silent)]
+    active_duration = np.r_[0., np.cumsum(durations * ~silent)]
+    # Aggregate chroma alone can hide real changes: two different chords can
+    # share many tones. Also score every beat against the proposed held chord.
+    # Missing tones are soft evidence, so an arpeggio need not sound all notes
+    # simultaneously, but a sustained incompatible tone still counts against it.
+    local = np.zeros((count, size))
+    for i, (_, _, weights, lows, _) in enumerate(observations):
+        vector = .75*_normalize(weights**2) + .25*_normalize(lows**2)
+        vector = np.where(vector >= np.max(vector)*.12, vector, 0.)
+        vector = _normalize(vector)
+        for k, (root, _, intervals) in enumerate(labels[1:], 1):
+            pcs = [(root+x) % 12 for x in intervals]
+            inside = float(np.sum(vector[pcs]))
+            missing = float(np.mean(vector[pcs] == 0))
+            local[i,k] = (inside - 1.2*(1-inside) - .8*missing - .025*len(intervals)
+                          + .28*float(lows[root]) + .03*float(np.mean(prior[pcs])))
+    local_sum = np.vstack([np.zeros(size), np.cumsum(local*durations[:,None], axis=0)])
+
+    switch = .25 + .15*opts.chord_beats
+    costs = np.full((size, size), switch)
+    for i, (root_a, _, intervals_a) in enumerate(labels):
+        for j, (root_b, _, intervals_b) in enumerate(labels):
+            if i == j:
+                costs[i,j] = 0.
+            elif root_a is not None and root_b is not None:
+                a = {(root_a+x) % 12 for x in intervals_a}
+                b = {(root_b+x) % 12 for x in intervals_b}
+                # Require more evidence to toggle related chord colors.
+                if len(a & b) >= 3 or root_a == root_b:
+                    costs[i,j] += .15
+
+    scores = np.full((count+1, size), -np.inf)
+    scores[0] = 0.
+    previous_time = np.zeros((count+1, size), dtype=int)
+    previous_label = np.zeros((count+1, size), dtype=int)
+    transitions = {0: (np.zeros(size), np.zeros(size, dtype=int))}
+    for end in range(1, count+1):
+        # Sixteen beats bounds cost on long songs; adjacent identical spans are
+        # merged after decoding, so there is no maximum held-chord duration.
+        for start in range(max(0, end-16), end):
+            length = (times[end]-times[start])/beat
+            emission = np.full(size, -np.inf)
+            emission[0] = .12 * (active_duration[end]-active_duration[start])
+            if silence_sum[end] == silence_sum[start]:
+                weights = (chroma_sum[end]-chroma_sum[start])/length
+                lows = (bass_sum[end]-bass_sum[start])/length
+                vector = .75*_normalize(weights**2) + .25*_normalize(lows**2)
+                ranked = _rank_chords(dict(enumerate(vector)), dict(enumerate(lows)))
+                for score, root, suffix, intervals in ranked:
+                    if score < .35:
+                        continue
+                    pcs = [(root+x) % 12 for x in intervals]
+                    # Low-register support anchors the harmonic foundation;
+                    # high ornaments alone should not keep changing the root.
+                    score += .20*float(lows[root]) + .03*float(np.mean(prior[pcs]))
+                    short = .15*max(0., opts.chord_beats-length)
+                    k = lookup[root,suffix,intervals]
+                    emission[k] = .2*score*length + .8*(local_sum[end,k]-local_sum[start,k])-short
+            if start not in transitions:
+                entries = scores[start][:, None]-costs
+                parents = np.argmax(entries, axis=0)
+                transitions[start] = entries[parents, np.arange(size)], parents
+            entry_scores, parents = transitions[start]
+            candidate = entry_scores+emission
+            better = candidate > scores[end]
+            scores[end,better] = candidate[better]
+            previous_time[end,better] = start
+            previous_label[end,better] = parents[better]
+
+    changes = []
+    end, label = count, int(np.argmax(scores[-1]))
+    while end:
+        start = previous_time[end,label]
+        root, suffix, intervals = labels[label]
+        changes.append(ChordChange(times[start], times[end], root, suffix, intervals))
+        end, label = int(start), int(previous_label[end,label])
+    result = []
+    for change in reversed(changes):
+        if result and result[-1].name == change.name:
+            result[-1] = replace(result[-1], end=change.end)
+        else:
+            result.append(change)
+    return result
+
+
+def chords_from_chroma(features: ChromaFeatures, opts: TabOptions) -> list[ChordChange]:
+    """Choose sustained harmony from variable-length spans on the beat grid."""
     if opts.chord_beats not in (1, 2, 4):
         raise ValueError("Chord stability must be 1, 2 or 4 beats")
     if features.duration <= 0 or not features.times.size:
@@ -96,56 +195,12 @@ def chords_from_chroma(features: ChromaFeatures, opts: TabOptions) -> list[Chord
     for start, end in zip(boundaries, boundaries[1:]):
         frames = (features.times >= start) & (features.times < end)
         if not np.any(frames):
-            # Very short pickup/tail intervals use the closest measured frame.
             frames[np.argmin(abs(features.times - (start + end) / 2))] = True
-        weights = np.mean(features.chroma[:, frames], axis=1)
-        bass = np.mean(features.bass[:, frames], axis=1)
-        # Chroma filters spread energy into neighboring semitones. Sharpen the
-        # peaks so C's spectral skirt is not mistaken for a major seventh (B).
-        vector = .75 * _normalize(weights ** 2) + .25 * _normalize(bass ** 2)
-        candidates = []
-        if float(np.mean(features.rms[frames])) >= silence:
-            ranked = _rank_chords(dict(enumerate(vector)), dict(enumerate(bass)))
-            for score, root, suffix, intervals in ranked:
-                if score < .35:
-                    continue
-                pcs = [(root + i) % 12 for i in intervals]
-                candidates.append((score + .03 * float(np.mean(prior[pcs])), root, suffix, intervals))
-                if len(candidates) == 8:
-                    break
-        # An explicit unharmonized option prevents weak evidence forcing a chord.
-        candidates.append((.35, None, "", ()))
-        observations.append((start, end, vector, candidates))
-
-    layers = []
-    for i, (start, end, vector, candidates) in enumerate(observations):
-        layer = []
-        for emission, root, suffix, intervals in candidates:
-            if i:
-                previous_vector = observations[i - 1][2]
-                norm = np.linalg.norm(vector) * np.linalg.norm(previous_vector)
-                difference = 1 - float(np.dot(vector, previous_vector) / max(norm, 1e-12))
-                switch_cost = (.10 + .035 * opts.chord_beats) * max(.25, 1 - 3 * difference)
-                best, parent = max((node[0] - (switch_cost if (node[1], node[2]) != (root, suffix) else 0), j)
-                                   for j, node in enumerate(layers[-1]))
-            else:
-                best, parent = 0., -1
-            layer.append((best + emission * min(1., (end - start) / beat), root, suffix, intervals, parent))
-        layers.append(layer)
-    chosen = max(range(len(layers[-1])), key=lambda j: layers[-1][j][0])
-    path = []
-    for layer in reversed(layers):
-        node = layer[chosen]
-        path.append(node)
-        chosen = node[4]
-    changes = []
-    for (start, end, _, _), (_, root, suffix, intervals, _) in zip(observations, reversed(path)):
-        change = ChordChange(start, end, root, suffix, intervals)
-        if changes and changes[-1].name == change.name:
-            changes[-1] = replace(changes[-1], end=end)
-        else:
-            changes.append(change)
-    return changes
+        weights = _normalize(np.mean(features.chroma[:, frames], axis=1))
+        bass = _normalize(np.mean(features.bass[:, frames], axis=1))
+        is_silent = float(np.mean(features.rms[frames])) < silence
+        observations.append((start, end, weights, bass, is_silent))
+    return _decode_chord_segments(observations, prior, opts, beat)
 
 
 def audio_chord_changes(path: str, opts: TabOptions) -> list[ChordChange]:
