@@ -16,10 +16,11 @@ class TabOptions:
     max_fret: int = 19
     bars_per_line: int = 4
     capo: int = 0
+    difficulty: str = "standard"   # easy / standard / advanced
     grid_offset: float = 0.0        # seconds; grid origin (beat 0) of the song
 
 
-def notes_to_tab(notes: list[dict], opts: TabOptions | None = None) -> str:
+def notes_to_tab(notes: list[dict], opts: TabOptions | None = None, *, arranged: bool = False) -> str:
     """Render notes as ASCII tab text."""
     opts = opts or TabOptions()
     bpm = max(opts.bpm, 1.0)
@@ -28,22 +29,13 @@ def notes_to_tab(notes: list[dict], opts: TabOptions | None = None) -> str:
     steps_per_bar = int(round(4.0 / opts.quantize))
     steps_per_line = steps_per_bar * opts.bars_per_line
 
-    # filter + snap to grid
-    valid = [n for n in notes if n["confidence"] >= opts.min_confidence]
-    if not valid:
+    planned = notes if arranged else arrange_notes(notes, opts)
+    if not planned:
         return "(タブを生成できるノートが検出されませんでした)"
-
-    cells: dict[int, list[tuple[int, int]]] = {}  # step -> [(string, fret), ...]
-    prev_center = 7.0  # running hand-position center (fret), used for continuity
-    for step in sorted({max(0, int(round((n["start"] - opts.grid_offset) / grid)))
-                        for n in valid}):
-        pitches = [n["pitch"] for n in valid
-                   if max(0, int(round((n["start"] - opts.grid_offset) / grid))) == step]
-        positions = assign_positions(pitches, prev_center, opts)
-        if positions:
-            cells[step] = positions
-            frets = [f for _, f in positions]
-            prev_center = (min(frets) + max(frets)) / 2.0
+    cells: dict[int, list[tuple[int, int]]] = {}
+    for n in planned:
+        step = max(0, int(round((n["start"] - opts.grid_offset) / grid)))
+        cells.setdefault(step, []).append((n["string"], n["fret"]))
 
     max_step = max(cells) if cells else 0
     total_lines = max_step // steps_per_line + 1
@@ -93,74 +85,145 @@ def _candidates(pitch: int, opts: TabOptions) -> list[tuple[int, int]]:
     return out
 
 
+# (maximum simultaneous notes, fret span, physical stretch in mm, barre allowed)
+DIFFICULTIES = {
+    "easy": (3, 3, 100.0, False),
+    "standard": (4, 4, 125.0, True),
+    "advanced": (6, 5, 150.0, True),
+}
+
+
+def playable(shape: tuple[tuple[int, int], ...], opts: TabOptions) -> bool:
+    """Conservative four-finger model, with one index-finger barre at the nut side.
+
+    Open strings do not contribute to hand stretch. A barre cannot cross an
+    open string or a note fretted below it. This is a heuristic, not a guarantee
+    for every player's hand or every guitar scale length.
+    """
+    limit, span, stretch, barre = DIFFICULTIES[opts.difficulty]
+    if len(shape) > limit or len({s for s, _ in shape}) != len(shape):
+        return False
+    fretted = [(s, f) for s, f in shape if f > 0]
+    if not fretted:
+        return True
+    lo, hi = min(f for _, f in fretted), max(f for _, f in fretted)
+    # 648 mm scale; capo changes absolute fret spacing, not TAB fret numbers.
+    distance = 648 * (2 ** (-(lo + opts.capo) / 12) - 2 ** (-(hi + opts.capo) / 12))
+    if hi - lo > span or distance > stretch:
+        return False
+    fingers = len(fretted)
+    if barre:
+        strings = [s for s, f in fretted if f == lo]
+        left, right = min(strings), max(strings)
+        if not any(left <= s <= right and f < lo for s, f in shape):
+            fingers -= len(strings) - 1
+    return fingers <= 4
+
+
+def _center(shape):
+    frets = [f for _, f in shape if f > 0]
+    return (min(frets) + max(frets)) / 2 if frets else None
+
+
+def _effort(shape):
+    frets = [f for _, f in shape if f > 0]
+    return (0.08 * sum(frets) + 0.25 * (max(frets) - min(frets))) if frets else 0.0
+
+
+def _chord_candidates(notes, opts):
+    # Highest voice has priority, then bass, then confident inner voices.
+    unique = {}
+    for n in notes:
+        if _candidates(n["pitch"], opts):
+            if n["pitch"] not in unique or n["confidence"] > unique[n["pitch"]]["confidence"]:
+                unique[n["pitch"]] = n
+    pitches = sorted(unique, reverse=True)
+    if not pitches:
+        return [(0.0, (), ())]
+    top, bass = pitches[0], pitches[-1]
+    order = sorted(pitches, key=lambda p: (p != top, p != bass, -unique[p]["confidence"], -p))
+    states = [(0.0, (), ())]
+    for pitch in order:
+        weight = (40 if pitch == top else 12 if pitch == bass else 4) + unique[pitch]["confidence"]
+        expanded = []
+        for penalty, shape, kept in states:
+            expanded.append((penalty + weight, shape, kept))
+            for pos in _candidates(pitch, opts):
+                new_shape = shape + (pos,)
+                if playable(new_shape, opts):
+                    expanded.append((penalty, new_shape, kept + (unique[pitch],)))
+        # Bound noisy/transcribed dense chords; retain multiple voicings for lookahead.
+        states = sorted(expanded, key=lambda x: x[0] + _effort(x[1]))[:192]
+    return sorted(states, key=lambda x: x[0] + _effort(x[1]))[:64]
+
+
+def _transition(previous, current, seconds):
+    a, b = _center(previous), _center(current)
+    shift = abs(a - b) if a is not None and b is not None else 0
+    strings = abs(sum(s for s, _ in previous) / max(1, len(previous))
+                  - sum(s for s, _ in current) / max(1, len(current)))
+    # A move in a fast passage is more costly than the same move after a rest.
+    return (shift * 1.5 + strings * 0.25) / max(0.15, min(2.0, seconds))
+
+
+def arrange_notes(notes: list[dict], opts: TabOptions | None = None) -> list[dict]:
+    """Select playable voices and optimize voicings across all quantized onsets.
+
+    Dynamic programming over bounded chord candidates, rather than choosing
+    each chord greedily. Each onset releases the previous shape: this first
+    version does not model independent sustained voices or legato techniques.
+    Returned copies contain string/fret and quantized timing for every export.
+    """
+    opts = opts or TabOptions()
+    if opts.difficulty not in DIFFICULTIES:
+        raise ValueError("Unknown difficulty: " + opts.difficulty)
+    if opts.quantize <= 0 or not opts.tuning or opts.bars_per_line < 1:
+        raise ValueError("Invalid grid or tuning")
+    grid = opts.quantize * 60 / max(opts.bpm, 1)
+    groups = {}
+    for n in notes:
+        if n["confidence"] >= opts.min_confidence:
+            step = max(0, int(round((n["start"] - opts.grid_offset) / grid)))
+            groups.setdefault(step, []).append(n)
+    steps = sorted(groups)
+    if not steps:
+        return []
+    layers = []
+    previous = []
+    for index, step in enumerate(steps):
+        layer = []
+        for penalty, shape, kept in _chord_candidates(groups[step], opts):
+            local = penalty + _effort(shape)
+            if previous:
+                seconds = (step - steps[index - 1]) * grid
+                score, parent = min((node[0] + _transition(node[1], shape, seconds), j)
+                                    for j, node in enumerate(previous))
+            else:
+                score, parent = 0.0, -1
+            layer.append((score + local, shape, kept, parent))
+        layers.append(layer)
+        previous = layer
+    chosen = min(range(len(previous)), key=lambda j: previous[j][0])
+    path = []
+    for layer in reversed(layers):
+        node = layer[chosen]
+        path.append(node)
+        chosen = node[3]
+    result = []
+    for i, (step, node) in enumerate(zip(steps, reversed(path))):
+        start = max(0.0, opts.grid_offset + step * grid)
+        next_start = max(0.0, opts.grid_offset + steps[i + 1] * grid) if i + 1 < len(steps) else float("inf")
+        for (string, fret), note in zip(node[1], node[2]):
+            end = max(start + 0.01, note["end"])
+            result.append(dict(note, string=string, fret=fret, start=start, end=min(end, next_start)))
+    return result
+
+
 def assign_positions(pitches: list[int], prev_center: float,
                      opts: TabOptions) -> list[tuple[int, int]]:
-    """Assign (string, fret) for all pitches sounding at one grid step.
-
-    Chord-level optimization: no string may carry two pitches, the used
-    fret span is minimized, pitches are kept on strings natural for their
-    register, and the hand position stays close to the previous step.
-    Pitches the instrument cannot voice are dropped.
-    """
-    if not pitches:
-        return []
-    # deduplicate while keeping pitch order (low -> high)
-    uniq = sorted(set(pitches))
-    cand = [_candidates(p, opts) for p in uniq]
-    keep = [i for i, c in enumerate(cand) if c]
-    uniq = [uniq[i] for i in keep]
-    cand = [cand[i] for i in keep]
-    if not cand:
-        return []
-
-    # natural string per pitch: highest string whose open pitch <= pitch
-    def natural_string(p: int) -> int:
-        best = 0
-        for s, op in enumerate(opts.tuning):
-            if p >= op - opts.capo:
-                best = s
-        return best
-
-    if len(uniq) == 1:
-        combos = [(c, ) for c in cand[0]]
-    else:
-        total = 1
-        for c in cand:
-            total *= len(c)
-        if total <= 20000:  # brute-force small chords
-            import itertools
-            combos = itertools.product(*cand)
-        else:  # huge chord: greedy, high pitch on high string first
-            order = sorted(range(len(uniq)), key=lambda i: -uniq[i])
-            chosen: dict[int, tuple[int, int]] = {}
-            used: set[int] = set()
-            for i in order:
-                best_c, best_sc = None, None
-                for sc in cand[i]:
-                    if sc[0] in used:
-                        continue
-                    sc_score = abs(sc[0] - natural_string(uniq[i])) * 2 + sc[1] * 0.2
-                    if best_sc is None or sc_score < best_sc:
-                        best_c, best_sc = sc, sc_score
-                if best_c:
-                    chosen[i] = best_c
-                    used.add(best_c[0])
-            combos = [tuple(chosen.get(i, cand[i][0]) for i in range(len(uniq)))]
-
-    def score(combo) -> float:
-        frets = [f for _, f in combo]
-        strings = [s for s, _ in combo]
-        total = sum(frets) * 0.2
-        total += max(frets) - min(frets)              # compact hand shape
-        total += sum(abs(s - natural_string(p)) * 1.5     # natural register
-                     for s, p in zip(strings, uniq))
-        center = (min(frets) + max(frets)) / 2.0
-        total += abs(center - prev_center) * 0.7      # position continuity
-        return total
-
-    best_combo, best_score = None, None
-    for combo in combos:
-        sc = score(combo)
-        if best_score is None or sc < best_score:
-            best_combo, best_score = combo, sc
-    return list(best_combo) if best_combo else []
+    """Compatibility helper for a single chord; full TAB uses phrase planning."""
+    candidates = _chord_candidates([dict(pitch=p, confidence=1.0) for p in pitches], opts)
+    def cost(candidate):
+        center = _center(candidate[1])
+        return candidate[0] + _effort(candidate[1]) + (abs(center - prev_center) * 0.7 if center is not None else 0)
+    return list(min(candidates, key=cost)[1])

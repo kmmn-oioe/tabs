@@ -18,6 +18,9 @@ TUNINGS = {
 }
 
 
+DIFFICULTY_LABELS = {"初級（最大3音）": "easy", "標準（最大4音）": "standard", "上級（最大6音）": "advanced"}
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -93,6 +96,11 @@ class App(tk.Tk):
         self.note_len_var = tk.IntVar(value=70)
         ttk.Spinbox(opts, from_=30, to=300, increment=10, textvariable=self.note_len_var,
                     width=6).grid(row=4, column=1, sticky="w")
+
+        ttk.Label(opts, text="演奏難易度").grid(row=5, column=0, sticky="w", padx=4)
+        self.difficulty_var = tk.StringVar(value="標準（最大4音）")
+        ttk.Combobox(opts, textvariable=self.difficulty_var, values=list(DIFFICULTY_LABELS),
+                     state="readonly", width=24).grid(row=5, column=1, sticky="w", padx=4, pady=4)
 
         btns = ttk.Frame(self)
         btns.pack(fill="x", padx=8)
@@ -218,6 +226,7 @@ class App(tk.Tk):
                 bpm=float(self.bpm_var.get()),
                 min_confidence=float(self.conf_var.get()),
                 capo=int(self.capo_var.get()),
+                difficulty=DIFFICULTY_LABELS[self.difficulty_var.get()],
             )
             tab_text, midi_path, sheet_paths, stem = generate(
                 src, opts, use_separation=self.sep_var.get(),

@@ -6,7 +6,7 @@ import tempfile
 from typing import Callable
 
 from .audio import load_audio, download_youtube
-from .tab import TabOptions, notes_to_tab
+from .tab import TabOptions, notes_to_tab, arrange_notes
 
 
 def generate(
@@ -19,7 +19,7 @@ def generate(
     auto_bpm: bool = True,
     progress: Callable[[str], None] | None = None,
 ) -> tuple[str, str, str, str]:
-    """Returns (tab_text, midi_path, stem_wav_path).
+    """Returns (tab_text, midi_paths, sheet_paths, stem_wav_path).
 
     source: local audio file path or YouTube URL.
     """
@@ -77,20 +77,28 @@ def generate(
         split_notes = None
 
     def with_header(text: str) -> str:
-        return f"BPM {opts.bpm:g}" + (f"  (カポ {opts.capo})" if opts.capo else "") + "\n" + text
+        return f"BPM {opts.bpm:g}  [{opts.difficulty}]" + (f"  (カポ {opts.capo})" if opts.capo else "") + "\n" + text
+
+    def arrange(part: list[dict]) -> list[dict]:
+        arranged = arrange_notes(part, opts)
+        log(f"演奏用に調整 ({opts.difficulty}): {len(part)} → {len(arranged)} ノート", 97)
+        return arranged
 
     if split_lead_rhythm:
         lead, rhythm = split_notes(notes, lead_threshold)
         log(f"リード {len(lead)} / リズム {len(rhythm)} ノートに振り分けました")
+        lead = arrange(lead)
+        rhythm = arrange(rhythm)
         tab_text = (
             "====== リードギター ======\n"
-            + with_header(notes_to_tab(lead, opts))
+            + with_header(notes_to_tab(lead, opts, arranged=True))
             + "\n\n====== リズムギター ======\n"
-            + with_header(notes_to_tab(rhythm, opts))
+            + with_header(notes_to_tab(rhythm, opts, arranged=True))
         )
         lead_notes, rhythm_notes = lead, rhythm
     else:
-        tab_text = with_header(notes_to_tab(notes, opts))
+        notes = arrange(notes)
+        tab_text = with_header(notes_to_tab(notes, opts, arranged=True))
         lead_notes, rhythm_notes = notes, []
 
     # 5. export MIDI + sheet music (MusicXML)
