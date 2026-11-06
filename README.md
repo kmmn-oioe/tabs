@@ -11,16 +11,21 @@
 - 🎚️ (任意)Demucs によるギターパート分離 → 精度アップ
 - 🎼 音程検出は Spotify の **basic-pitch**
 - 🎸 チューニング選択(レギュラー / ドロップD / 半音下 / Open G)、カポ位置指定
+- ⏱ BPMの自動推定とグリッド原点(オフセット)合わせ
+- 🖐 コード単位の弦・フレット割当(運指の連続性を考慮)
 - 💾 タブ譜(.txt)と MIDI(.mid)で保存
 
 ## セットアップ(Windows)
 
-Python 3.10 以降をインストールしてから:
+Python **3.11** をインストールしてから(basic-pitch が依存する TensorFlow の都合上、3.12以降は非対応):
 
 ```bat
-py -3 -m pip install -r requirements.txt
+py -3.11 -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
 tabs.bat
 ```
+
+※ `py -3.11` が見つからない場合は `winget install --id Python.Python.3.11` で入れてください。
 
 ### ギターパート分離を使う場合(推奨・容量大)
 

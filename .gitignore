@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Test / generated artifacts
+test.pdf
+test.musicxml
+stems/
+
+# Build
+build/
+dist/
+*.spec
+
+# OS / IDE
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/

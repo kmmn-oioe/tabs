@@ -1,5 +1,9 @@
 @echo off
-REM tabs - Windows launcher
+REM tabs - Windows launcher (uses project venv if present)
 cd /d "%~dp0"
-python main.py
+if exist .venv\Scripts\python.exe (
+    .venv\Scripts\python.exe main.py
+) else (
+    py -3 main.py
+)
 pause
