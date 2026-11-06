@@ -81,7 +81,7 @@ class App(tk.Tk):
         ttk.Checkbutton(opts, text="リード / コード伴奏に分けて生成", variable=self.split_var,
                         command=self._toggle_split).grid(row=2, column=2, columnspan=2, sticky="w", padx=4)
 
-        ttk.Label(opts, text="リード判定の音域しきい値").grid(row=3, column=0, sticky="w", padx=4)
+        ttk.Label(opts, text="リード音域の目安（補助）").grid(row=3, column=0, sticky="w", padx=4)
         self.lead_thr_var = tk.IntVar(value=64)
         self.lead_thr_scale = ttk.Scale(opts, from_=55, to=76, variable=self.lead_thr_var,
                                        orient="horizontal", length=150)
@@ -102,7 +102,7 @@ class App(tk.Tk):
         ttk.Combobox(opts, textvariable=self.difficulty_var, values=list(DIFFICULTY_LABELS),
                      state="readonly", width=24).grid(row=5, column=1, sticky="w", padx=4, pady=4)
 
-        ttk.Label(opts, text="コード判定間隔（拍）").grid(row=6, column=0, sticky="w", padx=4)
+        ttk.Label(opts, text="コード安定性（拍）").grid(row=6, column=0, sticky="w", padx=4)
         self.chord_beats_var = tk.IntVar(value=2)
         self.chord_beats_box = ttk.Combobox(opts, textvariable=self.chord_beats_var,
                                           values=(1, 2, 4), state="disabled", width=6)

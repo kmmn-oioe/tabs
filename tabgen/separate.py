@@ -69,9 +69,9 @@ def separate_guitar(wav_path: str, out_dir: str | None = None,
     try:
         run(["-n", "htdemucs_6s", "--two-stems", "guitar", *_device_args()],
             "ギター", "htdemucs_6s")
-        model, name = "htdemucs_6s", "no_guitar"
+        model, name = "htdemucs_6s", "guitar"
     except RuntimeError:
-        report(0.0, "標準モデルで再試行中…")
+        report(0.0, "標準モデルで再試行中（otherにはギター以外も含まれます）…")
         run(["-n", "htdemucs", *_device_args()], "ギター", "htdemucs")
         model, name = "htdemucs", "other"
 

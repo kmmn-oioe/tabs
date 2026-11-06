@@ -71,10 +71,6 @@ def generate(
 
     # 4. build tab
     log("タブ譜を組み立て中…", 96)
-    try:
-        from .split import split_notes
-    except ImportError:
-        split_notes = None
 
     def with_header(text: str) -> str:
         return f"BPM {opts.bpm:g}  [{opts.difficulty}]" + (f"  (カポ {opts.capo})" if opts.capo else "") + "\n" + text
@@ -86,15 +82,26 @@ def generate(
 
     if split_lead_rhythm:
         from .rhythm import arrange_rhythm, progression_text
-        lead, rhythm = split_notes(notes, lead_threshold)
-        log(f"リード {len(lead)} / リズム {len(rhythm)} ノートに振り分けました")
+        from .split import split_notes
+        lead, rhythm = split_notes(notes, lead_threshold, min_confidence=opts.min_confidence)
+        log(f"旋律追跡: {len(lead)} ノートを採用 / その他 {len(rhythm)} ノート")
         lead = arrange(lead)
-        rhythm, changes = arrange_rhythm(notes, opts)
+        from .harmony import audio_chord_changes
+        try:
+            log("音声のクロマ特徴からコードと切替位置を解析中…", 97)
+            changes = audio_chord_changes(stem_path, opts)
+            analysis_method = "コード推定: 音声クロマ（拍単位・前後関係で平滑化）"
+        except (OSError, ValueError, RuntimeError, ImportError) as error:
+            log(f"音声コード解析を利用できないため検出ノートから推定します: {error}", 97)
+            changes = None
+            analysis_method = "コード推定: 検出ノート（音声解析を利用できなかったため）"
+        rhythm, changes = arrange_rhythm(notes, opts, changes=changes)
         log(f"リズム伴奏: {len(changes)} 区間のコード切替を作成しました", 97)
         tab_text = (
             "====== リードギター ======\n"
             + with_header(notes_to_tab(lead, opts, arranged=True))
             + "\n\n====== リズムギター ======\n"
+            + analysis_method + "\n"
             + progression_text(changes, opts) + "\n\n"
             + with_header(notes_to_tab(rhythm, opts, arranged=True))
         )

@@ -1,41 +1,88 @@
-"""Split transcribed notes into lead and rhythm guitar parts.
+"""Track a monophonic melody through polyphonic note onsets.
 
-Heuristic: at each short time window, the top voice (or a high single note)
-is treated as lead; everything else is rhythm. Uses a pitch threshold and
-density cues — no extra model required.
+Pitch register is a soft preference, not a lead/rhythm cutoff. This produces
+an arrangement; it does not identify which physical guitar played a note.
 """
 from __future__ import annotations
 
-from .tab import TabOptions
+from dataclasses import dataclass
+from math import tanh
 
-DEFAULT_LEAD_THRESHOLD = 64  # MIDI E4
+DEFAULT_LEAD_THRESHOLD = 64
+
+
+@dataclass
+class _State:
+    score: float
+    pitch: int | None
+    start: float
+    parent: _State | None = None
+    selected: int | None = None
 
 
 def split_notes(notes: list[dict], lead_threshold: int = DEFAULT_LEAD_THRESHOLD,
-                window: float = 0.5) -> tuple[list[dict], list[dict]]:
-    """Return (lead_notes, rhythm_notes)."""
-    if not notes:
-        return [], []
+                window: float = .04, min_confidence: float = .3) -> tuple[list[dict], list[dict]]:
+    """Choose a melodic path, returning copied lead notes and remaining notes.
 
-    lead: list[dict] = []
-    rhythm: list[dict] = []
-
-    # group notes by overlapping time windows
-    windows: list[list[dict]] = []
-    for n in sorted(notes, key=lambda x: x["start"]):
-        if windows and n["start"] - windows[-1][0]["start"] < window:
-            windows[-1].append(n)
+    Near-simultaneous attacks are alternatives. A bounded dynamic program can
+    skip weak notes, follows small intervals, and relaxes continuity after a
+    rest. Confidence and duration support low-register melodies as well as
+    high ones. Selected notes are released at the next melody attack.
+    """
+    if window <= 0:
+        raise ValueError("Onset grouping window must be positive")
+    groups: list[list[int]] = []
+    for i in sorted(range(len(notes)), key=lambda i: (notes[i]["start"], notes[i]["pitch"])):
+        n = notes[i]
+        if n["confidence"] < min_confidence or n["end"] <= n["start"]:
+            continue
+        if groups and n["start"] - notes[groups[-1][0]]["start"] < window:
+            groups[-1].append(i)
         else:
-            windows.append([n])
+            groups.append([i])
+    if not groups:
+        return [], list(notes)
 
-    for w in windows:
-        pitches = [n["pitch"] for n in w]
-        top = max(pitches)
-        for n in w:
-            if n["pitch"] == top and (len(w) > 1 or top >= lead_threshold):
-                lead.append(n)
-            elif n["pitch"] >= lead_threshold and len(w) == 1:
-                lead.append(n)
-            else:
-                rhythm.append(n)
-    return lead, rhythm
+    states = [_State(0., None, 0.)]
+    for group in groups:
+        expanded = [_State(s.score, s.pitch, s.start, s) for s in states]
+        # Duplicate detections of the same pitch should not compete as voices.
+        by_pitch = {}
+        for i in group:
+            n = notes[i]
+            if n["pitch"] not in by_pitch or n["confidence"] > notes[by_pitch[n["pitch"]]]["confidence"]:
+                by_pitch[n["pitch"]] = i
+        for i in by_pitch.values():
+            n = notes[i]
+            reward = (2 * (n["confidence"] - .2)
+                      + .25 * min(.6, n["end"] - n["start"])
+                      + .12 * tanh((n["pitch"] - lead_threshold) / 12))
+            def continuation(s):
+                if s.pitch is None:
+                    return s.score
+                gap = max(.1, n["start"] - s.start)
+                interval = abs(n["pitch"] - s.pitch)
+                movement = min(1.2, interval * .055 + max(0, interval - 7) * .08)
+                return s.score - movement / max(1., gap * 2)
+            previous = max(states, key=continuation)
+            expanded.append(_State(continuation(previous) + reward, n["pitch"], n["start"], previous, i))
+        # Keep the best history for each continuity state, including skipped onsets.
+        best = {}
+        for s in expanded:
+            key = s.pitch, s.start
+            if key not in best or s.score > best[key].score:
+                best[key] = s
+        states = sorted(best.values(), key=lambda s: s.score, reverse=True)[:64]
+
+    state = max(states, key=lambda s: s.score)
+    selected = []
+    while state is not None:
+        if state.selected is not None:
+            selected.append(state.selected)
+        state = state.parent
+    selected.reverse()
+    lead = [dict(notes[i]) for i in selected]
+    for current, following in zip(lead, lead[1:]):
+        current["end"] = min(current["end"], following["start"])
+    chosen = set(selected)
+    return lead, [n for i, n in enumerate(notes) if i not in chosen]

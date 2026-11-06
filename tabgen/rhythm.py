@@ -29,13 +29,15 @@ class ChordChange:
         return "N.C." if self.root is None else NAMES[self.root] + self.suffix
 
 
-def _identify(weights, bass_weights):
+def _rank_chords(weights, bass_weights):
     if not weights:
-        return None, "", ()
+        return []
     # Ignore very weak short ornaments rather than treating them as extensions.
     weights = {pc: w for pc, w in weights.items() if w >= max(weights.values()) * .12}
     total = sum(weights.values())
-    best = None
+    if total <= 0:
+        return []
+    ranked = []
     for root in weights:
         for suffix, intervals in QUALITIES:
             pcs = {(root + interval) % 12 for interval in intervals}
@@ -49,8 +51,13 @@ def _identify(weights, bass_weights):
             missing = len(pcs - weights.keys()) / len(pcs)
             bass = bass_weights.get(root, 0) / max(sum(bass_weights.values()), 1e-9)
             score = inside - 1.2 * (1 - inside) - .8 * missing + .08 * bass - .025 * len(intervals)
-            if best is None or score > best[0]:
-                best = score, root, suffix, intervals
+            ranked.append((score, root, suffix, intervals))
+    return sorted(ranked, key=lambda candidate: candidate[0], reverse=True)
+
+
+def _identify(weights, bass_weights):
+    ranked = _rank_chords(weights, bass_weights)
+    best = ranked[0] if ranked else None
     # A poorly explained/noisy window is left unharmonized.
     return best[1:] if best is not None and best[0] >= .35 else (None, "", ())
 
@@ -134,13 +141,14 @@ def _voicings(change, opts):
     return sorted(shapes, key=lambda shape: (_voicing_cost(shape, change, opts), shape))[:64]
 
 
-def arrange_rhythm(notes: list[dict], opts: TabOptions) -> tuple[list[dict], list[ChordChange]]:
+def arrange_rhythm(notes: list[dict], opts: TabOptions, *,
+                   changes: list[ChordChange] | None = None) -> tuple[list[dict], list[ChordChange]]:
     """Hold one playable voicing until the chord changes; silence remains silence.
 
     Uses the full transcription, including arpeggios, to retain chord evidence
     that would otherwise disappear when the top note is split into the lead.
     """
-    changes = chord_changes(notes, opts)
+    changes = chord_changes(notes, opts) if changes is None else list(changes)
     if not changes:
         return [], []
     cache, layers = {}, []
