@@ -78,7 +78,10 @@ class PlayabilityTests(unittest.TestCase):
                 expected = []
                 if split:
                     from tabgen.split import split_notes
-                    expected = [arrange_notes(part, TabOptions(difficulty='easy')) for part in split_notes(notes)]
+                    from tabgen.rhythm import arrange_rhythm
+                    lead, _ = split_notes(notes)
+                    expected = [arrange_notes(lead, TabOptions(difficulty='easy')),
+                                arrange_rhythm(notes, TabOptions(difficulty='easy'))[0]]
                 else:
                     expected = [arrange_notes(notes, TabOptions(difficulty='easy'))]
                 self.assertEqual(len(midis.split(';')), len(expected))

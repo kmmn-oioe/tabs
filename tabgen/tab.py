@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from math import ceil
 
 # Standard tuning, string 1 (high E) ... string 6 (low E)
 STANDARD_TUNING = [64, 59, 55, 50, 45, 40]  # MIDI pitches of open strings
@@ -17,6 +18,7 @@ class TabOptions:
     bars_per_line: int = 4
     capo: int = 0
     difficulty: str = "standard"   # easy / standard / advanced
+    chord_beats: int = 2           # rhythm chord recognition interval
     grid_offset: float = 0.0        # seconds; grid origin (beat 0) of the song
 
 
@@ -38,6 +40,14 @@ def notes_to_tab(notes: list[dict], opts: TabOptions | None = None, *, arranged:
         cells.setdefault(step, []).append((n["string"], n["fret"]))
 
     max_step = max(cells) if cells else 0
+    held = {}
+    for n in planned:
+        if n.get("chord"):
+            first = max(0, int(round((n["start"] - opts.grid_offset) / grid)))
+            last = max(first, ceil((n["end"] - opts.grid_offset) / grid) - 1)
+            for step in range(first + 1, last + 1):
+                held.setdefault(step, []).append(n["string"])
+            max_step = max(max_step, last)
     total_lines = max_step // steps_per_line + 1
 
     tuning = opts.tuning
@@ -50,6 +60,12 @@ def notes_to_tab(notes: list[dict], opts: TabOptions | None = None, *, arranged:
         width = steps_per_line + steps_per_bar  # bar separators
         # each cell is 2 chars wide so two-digit frets (10-19) fit
         rows = [["--"] * width for _ in range(n_strings)]
+
+        for step in range(start_step, min(end_step, max_step + 1)):
+            offset = step - start_step
+            col = offset + offset // steps_per_bar
+            for string in held.get(step, []):
+                rows[string][col] = "~~"
 
         for step in range(start_step, min(end_step, max_step + 1)):
             if step not in cells:

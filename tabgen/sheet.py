@@ -8,7 +8,7 @@ def export_musicxml(notes: list[dict], path: str, opts: TabOptions | None = None
                     title: str = "tabs"):
     """Write notes as a MusicXML file readable by MuseScore / Finale / etc."""
     from music21 import (stream, note as m21note, chord as m21chord,
-                         meter, tempo, metadata)
+                         meter, tempo, metadata, harmony)
 
     opts = opts or TabOptions()
     sec_per_beat = 60.0 / max(opts.bpm, 1.0)
@@ -28,6 +28,10 @@ def export_musicxml(notes: list[dict], path: str, opts: TabOptions | None = None
     part.insert(0, tempo.MetronomeMark(number=int(opts.bpm)))
     if title:
         part.insert(0, metadata.Metadata(title=title))
+
+    symbols = {(n["start"], n["chord"]) for n in notes if n.get("chord")}
+    for start, symbol in sorted(symbols):
+        part.insert(round(start / sec_per_beat * 4) / 4, harmony.ChordSymbol(symbol))
 
     for i, (start, end, pitches) in enumerate(events):
         start_beat = round(start / sec_per_beat * 4) / 4

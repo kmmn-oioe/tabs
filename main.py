@@ -78,7 +78,7 @@ class App(tk.Tk):
                         variable=self.sep_var).grid(row=2, column=0, columnspan=2, sticky="w", padx=4)
 
         self.split_var = tk.BooleanVar(value=False)
-        ttk.Checkbutton(opts, text="リード / リズムに分けて生成", variable=self.split_var,
+        ttk.Checkbutton(opts, text="リード / コード伴奏に分けて生成", variable=self.split_var,
                         command=self._toggle_split).grid(row=2, column=2, columnspan=2, sticky="w", padx=4)
 
         ttk.Label(opts, text="リード判定の音域しきい値").grid(row=3, column=0, sticky="w", padx=4)
@@ -102,6 +102,12 @@ class App(tk.Tk):
         ttk.Combobox(opts, textvariable=self.difficulty_var, values=list(DIFFICULTY_LABELS),
                      state="readonly", width=24).grid(row=5, column=1, sticky="w", padx=4, pady=4)
 
+        ttk.Label(opts, text="コード判定間隔（拍）").grid(row=6, column=0, sticky="w", padx=4)
+        self.chord_beats_var = tk.IntVar(value=2)
+        self.chord_beats_box = ttk.Combobox(opts, textvariable=self.chord_beats_var,
+                                          values=(1, 2, 4), state="disabled", width=6)
+        self.chord_beats_box.grid(row=6, column=1, sticky="w", padx=4, pady=4)
+
         btns = ttk.Frame(self)
         btns.pack(fill="x", padx=8)
         self.run_btn = ttk.Button(btns, text="▶ タブ譜を生成", command=self._run)
@@ -116,6 +122,7 @@ class App(tk.Tk):
         self.bpm_spin.state(["disabled"] if self.auto_bpm_var.get() else ["!disabled"])
 
     def _toggle_split(self):
+        self.chord_beats_box.configure(state="readonly" if self.split_var.get() else "disabled")
         if self.split_var.get():
             self.lead_thr_scale.state(["!disabled"])
             self.lead_thr_lbl.state(["!disabled"])
@@ -227,6 +234,7 @@ class App(tk.Tk):
                 min_confidence=float(self.conf_var.get()),
                 capo=int(self.capo_var.get()),
                 difficulty=DIFFICULTY_LABELS[self.difficulty_var.get()],
+                chord_beats=int(self.chord_beats_var.get()),
             )
             tab_text, midi_path, sheet_paths, stem = generate(
                 src, opts, use_separation=self.sep_var.get(),

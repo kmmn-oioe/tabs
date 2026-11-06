@@ -85,14 +85,17 @@ def generate(
         return arranged
 
     if split_lead_rhythm:
+        from .rhythm import arrange_rhythm, progression_text
         lead, rhythm = split_notes(notes, lead_threshold)
         log(f"リード {len(lead)} / リズム {len(rhythm)} ノートに振り分けました")
         lead = arrange(lead)
-        rhythm = arrange(rhythm)
+        rhythm, changes = arrange_rhythm(notes, opts)
+        log(f"リズム伴奏: {len(changes)} 区間のコード切替を作成しました", 97)
         tab_text = (
             "====== リードギター ======\n"
             + with_header(notes_to_tab(lead, opts, arranged=True))
             + "\n\n====== リズムギター ======\n"
+            + progression_text(changes, opts) + "\n\n"
             + with_header(notes_to_tab(rhythm, opts, arranged=True))
         )
         lead_notes, rhythm_notes = lead, rhythm
