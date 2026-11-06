@@ -21,6 +21,7 @@ class TabOptions:
     chord_beats: int = 2           # rhythm chord recognition interval
     suppress_chord_attacks: bool = True
     lead_start_seconds: float = 0. # manual intro exclusion, 0 = automatic only
+    audio_lead_detection: bool = True
     grid_offset: float = 0.0        # seconds; grid origin (beat 0) of the song
 
 

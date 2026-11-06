@@ -117,6 +117,10 @@ class App(tk.Tk):
         self.lead_start_box = ttk.Spinbox(opts, textvariable=self.lead_start_var,
                                          from_=0, to=86400, increment=.5, width=10, state="disabled")
         self.lead_start_box.grid(row=7, column=1, sticky="w", padx=4, pady=4)
+        self.audio_lead_var = tk.BooleanVar(value=True)
+        self.audio_lead_check = ttk.Checkbutton(opts, text="音声で独立したリードを確認（実験的）",
+                                               variable=self.audio_lead_var, state="disabled")
+        self.audio_lead_check.grid(row=7, column=2, columnspan=3, sticky="w", padx=4)
 
         btns = ttk.Frame(self)
         btns.pack(fill="x", padx=8)
@@ -135,6 +139,7 @@ class App(tk.Tk):
         self.chord_beats_box.configure(state="readonly" if self.split_var.get() else "disabled")
         self.lead_start_box.configure(state="normal" if self.split_var.get() else "disabled")
         self.suppress_chords_check.configure(state="normal" if self.split_var.get() else "disabled")
+        self.audio_lead_check.configure(state="normal" if self.split_var.get() else "disabled")
         if self.split_var.get():
             self.lead_thr_scale.state(["!disabled"])
             self.lead_thr_lbl.state(["!disabled"])
@@ -249,6 +254,7 @@ class App(tk.Tk):
                 chord_beats=int(self.chord_beats_var.get()),
                 suppress_chord_attacks=self.suppress_chords_var.get(),
                 lead_start_seconds=float(self.lead_start_var.get()),
+                audio_lead_detection=self.audio_lead_var.get(),
             )
             tab_text, midi_path, sheet_paths, stem = generate(
                 src, opts, use_separation=self.sep_var.get(),

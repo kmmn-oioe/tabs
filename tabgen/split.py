@@ -22,7 +22,8 @@ class _State:
 
 def split_notes(notes: list[dict], lead_threshold: int = DEFAULT_LEAD_THRESHOLD,
                 window: float = .04, min_confidence: float = .3, *,
-                suppress_chords: bool = True, start_seconds: float = 0.) -> tuple[list[dict], list[dict]]:
+                suppress_chords: bool = True, start_seconds: float = 0.,
+                lead_scores: list[float] | None = None) -> tuple[list[dict], list[dict]]:
     """Choose a melodic path, returning copied lead notes and remaining notes.
 
     Near-simultaneous attacks are alternatives. A bounded dynamic program can
@@ -34,9 +35,12 @@ def split_notes(notes: list[dict], lead_threshold: int = DEFAULT_LEAD_THRESHOLD,
         raise ValueError("Onset grouping window must be positive")
     if not isfinite(start_seconds) or start_seconds < 0:
         raise ValueError("Lead start must be a finite nonnegative number")
+    if lead_scores is not None and len(lead_scores) != len(notes):
+        raise ValueError("Audio evidence must align with the detected notes")
     ordered = sorted((i for i, n in enumerate(notes)
                       if n["confidence"] >= min_confidence and n["end"] > n["start"]
-                      and n["start"] >= start_seconds),
+                      and n["start"] >= start_seconds
+                      and (lead_scores is None or lead_scores[i] >= .6)),
                      key=lambda i: (notes[i]["start"], notes[i]["pitch"]))
     if suppress_chords:
         # Strummed chords have slightly staggered attacks: use a wider window

@@ -83,15 +83,31 @@ def generate(
     if split_lead_rhythm:
         from .rhythm import arrange_rhythm, progression_text
         from .split import split_notes
+        lead_scores = None
+        lead_method = "リード判定: 検出ノートのみ（音声による存在判定は無効）"
+        if opts.audio_lead_detection:
+            from .lead_audio import analyze_lead_audio
+            try:
+                log("音声の定位・倍音・発音から独立したリードの根拠を解析中…", 96)
+                evidence = analyze_lead_audio(stem_path, notes, min_confidence=opts.min_confidence)
+                lead_scores = evidence.scores
+                lead_method = evidence.summary()
+            except (OSError, ValueError, RuntimeError, ImportError) as error:
+                lead_scores = [0.] * len(notes)
+                lead_method = "リード音声判定に失敗したため保留（休符）。音声入力や依存関係を確認してください。"
+                log(f"{lead_method}: {error}", 96)
         lead, rhythm = split_notes(notes, lead_threshold, min_confidence=opts.min_confidence,
                                    suppress_chords=opts.suppress_chord_attacks,
-                                   start_seconds=opts.lead_start_seconds)
+                                   start_seconds=opts.lead_start_seconds, lead_scores=lead_scores)
         log(f"旋律追跡: {len(lead)} ノートを採用 / その他 {len(rhythm)} ノート")
         lead = arrange_melody(lead, opts)
         duration = max((n["end"] for n in notes), default=0.)
         entry_text = (f"リード開始指定: {opts.lead_start_seconds:g}秒（それ以前は休符）\n"
                       if opts.lead_start_seconds > 0 else "")
-        lead_text = notes_to_tab(lead, opts, arranged=True, duration=duration) if lead else "（リードなし／休符）"
+        if lead:
+            lead_text = notes_to_tab(lead, opts, arranged=True, duration=duration)
+        else:
+            lead_text = "（リードを確認できず／休符）" if opts.audio_lead_detection else "（リードなし／休符）"
         from .harmony import audio_chord_changes
         try:
             log("音声のクロマ特徴からコードと切替位置を解析中…", 97)
@@ -105,6 +121,7 @@ def generate(
         log(f"リズム伴奏: {len(changes)} 区間のコード切替を作成しました", 97)
         tab_text = (
             "====== リードギター ======\n"
+            + lead_method + "\n"
             + entry_text + with_header(lead_text)
             + "\n\n====== リズムギター ======\n"
             + analysis_method + "\n"

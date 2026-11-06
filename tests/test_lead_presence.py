@@ -39,7 +39,7 @@ class LeadPresenceTests(unittest.TestCase):
         notes = [note([57,60,64][i % 3], i*.25) for i in range(44)] + [note(66, 11.01), note(64, 11.4)]
         lead, _ = split_notes(notes, start_seconds=11, suppress_chords=False)
         self.assertEqual([n['pitch'] for n in lead], [66,64])
-        opts = TabOptions(lead_start_seconds=11, bpm=107.7, grid_offset=.14)
+        opts = TabOptions(lead_start_seconds=11, bpm=107.7, grid_offset=.14, audio_lead_detection=False)
         arranged = arrange_melody(lead, opts)
         self.assertTrue(all(n['start'] >= 11 for n in arranged))
 
@@ -59,7 +59,7 @@ class LeadPresenceTests(unittest.TestCase):
         from tabgen.pipeline import generate
         import pretty_midi
         from music21 import converter
-        opts = TabOptions(lead_start_seconds=11, bpm=107.7, grid_offset=.14)
+        opts = TabOptions(lead_start_seconds=11, bpm=107.7, grid_offset=.14, audio_lead_detection=False)
         notes = [note(57, i*.25) for i in range(44)] + [note(66, 11.01), note(64, 11.4)]
         with tempfile.TemporaryDirectory() as tmp:
             source = Path(tmp)/'audio.wav'
@@ -107,7 +107,8 @@ class LeadPresenceTests(unittest.TestCase):
             source.touch()
             with patch('tabgen.transcribe.transcribe', return_value=notes), \
                  patch('tabgen.harmony.audio_chord_changes', return_value=[]):
-                text, midis, xmls, _ = generate(str(source), split_lead_rhythm=True, auto_bpm=False)
+                text, midis, xmls, _ = generate(str(source), TabOptions(audio_lead_detection=False),
+                                               split_lead_rhythm=True, auto_bpm=False)
             self.assertIn('リードなし／休符', text)
             pm = pretty_midi.PrettyMIDI(midis.split(';')[0])
             self.assertFalse(any(i.notes for i in pm.instruments))

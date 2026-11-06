@@ -11,15 +11,20 @@ import numpy as np
 import soundfile as sf
 
 
-def load_audio(path: str, sr: int = 22050) -> tuple[np.ndarray, int]:
-    """Load audio file, resampling to mono at the given sample rate."""
+def load_audio_channels(path: str, sr: int = 22050) -> tuple[np.ndarray, int]:
+    """Load/resample audio without discarding channel position information."""
     data, rate = sf.read(path, always_2d=True)
-    mono = data.mean(axis=1)
     if rate != sr:
         import scipy.signal
         gcd = np.gcd(rate, sr)
-        mono = scipy.signal.resample_poly(mono, sr // gcd, rate // gcd)
-    return mono.astype(np.float32), sr
+        data = scipy.signal.resample_poly(data, sr // gcd, rate // gcd, axis=0)
+    return data.astype(np.float32), sr
+
+
+def load_audio(path: str, sr: int = 22050) -> tuple[np.ndarray, int]:
+    """Load audio file, resampling to mono at the given sample rate."""
+    data, sr = load_audio_channels(path, sr)
+    return data.mean(axis=1), sr
 
 
 def _ffmpeg_location() -> str | None:

@@ -73,7 +73,7 @@ class PlayabilityTests(unittest.TestCase):
                 source = Path(tmp)/'audio.wav'
                 source.touch()
                 with patch('tabgen.transcribe.transcribe', return_value=notes):
-                    text, midis, xmls, _ = generate(str(source), TabOptions(difficulty='easy'),
+                    text, midis, xmls, _ = generate(str(source), TabOptions(difficulty='easy', audio_lead_detection=False),
                                                    auto_bpm=False, split_lead_rhythm=split)
                 expected = []
                 if split:
