@@ -53,6 +53,17 @@ class LeadAudioTests(unittest.TestCase):
         evidence, _, _ = self.analyze(moving=True)
         self.assertFalse(any(s >= .6 for s in evidence.scores))
 
+    def test_pitch_dependent_timbre_does_not_invent_a_second_stereo_source(self):
+        evidence, _, _ = self.analyze(varying_timbre=True)
+        self.assertFalse(any(s >= .6 for s in evidence.scores))
+
+    def test_phase_reveals_centered_voice_that_mono_average_cancels(self):
+        evidence, notes, labels = self.analyze(lead=True, spread=0, lead_antiphase=True)
+        self.assertEqual([s >= .6 for s in evidence.scores], labels)
+        self.assertTrue(all(f.side_fraction > .7 for f,l in zip(evidence.features, labels) if l))
+        lead, _ = split_notes(notes, lead_scores=evidence.scores)
+        self.assertEqual([n['pitch'] for n in lead], [66,64,62,64,66])
+
     def test_distinct_harmonic_signature_supports_mono_evidence(self):
         evidence, _, labels = self.analyze(lead=True, stereo=False,
                                            lead_harmonics=(.55,1,.7,.5,.3))

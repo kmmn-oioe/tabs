@@ -20,6 +20,8 @@ class NoteAudioFeatures:
     attack: float
     coherence: float
     valid: bool
+    side_fraction: float = 0.
+    spatial_rank: float = 1.
 
 
 @dataclass
@@ -31,7 +33,7 @@ class LeadAudioEvidence:
 
     def summary(self) -> str:
         supported = sum(s >= .6 for s in self.scores)
-        channels = "ステレオ定位・倍音・発音" if self.stereo else "モノラル倍音・発音（定位情報なし）"
+        channels = "ステレオ定位・位相・倍音・発音" if self.stereo else "モノラル倍音・発音（定位情報なし）"
         reference = "伴奏の基準音色を推定しました。" if self.reference_found else "伴奏の基準音色が不足しています。"
         return (f"リード音声判定: {channels}\n"
                 f"{reference}\n"
@@ -42,32 +44,40 @@ class LeadAudioEvidence:
 
 def _partials(samples, sr, pitch):
     if len(samples) < 16:
-        return np.zeros((5, samples.shape[1])), 0.
+        return np.zeros((5, samples.shape[1])), 0., np.zeros(5)
     n_fft = max(8192, 1 << (len(samples) - 1).bit_length())
     windowed = samples * np.hanning(len(samples))[:, None]
-    power = abs(np.fft.rfft(windowed, n=n_fft, axis=0)) ** 2
+    spectrum = np.fft.rfft(windowed, n=n_fft, axis=0)
+    power = abs(spectrum) ** 2
+    side_power = abs((spectrum[:, 0]-spectrum[:, 1])/np.sqrt(2))**2 if samples.shape[1] == 2 else None
     resolution = sr / n_fft
     f0 = 440 * 2 ** ((pitch - 69) / 12)
-    partials = []
+    partials, sides = [], []
     for harmonic in range(1, 6):
         center = int(round(f0 * harmonic / resolution))
         radius = max(1, int(round(f0 * harmonic * .012 / resolution)))
         lo, hi = max(1, center - radius), min(len(power), center + radius + 1)
         if lo >= hi:
             partials.append(np.zeros(samples.shape[1]))
+            sides.append(0.)
             continue
         # Local background subtraction reduces broadband/transient evidence.
         context = power[max(1, lo-2*radius-2):min(len(power), hi+2*radius+2)]
         floor = np.median(context, axis=0)
         partials.append(np.maximum(0., np.sum(power[lo:hi], axis=0) - (hi-lo)*floor))
-    return np.array(partials), float(np.sum(power))
+        if side_power is not None:
+            side_context = side_power[max(1, lo-2*radius-2):min(len(power), hi+2*radius+2)]
+            sides.append(max(0., float(np.sum(side_power[lo:hi]) - (hi-lo)*np.median(side_context))))
+        else:
+            sides.append(0.)
+    return np.array(partials), float(np.sum(power)), np.array(sides)
 
 
 def note_audio_features(data, sr, note) -> NoteAudioFeatures:
     duration = min(.35, max(0., note["end"] - note["start"]))
     start = max(0, int((note["start"] + min(.035, duration*.15)) * sr))
     stop = max(start, min(len(data), int((note["start"] + duration) * sr)))
-    partials, total = _partials(data[start:stop], sr, note["pitch"])
+    partials, total, sides = _partials(data[start:stop], sr, note["pitch"])
     energy = partials.sum(axis=1)
     harmonic_total = float(energy.sum())
     valid = (total > 1e-8 and harmonic_total / total > .01
@@ -76,24 +86,38 @@ def note_audio_features(data, sr, note) -> NoteAudioFeatures:
     signature = amplitudes / max(float(np.linalg.norm(amplitudes)), 1e-12)
     if data.shape[1] == 2:
         pans = (partials[:, 1] - partials[:, 0]) / np.maximum(partials.sum(axis=1), 1e-12)
-        weights = energy / max(harmonic_total, 1e-12)
+        # Overlapping fundamentals can contaminate upper partials. Give the
+        # detected fundamental the strongest vote in its spatial fingerprint.
+        weights = .4 * energy / max(harmonic_total, 1e-12)
+        weights[0] += .6
         pan = float(np.sum(pans * weights))
         spread = float(np.sqrt(np.sum(weights * (pans-pan)**2)))
         coherence = max(.3, 1 - spread)
+        side_fraction = float(np.sum(weights * np.clip(sides / np.maximum(energy, 1e-12), 0, 1)))
+        chunk = data[start:stop].astype(np.float64)
+        covariance = chunk.T @ chunk / max(1, len(chunk))
+        eigenvalues = np.linalg.eigvalsh(covariance)
+        spatial_rank = float(2*max(0., eigenvalues[0])/max(float(eigenvalues.sum()), 1e-12))
     else:
         pan, coherence = 0., 1.
+        side_fraction, spatial_rank = 0., 0.
     before_start = max(0, int((note["start"] - .15) * sr))
     before_end = max(0, int((note["start"] - .02) * sr))
-    before, _ = _partials(data[before_start:before_end], sr, note["pitch"])
+    before, _, _ = _partials(data[before_start:before_end], sr, note["pitch"])
     # Normalize FFT energy by squared window length for before/after comparison.
     after_level = float(energy[0]) / max(1, stop-start)**2
     before_level = float(before[0].sum()) / max(1, before_end-before_start)**2
     attack = float(np.clip(1 - before_level / max(after_level, 1e-12), 0, 1))
-    return NoteAudioFeatures(pan, signature, attack, coherence, bool(valid))
+    return NoteAudioFeatures(pan, signature, attack, coherence, bool(valid), side_fraction, spatial_rank)
 
 
-def _distance(a, b):
-    return abs(a.pan-b.pan)/.45 + float(np.linalg.norm(a.harmonics-b.harmonics))/.55
+def _distance(a, b, stereo=True):
+    timbre = float(np.linalg.norm(a.harmonics-b.harmonics))/.55
+    if not stereo:
+        return timbre
+    # Guitar timbre changes with pitch/chord and must not create a new source
+    # on every voicing. Phase and pan define the main stereo source identity.
+    return max(abs(a.pan-b.pan)/.45, abs(a.side_fraction-b.side_fraction)/.3) + .1*timbre
 
 
 def _chord_anchors(notes):
@@ -124,10 +148,10 @@ def infer_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
         if not feature.valid:
             continue
         if clusters:
-            nearest = min(range(len(clusters)), key=lambda j: _distance(feature, features[clusters[j][0]]))
+            nearest = min(range(len(clusters)), key=lambda j: _distance(feature, features[clusters[j][0]], stereo))
         else:
             nearest = None
-        if nearest is None or (_distance(feature, features[clusters[nearest][0]]) > 1. and len(clusters) < 24):
+        if nearest is None or (_distance(feature, features[clusters[nearest][0]], stereo) > 1. and len(clusters) < 24):
             nearest = len(clusters)
             clusters.append([])
         clusters[nearest].append(i)
@@ -141,6 +165,7 @@ def infer_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
     if len(reference) < 3:
         return LeadAudioEvidence(scores, stereo, False, features)
     reference_pan = float(np.median([features[i].pan for i in reference]))
+    reference_side = float(np.median([features[i].side_fraction for i in reference]))
     reference_timbre = np.median([features[i].harmonics for i in reference], axis=0)
     reference_timbre /= max(float(np.linalg.norm(reference_timbre)), 1e-12)
     reference_intervals = []
@@ -168,10 +193,18 @@ def infer_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
         if neighbors < 3 and note["end"] - note["start"] < .6:
             continue
         pan = float(np.clip((abs(feature.pan-reference_pan)-.12)/.4, 0, 1)) if stereo else 0.
+        phase = float(np.clip((abs(feature.side_fraction-reference_side)-.1)/.35, 0, 1)) if stereo else 0.
         timbre = float(np.clip((np.linalg.norm(feature.harmonics-reference_timbre)-.2)/.45, 0, 1))
-        difference = max(pan, .8*timbre)
+        if stereo:
+            # Timbre alone changes with fingering and creates false sources.
+            # Spatial rank is supporting evidence, never a hard veto: a quiet
+            # real voice can have little effect on the full-band covariance.
+            channel_support = .85 + .15*float(np.clip(feature.spatial_rank/.2, 0, 1))
+            difference = max(pan, phase) * channel_support
+        else:
+            difference = .8*timbre
         articulation = .65 + .2*feature.attack + .15*min(1., (note["end"]-note["start"])/.2)
-        scores[i] = float(np.clip(difference * articulation * feature.coherence, 0, 1))
+        scores[i] = float(np.clip(difference * articulation * (.7+.3*feature.coherence), 0, 1))
     # Require repeated evidence of *simultaneous* voices, rather than just a
     # changing pan or one short crossfade at the end of an accompaniment note.
     supported_times = [sorted(notes[i]["start"] for i in group if scores[i] >= .6) for group in clusters]

@@ -5,7 +5,8 @@ SAMPLE_RATE = 22050
 
 
 def guitar_scene(*, lead=False, stereo=True, moving=False, spread=.7,
-                 lead_harmonics=(1, .35, .2, .1, .07)):
+                 lead_harmonics=(1, .35, .2, .1, .07), lead_antiphase=False,
+                 varying_timbre=False):
     duration = 4.
     audio = np.zeros((int(SAMPLE_RATE*duration), 2))
     notes, labels = [], []
@@ -19,6 +20,8 @@ def guitar_scene(*, lead=False, stereo=True, moving=False, spread=.7,
             envelope *= np.exp(-2*t)
         wave *= level*envelope
         gains = np.sqrt(np.array([1-pan, 1+pan])/2)
+        if is_lead and lead_antiphase:
+            gains[1] *= -1
         first = round(start*SAMPLE_RATE)
         stop = min(len(audio), first+len(t))
         audio[first:stop] += wave[:stop-first, None]*gains
@@ -27,7 +30,8 @@ def guitar_scene(*, lead=False, stereo=True, moving=False, spread=.7,
 
     for i,start in enumerate(np.arange(0, 3.7, .25)):
         pan = -spread if not moving or start < 2 else spread
-        add([45,52,57,60][i % 4], float(start), .55, pan, .22, [1,.45,.25,.15,.08], False)
+        harmonics = [.55,1,.7,.5,.3] if varying_timbre and i % 2 else [1,.45,.25,.15,.08]
+        add([45,52,57,60][i % 4], float(start), .55, pan, .22, harmonics, False)
     if lead:
         for i,pitch in enumerate([66,64,62,64,66]):
             add(pitch, 1.6+i*.4, .32, spread, .22, lead_harmonics, True)

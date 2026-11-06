@@ -54,7 +54,8 @@ def generate(
     log("音程を解析中…", 50)
     from .transcribe import transcribe
     notes = transcribe(stem_path, progress=progress,
-                       min_note_length_ms=min_note_length_ms)
+                       min_note_length_ms=min_note_length_ms,
+                       stereo_candidates=split_lead_rhythm and opts.audio_lead_detection)
     log(f"{len(notes)} ノートを検出しました", 95)
 
     # 3.5 tempo & grid-offset estimation
