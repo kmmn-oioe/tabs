@@ -108,6 +108,16 @@ class App(tk.Tk):
                                           values=(1, 2, 4), state="disabled", width=6)
         self.chord_beats_box.grid(row=6, column=1, sticky="w", padx=4, pady=4)
 
+        self.suppress_chords_var = tk.BooleanVar(value=True)
+        self.suppress_chords_check = ttk.Checkbutton(opts, text="コード打音をリードから除外",
+                                                    variable=self.suppress_chords_var, state="disabled")
+        self.suppress_chords_check.grid(row=6, column=2, columnspan=3, sticky="w", padx=4)
+        ttk.Label(opts, text="リード開始（秒・0=自動）").grid(row=7, column=0, sticky="w", padx=4)
+        self.lead_start_var = tk.DoubleVar(value=0.)
+        self.lead_start_box = ttk.Spinbox(opts, textvariable=self.lead_start_var,
+                                         from_=0, to=86400, increment=.5, width=10, state="disabled")
+        self.lead_start_box.grid(row=7, column=1, sticky="w", padx=4, pady=4)
+
         btns = ttk.Frame(self)
         btns.pack(fill="x", padx=8)
         self.run_btn = ttk.Button(btns, text="▶ タブ譜を生成", command=self._run)
@@ -123,6 +133,8 @@ class App(tk.Tk):
 
     def _toggle_split(self):
         self.chord_beats_box.configure(state="readonly" if self.split_var.get() else "disabled")
+        self.lead_start_box.configure(state="normal" if self.split_var.get() else "disabled")
+        self.suppress_chords_check.configure(state="normal" if self.split_var.get() else "disabled")
         if self.split_var.get():
             self.lead_thr_scale.state(["!disabled"])
             self.lead_thr_lbl.state(["!disabled"])
@@ -235,6 +247,8 @@ class App(tk.Tk):
                 capo=int(self.capo_var.get()),
                 difficulty=DIFFICULTY_LABELS[self.difficulty_var.get()],
                 chord_beats=int(self.chord_beats_var.get()),
+                suppress_chord_attacks=self.suppress_chords_var.get(),
+                lead_start_seconds=float(self.lead_start_var.get()),
             )
             tab_text, midi_path, sheet_paths, stem = generate(
                 src, opts, use_separation=self.sep_var.get(),

@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 
 from tabgen.tab import (TabOptions, playable, arrange_notes, assign_positions,
-                        notes_to_tab, DIFFICULTIES)
+                        notes_to_tab, DIFFICULTIES, arrange_melody)
 
 
 def note(pitch, start=0., end=None):
@@ -80,7 +80,7 @@ class PlayabilityTests(unittest.TestCase):
                     from tabgen.split import split_notes
                     from tabgen.rhythm import arrange_rhythm
                     lead, _ = split_notes(notes)
-                    expected = [arrange_notes(lead, TabOptions(difficulty='easy')),
+                    expected = [arrange_melody(lead, TabOptions(difficulty='easy')),
                                 arrange_rhythm(notes, TabOptions(difficulty='easy'))[0]]
                 else:
                     expected = [arrange_notes(notes, TabOptions(difficulty='easy'))]
@@ -90,7 +90,10 @@ class PlayabilityTests(unittest.TestCase):
                     actual = [n.pitch for i in pretty_midi.PrettyMIDI(path).instruments for n in i.notes]
                     self.assertEqual(sorted(actual), sorted(n['pitch'] for n in part))
                     self.assertEqual(len(ET.parse(xml).findall('.//note/pitch')), len(part))
-                    self.assertIn(notes_to_tab(part, TabOptions(difficulty='easy'), arranged=True), text)
+                    if part:
+                        self.assertIn(notes_to_tab(part, TabOptions(difficulty='easy'), arranged=True), text)
+                if split and not expected[0]:
+                    self.assertIn('リードなし／休符', text)
 
 
 if __name__ == '__main__':

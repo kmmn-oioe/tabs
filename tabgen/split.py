@@ -6,7 +6,7 @@ an arrangement; it does not identify which physical guitar played a note.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import tanh
+from math import tanh, isfinite
 
 DEFAULT_LEAD_THRESHOLD = 64
 
@@ -21,7 +21,8 @@ class _State:
 
 
 def split_notes(notes: list[dict], lead_threshold: int = DEFAULT_LEAD_THRESHOLD,
-                window: float = .04, min_confidence: float = .3) -> tuple[list[dict], list[dict]]:
+                window: float = .04, min_confidence: float = .3, *,
+                suppress_chords: bool = True, start_seconds: float = 0.) -> tuple[list[dict], list[dict]]:
     """Choose a melodic path, returning copied lead notes and remaining notes.
 
     Near-simultaneous attacks are alternatives. A bounded dynamic program can
@@ -31,11 +32,31 @@ def split_notes(notes: list[dict], lead_threshold: int = DEFAULT_LEAD_THRESHOLD,
     """
     if window <= 0:
         raise ValueError("Onset grouping window must be positive")
+    if not isfinite(start_seconds) or start_seconds < 0:
+        raise ValueError("Lead start must be a finite nonnegative number")
+    ordered = sorted((i for i, n in enumerate(notes)
+                      if n["confidence"] >= min_confidence and n["end"] > n["start"]
+                      and n["start"] >= start_seconds),
+                     key=lambda i: (notes[i]["start"], notes[i]["pitch"]))
+    if suppress_chords:
+        # Strummed chords have slightly staggered attacks: use a wider window
+        # than the melody lattice, and require actual overlap to retain runs.
+        clusters = []
+        for i in ordered:
+            if clusters and notes[i]["start"] - notes[clusters[-1][0]]["start"] < .09:
+                clusters[-1].append(i)
+            else:
+                clusters.append([i])
+        blocked = set()
+        for cluster in clusters:
+            pitches = {notes[i]["pitch"] for i in cluster}
+            overlap = min(notes[i]["end"] for i in cluster) - max(notes[i]["start"] for i in cluster)
+            if len(pitches) >= 3 and len({p % 12 for p in pitches}) >= 2 and overlap >= .025:
+                blocked.update(cluster)
+        ordered = [i for i in ordered if i not in blocked]
     groups: list[list[int]] = []
-    for i in sorted(range(len(notes)), key=lambda i: (notes[i]["start"], notes[i]["pitch"])):
+    for i in ordered:
         n = notes[i]
-        if n["confidence"] < min_confidence or n["end"] <= n["start"]:
-            continue
         if groups and n["start"] - notes[groups[-1][0]]["start"] < window:
             groups[-1].append(i)
         else:

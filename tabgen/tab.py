@@ -19,10 +19,13 @@ class TabOptions:
     capo: int = 0
     difficulty: str = "standard"   # easy / standard / advanced
     chord_beats: int = 2           # rhythm chord recognition interval
+    suppress_chord_attacks: bool = True
+    lead_start_seconds: float = 0. # manual intro exclusion, 0 = automatic only
     grid_offset: float = 0.0        # seconds; grid origin (beat 0) of the song
 
 
-def notes_to_tab(notes: list[dict], opts: TabOptions | None = None, *, arranged: bool = False) -> str:
+def notes_to_tab(notes: list[dict], opts: TabOptions | None = None, *, arranged: bool = False,
+                 duration: float | None = None) -> str:
     """Render notes as ASCII tab text."""
     opts = opts or TabOptions()
     bpm = max(opts.bpm, 1.0)
@@ -40,6 +43,8 @@ def notes_to_tab(notes: list[dict], opts: TabOptions | None = None, *, arranged:
         cells.setdefault(step, []).append((n["string"], n["fret"]))
 
     max_step = max(cells) if cells else 0
+    if duration is not None:
+        max_step = max(max_step, ceil((duration - opts.grid_offset) / grid) - 1)
     held = {}
     for n in planned:
         if n.get("chord"):
@@ -233,6 +238,25 @@ def arrange_notes(notes: list[dict], opts: TabOptions | None = None) -> list[dic
             end = max(start + 0.01, note["end"])
             result.append(dict(note, string=string, fret=fret, start=start, end=min(end, next_start)))
     return result
+
+
+def arrange_melody(notes: list[dict], opts: TabOptions) -> list[dict]:
+    """Keep the lead monophonic even when nearby attacks snap to one grid cell.
+
+    Round up at the manual entry boundary so quantization cannot move a note
+    back into a user-specified silent intro.
+    """
+    grid = opts.quantize * 60 / max(opts.bpm, 1)
+    cutoff = max(0, ceil((opts.lead_start_seconds - opts.grid_offset) / grid))
+    cells = {}
+    for n in notes:
+        if n["start"] < opts.lead_start_seconds:
+            continue
+        step = max(cutoff, int(round((n["start"] - opts.grid_offset) / grid)))
+        if step not in cells or (n["confidence"], n["end"] - n["start"]) > (cells[step]["confidence"], cells[step]["end"] - cells[step]["start"]):
+            cells[step] = n
+    quantized = [dict(n, start=opts.grid_offset + step * grid) for step, n in sorted(cells.items())]
+    return arrange_notes(quantized, opts)
 
 
 def assign_positions(pitches: list[int], prev_center: float,

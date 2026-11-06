@@ -6,7 +6,7 @@ import tempfile
 from typing import Callable
 
 from .audio import load_audio, download_youtube
-from .tab import TabOptions, notes_to_tab, arrange_notes
+from .tab import TabOptions, notes_to_tab, arrange_notes, arrange_melody
 
 
 def generate(
@@ -83,9 +83,15 @@ def generate(
     if split_lead_rhythm:
         from .rhythm import arrange_rhythm, progression_text
         from .split import split_notes
-        lead, rhythm = split_notes(notes, lead_threshold, min_confidence=opts.min_confidence)
+        lead, rhythm = split_notes(notes, lead_threshold, min_confidence=opts.min_confidence,
+                                   suppress_chords=opts.suppress_chord_attacks,
+                                   start_seconds=opts.lead_start_seconds)
         log(f"旋律追跡: {len(lead)} ノートを採用 / その他 {len(rhythm)} ノート")
-        lead = arrange(lead)
+        lead = arrange_melody(lead, opts)
+        duration = max((n["end"] for n in notes), default=0.)
+        entry_text = (f"リード開始指定: {opts.lead_start_seconds:g}秒（それ以前は休符）\n"
+                      if opts.lead_start_seconds > 0 else "")
+        lead_text = notes_to_tab(lead, opts, arranged=True, duration=duration) if lead else "（リードなし／休符）"
         from .harmony import audio_chord_changes
         try:
             log("音声のクロマ特徴からコードと切替位置を解析中…", 97)
@@ -99,7 +105,7 @@ def generate(
         log(f"リズム伴奏: {len(changes)} 区間のコード切替を作成しました", 97)
         tab_text = (
             "====== リードギター ======\n"
-            + with_header(notes_to_tab(lead, opts, arranged=True))
+            + entry_text + with_header(lead_text)
             + "\n\n====== リズムギター ======\n"
             + analysis_method + "\n"
             + progression_text(changes, opts) + "\n\n"
@@ -130,7 +136,8 @@ def generate(
         from .sheet import export_musicxml
         log("楽譜(MusicXML)を作成中…", 98)
         if split_lead_rhythm:
-            export_musicxml(lead_notes, os.path.join(tmp_dir, "tabgen_lead.musicxml"), opts, "lead")
+            export_musicxml(lead_notes, os.path.join(tmp_dir, "tabgen_lead.musicxml"), opts, "lead",
+                            duration=duration, start_floor=opts.lead_start_seconds)
             export_musicxml(rhythm_notes, os.path.join(tmp_dir, "tabgen_rhythm.musicxml"), opts, "rhythm")
             sheet_paths = [os.path.join(tmp_dir, "tabgen_lead.musicxml"),
                            os.path.join(tmp_dir, "tabgen_rhythm.musicxml")]

@@ -51,11 +51,12 @@ class MelodyTests(unittest.TestCase):
         self.assertEqual([n['pitch'] for n in lead], [60, 62, 84])
         self.assertEqual([n['pitch'] for n in rhythm], [96])
 
-    def test_chords_are_alternatives_not_simultaneous_melody_notes(self):
+    def test_chord_attacks_are_not_forced_into_melody(self):
         notes = [note(p) for p in [48, 52, 55, 60]] + [note(62, .5)]
         lead, rhythm = split_notes(notes)
-        self.assertEqual(len(lead), 2)
-        self.assertEqual(len(rhythm), 3)
+        self.assertEqual([n['pitch'] for n in lead], [62])
+        self.assertEqual(len(rhythm), 4)
+        self.assertEqual(len(split_notes(notes, suppress_chords=False)[0]), 2)
         self.assertEqual(split_notes([]), ([], []))
         self.assertEqual(split_notes([note(60, confidence=.1)])[0], [])
 
