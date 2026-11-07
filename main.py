@@ -236,7 +236,7 @@ class App(tk.Tk):
         filem.add_command(label="タブを保存 (.txt)…", command=self._save_tab, accelerator="Ctrl+S")
         filem.add_command(label="MIDIを保存…", command=self._save_midi)
         filem.add_command(label="楽譜を保存 (.musicxml)…", command=self._save_sheet)
-        filem.add_command(label="楽譜をPDFで保存…", command=self._save_pdf)
+        filem.add_command(label="コード付きTAB譜をPDFで保存…", command=self._save_pdf)
         filem.add_separator()
         filem.add_command(label="終了", command=self.destroy)
         m.add_cascade(label="ファイル", menu=filem)
@@ -399,11 +399,11 @@ class App(tk.Tk):
         if not paths:
             messagebox.showinfo("tabs", "楽譜データがありません。まずタブ譜を生成してください")
             return
-        from tabgen.pdf import musicxml_to_pdf
+        from tabgen.tabpdf import tab_to_pdf
         for p in paths:
             if len(paths) > 1:
                 kind = "リード" if "lead" in os.path.basename(p) else "リズム"
-                if not messagebox.askyesno("tabs", f"{kind}ギターの楽譜をPDFで保存しますか?"):
+                if not messagebox.askyesno("tabs", f"{kind}ギターのコード付きTAB譜をPDFで保存しますか?"):
                     continue
             default = ("lead.pdf" if "lead" in os.path.basename(p) else "rhythm.pdf") \
                 if len(paths) > 1 else "sheet.pdf"
@@ -414,13 +414,7 @@ class App(tk.Tk):
             try:
                 self.status.config(text="PDF変換中…")
                 self.update()
-                from tabgen.pdf import find_musescore
-                if find_musescore():
-                    musicxml_to_pdf(p, f)
-                else:
-                    # MuseScoreなし: 内蔵レンダラで描画
-                    from tabgen.pdflite import render_pdf
-                    render_pdf(p, f, title="tabs")
+                tab_to_pdf(p, f)
                 self.status.config(text=f"PDFを保存しました: {f}")
             except Exception as e:
                 self.status.config(text="PDF保存に失敗しました")

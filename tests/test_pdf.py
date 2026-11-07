@@ -7,6 +7,9 @@ from unittest.mock import Mock, patch
 
 from music21 import chord, note, pitch, stream
 
+from tabgen.tab import TabOptions
+from tabgen.tabpdf import export_tab_data
+
 from tabgen.pdflite import _diatonic, _note_y, _accidental_text, _music_font, render_pdf
 
 
@@ -68,14 +71,14 @@ class PdfTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'楽譜用フォント'):
                 _music_font(None)
 
-    def test_app_save_uses_real_fallback_renderer_without_musescore(self):
+    def test_app_saves_tablature_pdf(self):
         from main import App
         with tempfile.TemporaryDirectory() as tmp:
             xml,pdf = Path(tmp)/'chromatic.musicxml',Path(tmp)/'result.pdf'
             write_score(xml)
+            export_tab_data([], str(xml), TabOptions(), 'tabs', [], 2)
             app = SimpleNamespace(sheet_paths=[str(xml)],status=Mock(),update=Mock())
-            with patch('tabgen.pdf.find_musescore',return_value=None), \
-                 patch('main.filedialog.asksaveasfilename',return_value=str(pdf)), \
+            with patch('main.filedialog.asksaveasfilename',return_value=str(pdf)), \
                  patch('main.messagebox.showerror') as error:
                 App._save_pdf(app)
             error.assert_not_called()
@@ -86,10 +89,10 @@ class PdfTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             xml = Path(tmp)/'score.musicxml'
             xml.touch()
+            export_tab_data([], str(xml), TabOptions(), 'tabs', [], 2)
             app = SimpleNamespace(sheet_paths=[str(xml)],status=Mock(),update=Mock())
-            with patch('tabgen.pdf.find_musescore',return_value=None), \
-                 patch('main.filedialog.asksaveasfilename',return_value=str(Path(tmp)/'out.pdf')), \
-                 patch('tabgen.pdflite.render_pdf',side_effect=KeyError(8)), \
+            with patch('main.filedialog.asksaveasfilename',return_value=str(Path(tmp)/'out.pdf')), \
+                 patch('tabgen.tabpdf.tab_to_pdf',side_effect=KeyError(8)), \
                  patch('main.messagebox.showerror') as error:
                 App._save_pdf(app)
             self.assertIn('KeyError: 8',error.call_args.args[1])

@@ -80,6 +80,7 @@ def generate(
 
     # 4. build tab
     log("タブ譜を組み立て中…", 96)
+    duration = max((n["end"] for n in notes), default=0.)
 
     def with_header(text: str) -> str:
         return f"BPM {opts.bpm:g}  [{opts.difficulty}]" + (f"  (カポ {opts.capo})" if opts.capo else "") + "\n" + text
@@ -110,7 +111,6 @@ def generate(
                                    start_seconds=opts.lead_start_seconds, lead_scores=lead_scores)
         log(f"旋律追跡: {len(lead)} ノートを採用 / その他 {len(rhythm)} ノート")
         lead = arrange_melody(lead, opts)
-        duration = max((n["end"] for n in notes), default=0.)
         entry_text = (f"リード開始指定: {opts.lead_start_seconds:g}秒（それ以前は休符）\n"
                       if opts.lead_start_seconds > 0 else "")
         if lead:
@@ -139,6 +139,8 @@ def generate(
         )
         lead_notes, rhythm_notes = lead, rhythm
     else:
+        from .rhythm import chord_changes
+        changes = chord_changes(notes, opts)
         notes = arrange(notes)
         tab_text = with_header(notes_to_tab(notes, opts, arranged=True))
         lead_notes, rhythm_notes = notes, []
@@ -160,6 +162,7 @@ def generate(
 
     try:
         from .sheet import export_musicxml
+        from .tabpdf import export_tab_data
         log("楽譜(MusicXML)を作成中…", 98)
         if split_lead_rhythm:
             export_musicxml(lead_notes, os.path.join(tmp_dir, "tabgen_lead.musicxml"), opts, "lead",
@@ -170,6 +173,9 @@ def generate(
         else:
             export_musicxml(notes, os.path.join(tmp_dir, "tabgen.musicxml"), opts, "tabs")
             sheet_paths = [os.path.join(tmp_dir, "tabgen.musicxml")]
+        pdf_parts = [(lead_notes, "lead"), (rhythm_notes, "rhythm")] if split_lead_rhythm else [(notes, "tabs")]
+        for sheet_path, (part_notes, title) in zip(sheet_paths, pdf_parts):
+            export_tab_data(part_notes, sheet_path, opts, title, changes, duration)
     except Exception as e:
         log(f"楽譜出力をスキップ: {e}")
 
