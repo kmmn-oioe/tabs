@@ -33,7 +33,8 @@ class App(tk.Tk):
         self.audio_path = ""
         self.midi_path = ""
         self.tab_text = ""
-        self._tab_audio_path = None
+        self._tab_audio_paths = set()
+        self._playback_sources = {}
         self._tab_timing = None
         self._build_ui()
         self._poll_job = self.after(50, self._poll_player)
@@ -176,6 +177,17 @@ class App(tk.Tk):
         self.time_label = ttk.Label(pl, text="0:00 / 0:00", width=12)
         self.time_label.grid(row=0, column=3, padx=4)
 
+        sources = ttk.Frame(pl)
+        sources.grid(row=1, column=0, columnspan=4, sticky="ew", padx=4, pady=4)
+        ttk.Label(sources, text="再生音源").pack(side="left")
+        self.audio_source_var = tk.StringVar(value="元の音源")
+        self.audio_source_box = ttk.Combobox(sources, textvariable=self.audio_source_var,
+                                            values=("元の音源",), width=18, state="disabled")
+        self.audio_source_box.pack(side="left", padx=6)
+        self.audio_source_box.bind("<<ComboboxSelected>>", self._switch_audio_source)
+        self.audio_file_var = tk.StringVar()
+        ttk.Label(sources, textvariable=self.audio_file_var).pack(side="left", padx=4)
+
         prow = ttk.Frame(self)
         prow.pack(fill="x", padx=10, pady=(4, 0))
         self.progress = ttk.Progressbar(prow, maximum=100, value=0)
@@ -246,13 +258,14 @@ class App(tk.Tk):
         ])
         if f:
             self.path_var.set(f)
-            self._load_for_playback(f)
+            self._set_playback_sources({"元の音源": f})
 
     def _run(self):
         src = self.path_var.get().strip()
         if not src:
             messagebox.showwarning("tabs", "音声ファイルまたはYouTube URLを入力してください")
             return
+        self._stop_play()
         self.run_btn.config(state="disabled")
         self.progress.config(value=0)
         self.status.config(text="処理中…")
@@ -260,6 +273,7 @@ class App(tk.Tk):
 
     def _worker(self, src):
         try:
+            audio_sources = {}
             opts = TabOptions(
                 tuning=TUNINGS[self.tuning_var.get()],
                 bpm=float(self.bpm_var.get()),
@@ -278,8 +292,9 @@ class App(tk.Tk):
                 min_note_length_ms=float(self.note_len_var.get()),
                 auto_bpm=self.auto_bpm_var.get(),
                 progress=lambda pct, msg: self.after(0, lambda: self._set_progress(pct, msg)),
+                audio_sources=audio_sources,
             )
-            self.after(0, lambda: self._done(tab_text, midi_path, sheet_paths, stem, opts))
+            self.after(0, lambda: self._done(tab_text, midi_path, sheet_paths, stem, opts, audio_sources))
         except Exception as e:
             import traceback
             msg = str(e)
@@ -293,20 +308,24 @@ class App(tk.Tk):
         if msg:
             self.status.config(text=msg)
 
-    def _done(self, tab_text, midi_path, sheet_paths, stem, opts):
+    def _done(self, tab_text, midi_path, sheet_paths, stem, opts, audio_sources=None):
+        self.player.stop()
         self.progress.config(value=100)
         self.tab_text = tab_text
         self.midi_path = midi_path
         self.sheet_paths = [p for p in sheet_paths.split(";") if p]
-        self.audio_path = stem
         self.text.delete("1.0", "end")
         self.text.insert("1.0", tab_text)
-        self._tab_audio_path = os.path.realpath(stem)
+        audio_sources = audio_sources or {"original": stem}
+        sources = {"元の音源": audio_sources["original"]}
+        if "separated" in audio_sources:
+            sources["分離後の音源"] = audio_sources["separated"]
+        self._tab_audio_paths = {self._audio_key(p) for p in sources.values()}
         # Keep the actual generation tempo/offset, including automatic estimates;
         # later edits to the options form must not change the playback clock.
         self._tab_timing = PlaybackTiming.from_options(opts)
         self.run_btn.config(state="normal")
-        self._load_for_playback(stem)
+        self._set_playback_sources(sources)
 
     def _fail(self, msg, tb=""):
         self.run_btn.config(state="normal")
@@ -417,20 +436,51 @@ class App(tk.Tk):
 
     # ---------- プレイヤー ----------
 
-    def _load_for_playback(self, path):
-        if not path or not os.path.exists(path):
+    @staticmethod
+    def _audio_key(path):
+        return os.path.normcase(os.path.realpath(path))
+
+    def _set_playback_sources(self, sources):
+        self.player.stop()
+        self._playback_sources = dict(sources)
+        labels = list(sources)
+        selected = "元の音源" if "元の音源" in sources else (labels[0] if labels else "")
+        self.audio_source_box.configure(values=labels, state="readonly" if len(labels)>1 else "disabled")
+        self.audio_source_var.set(selected)
+        self._load_for_playback(sources.get(selected, ""))
+
+    def _switch_audio_source(self, event=None):
+        path = self._playback_sources.get(self.audio_source_var.get())
+        if path is None:
             return
+        if self.audio_path and self._audio_key(path) == self._audio_key(self.audio_path):
+            return
+        position, resume = self.player.position, self.player.playing
+        self.player.stop()  # Abort the old source before loading/starting another.
+        if self._load_for_playback(path):
+            self.player.seek(position)
+            if resume and self.player.position < self.player.duration:
+                if not self.player.play():
+                    self.status.config(text=f"再生できません: {self.player.last_error}")
+        self._refresh_playback()
+
+    def _load_for_playback(self, path):
         ok = self.player.load(path)
         if ok:
             self.audio_path = path
+            self.audio_file_var.set(os.path.basename(path))
             self.slider.config(to=self.player.duration)
-            linked = os.path.realpath(path) == self._tab_audio_path
+            linked = self._audio_key(path) in self._tab_audio_paths
             self.playhead.set_timing(self._tab_timing if linked else None)
-            self.status.config(text="プレイヤー準備完了")
+            self.status.config(text=f"再生対象: {self.audio_source_var.get()}")
         else:
+            self.audio_path = ""
+            self.audio_file_var.set("")
+            self.slider.config(to=0)
             self.playhead.set_timing(None)
             self.status.config(text=f"音声を読み込めません: {self.player.last_error}")
         self._refresh_playback()
+        return ok
 
     def _toggle_play(self):
         if self.player.data is None:

@@ -18,12 +18,16 @@ def generate(
     min_note_length_ms: float = 70.0,
     auto_bpm: bool = True,
     progress: Callable[[str], None] | None = None,
+    audio_sources: dict[str, str] | None = None,
 ) -> tuple[str, str, str, str]:
     """Returns (tab_text, midi_paths, sheet_paths, stem_wav_path).
 
     source: local audio file path or YouTube URL.
+    audio_sources: optional output dictionary containing original/separated paths.
     """
     opts = opts or TabOptions()
+    if audio_sources is not None:
+        audio_sources.clear()
 
     def log(msg: str, pct: float | None = None):
         if progress:
@@ -41,6 +45,8 @@ def generate(
         wav = source
 
     # 2. optional stem separation
+    if audio_sources is not None:
+        audio_sources["original"] = wav
     stem_path = wav
     if use_separation:
         log("ギターパートを分離中…(Demucs・時間がかかります)")
@@ -49,6 +55,8 @@ def generate(
             log("※ demucs/torch が未インストールのため分離をスキップします")
         else:
             stem_path = separate_guitar(wav, tmp_dir, progress=progress)
+    if audio_sources is not None and os.path.realpath(stem_path) != os.path.realpath(wav):
+        audio_sources["separated"] = stem_path
 
     # 3. transcribe
     log("音程を解析中…", 50)

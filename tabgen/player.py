@@ -4,7 +4,7 @@ from __future__ import annotations
 import math
 import time
 
-import soundfile as sf
+from .audio import read_preview_audio
 
 try:
     import sounddevice as sd
@@ -53,7 +53,7 @@ class AudioPlayer:
         self._position = 0.
         self.last_error = ""
         try:
-            self.data, self.sr = sf.read(path, always_2d=True, dtype="float32")
+            self.data, self.sr = read_preview_audio(path)
         except (OSError, RuntimeError) as error:
             self.last_error = str(error)
             return False

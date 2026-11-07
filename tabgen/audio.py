@@ -27,6 +27,31 @@ def load_audio(path: str, sr: int = 22050) -> tuple[np.ndarray, int]:
     return data.mean(axis=1), sr
 
 
+def read_preview_audio(path: str):
+    """Read the selected original too, including formats such as AAC/M4A.
+
+    Separation outputs WAV, while the original may need FFmpeg decoding.
+    Decode to a temporary file; never fall back to playing a different source.
+    """
+    try:
+        return sf.read(path, always_2d=True, dtype="float32")
+    except (OSError, RuntimeError):
+        if not os.path.isfile(path):
+            raise
+    with tempfile.TemporaryDirectory(prefix="tabgen_preview_") as directory:
+        wav = os.path.join(directory, "preview.wav")
+        cmd = [_ffmpeg_location() or "ffmpeg", "-nostdin", "-v", "error", "-y",
+               "-i", os.fspath(path), "-vn", "-c:a", "pcm_f32le", wav]
+        try:
+            result = subprocess.run(cmd, capture_output=True, timeout=120)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            raise RuntimeError(f"元音源のデコードに失敗しました: {error}") from error
+        if result.returncode:
+            detail = result.stderr.decode("utf-8", errors="replace")[-1500:]
+            raise RuntimeError(f"元音源のデコードに失敗しました: {detail}")
+        return sf.read(wav, always_2d=True, dtype="float32")
+
+
 def _ffmpeg_location() -> str | None:
     """Locate an ffmpeg binary: system PATH first, then imageio-ffmpeg wheel."""
     from shutil import which

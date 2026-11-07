@@ -1,8 +1,11 @@
 import unittest
+import tempfile
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
 import numpy as np
+import soundfile as sf
 
 from tabgen import player as module
 from tabgen.playhead import PlaybackTiming, parse_blocks, cursor_cells
@@ -15,27 +18,32 @@ class CallbackStop(Exception):
 
 class FakeStream:
     instances = []
+    peak_active = 0
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.time = 10.
         self.latency = .1
         self.closed = False
+        self.active = False
         self.instances.append(self)
 
     def start(self):
-        pass
+        self.active = True
+        type(self).peak_active = max(type(self).peak_active, sum(s.active for s in self.instances))
 
     def stop(self):
+        self.active = False
         self.kwargs['finished_callback']()
 
     def abort(self):
         self.stop()
 
     def close(self):
+        self.active = False
         self.closed = True
 
     def emit(self, count, dac=10.1):
-        output = np.full((count, 1), 999., dtype=np.float32)
+        output = np.full((count, self.kwargs.get('channels',1)), 999., dtype=np.float32)
         try:
             self.kwargs['callback'](output, count, SimpleNamespace(outputBufferDacTime=dac, currentTime=dac-.1), None)
         except CallbackStop:
@@ -50,6 +58,7 @@ class PlayerClockTests(unittest.TestCase):
         self.sd.start()
         self.ready.start()
         FakeStream.instances = []
+        FakeStream.peak_active = 0
         self.player = module.AudioPlayer()
         self.player.sr = 1000
         self.player.data = np.ones((4000, 1), dtype=np.float32)
@@ -125,6 +134,21 @@ class PlayerClockTests(unittest.TestCase):
             FakeStream.instances[-1].emit(1000, dac=0.)
         with patch.object(module.time, 'perf_counter', return_value=20.35):
             self.assertAlmostEqual(self.player.position,.25)
+
+    def test_loading_new_audio_silences_old_callback_and_keeps_one_stream(self):
+        self.player.play()
+        old = FakeStream.instances[-1]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)/'separated.wav'
+            sf.write(path,np.full(4000,.25),1000,subtype='FLOAT')
+            self.assertTrue(self.player.load(str(path)))
+            self.assertFalse(self.player.playing)
+            self.assertTrue(old.closed)
+            self.assertTrue(self.player.play())
+            current = FakeStream.instances[-1]
+            np.testing.assert_array_equal(old.emit(8).ravel(),np.zeros(8))
+            np.testing.assert_array_equal(current.emit(8).ravel(),np.full(8,.25))
+        self.assertEqual(FakeStream.peak_active,1)
 
 
 class TabTimelineTests(unittest.TestCase):

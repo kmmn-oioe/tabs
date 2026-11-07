@@ -24,6 +24,7 @@ class PlaybackGuiTests(unittest.TestCase):
         self.sd.start()
         self.ready.start()
         FakeStream.instances = []
+        FakeStream.peak_active = 0
         self.app = App()
         self.temp = tempfile.TemporaryDirectory()
         self.path = Path(self.temp.name)/'song.wav'
@@ -134,6 +135,98 @@ class PlaybackGuiTests(unittest.TestCase):
         app._refresh_playback()
         app.update()
         self.assertIsNotNone(app.text.dlineinfo(f'{app.playhead.blocks[1].rows[-1]}.0'))
+
+    def setup_sources(self, stereo=False):
+        original = Path(self.temp.name)/'original.wav'
+        separated = Path(self.temp.name)/'guitar.wav'
+        a = np.tile([.125,.25],(24000,1)) if stereo else np.full(24000,.125)
+        b = np.tile([.375,.5],(24000,1)) if stereo else np.full(24000,.375)
+        sf.write(original,a,1000,subtype='FLOAT')
+        sf.write(separated,b,1000,subtype='FLOAT')
+        self.app._done(self.content,'','',str(separated),self.opts,
+                       {'original':str(original),'separated':str(separated)})
+        self.app.update()
+        return original,separated
+
+    def test_generation_defaults_to_original_not_separated_and_does_not_autoplay(self):
+        self.app.player.play()
+        previous = FakeStream.instances[-1]
+        original,_ = self.setup_sources()
+        self.assertTrue(previous.closed)
+        self.assertFalse(self.app.player.playing)
+        self.assertEqual(self.app.audio_path,str(original))
+        self.assertEqual(self.app.audio_source_var.get(),'元の音源')
+        self.assertEqual(self.app.audio_file_var.get(),'original.wav')
+        np.testing.assert_array_equal(self.app.player.data[:,0],np.full(24000,.125))
+
+    def test_switch_source_while_playing_closes_previous_and_preserves_time(self):
+        app = self.app
+        self.setup_sources()
+        app.player.play()
+        original_stream = FakeStream.instances[-1]
+        original_stream.emit(16000)
+        original_stream.time = 12.35
+        app.audio_source_var.set('分離後の音源')
+        app._switch_audio_source()
+        current = FakeStream.instances[-1]
+        self.assertTrue(original_stream.closed)
+        self.assertTrue(app.player.playing)
+        self.assertAlmostEqual(app.player.position,2.25,delta=.001)
+        self.assertIsNotNone(app.playhead.timing)
+        np.testing.assert_array_equal(current.emit(8).ravel(),np.full(8,.375))
+        np.testing.assert_array_equal(original_stream.emit(8).ravel(),np.zeros(8))
+        self.assertEqual(FakeStream.peak_active,1)
+
+    def test_paused_source_switch_stays_paused_and_both_paths_keep_tab_sync(self):
+        app = self.app
+        original,_ = self.setup_sources()
+        app.player.seek(3)
+        for name in ['分離後の音源','元の音源']:
+            app.audio_source_var.set(name)
+            app._switch_audio_source()
+            self.assertFalse(app.player.playing)
+            self.assertAlmostEqual(app.player.position,3)
+            self.assertIsNotNone(app.playhead.timing)
+        self.assertEqual(app.audio_path,str(original))
+        self.assertFalse(FakeStream.instances)
+
+    def test_stop_after_switch_leaves_no_output_active(self):
+        app = self.app
+        self.setup_sources()
+        app.player.play()
+        for name in ['分離後の音源','元の音源','分離後の音源']:
+            app.audio_source_var.set(name)
+            app._switch_audio_source()
+        app._stop_play()
+        self.assertFalse(any(s.active for s in FakeStream.instances))
+        self.assertEqual(app.player.position,0)
+        self.assertEqual(FakeStream.peak_active,1)
+
+    def test_selecting_same_source_does_not_restart_it(self):
+        app = self.app
+        self.setup_sources()
+        app.player.play()
+        app._switch_audio_source()
+        self.assertEqual(len(FakeStream.instances),1)
+
+    def test_stereo_output_contains_only_the_selected_source(self):
+        app = self.app
+        self.setup_sources(stereo=True)
+        app.player.play()
+        np.testing.assert_array_equal(FakeStream.instances[-1].emit(8),np.tile([.125,.25],(8,1)))
+        app.audio_source_var.set('分離後の音源')
+        app._switch_audio_source()
+        np.testing.assert_array_equal(FakeStream.instances[-1].emit(8),np.tile([.375,.5],(8,1)))
+        self.assertEqual(FakeStream.peak_active,1)
+
+    def test_generation_start_stops_preview(self):
+        self.app.player.play()
+        self.app.path_var.set(str(self.path))
+        with patch('main.threading.Thread') as thread:
+            self.app._run()
+            thread.return_value.start.assert_called_once()
+        self.assertFalse(self.app.player.playing)
+        self.assertFalse(any(s.active for s in FakeStream.instances))
 
 
 if __name__ == '__main__':
