@@ -423,7 +423,8 @@ class App(tk.Tk):
                     render_pdf(p, f, title="tabs")
                 self.status.config(text=f"PDFを保存しました: {f}")
             except Exception as e:
-                messagebox.showerror("tabs", str(e))
+                self.status.config(text="PDF保存に失敗しました")
+                messagebox.showerror("tabs", f"PDFを保存できませんでした。\n{type(e).__name__}: {e}")
                 return
 
     def _copy_tab(self):

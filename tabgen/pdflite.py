@@ -1,7 +1,7 @@
 """Render standard notation to PDF without MuseScore.
 
 Parses the generated MusicXML with music21 and draws a treble-clef staff
-using reportlab + Windows' Segoe UI Symbol musical glyphs (pure Python).
+using reportlab + an installed music font (pure Python).
 Output is simplified: no beams/ties/dynamics, but correct pitches, rests,
 chords and barlines.
 """
@@ -9,11 +9,15 @@ from __future__ import annotations
 
 import os
 
-STEPS = {0: 0, 2: 1, 4: 2, 5: 3, 7: 4, 9: 5, 11: 6}  # pitch class -> diatonic step
+def _diatonic(value) -> int:
+    """Zero-based written staff position, including enharmonic spellings.
 
-
-def _diatonic(midi: int) -> int:
-    return (midi // 12) * 7 + STEPS[midi % 12]
+    Pitch classes alone cannot distinguish G-sharp from A-flat. In particular
+    a natural-note-only lookup raises KeyError(8) for G-sharp/A-flat.
+    """
+    from music21.pitch import Pitch
+    pitch = value if isinstance(value, Pitch) else Pitch(float(value))
+    return pitch.diatonicNoteNum - 1
 
 
 # reference: B4 (middle staff line) = diatonic 34
@@ -29,17 +33,39 @@ GLYPHS = {
     "rest_16th": 0x1D13F,
     "sharp": 0x266F,
     "flat": 0x266D,
+    "natural": 0x266E,
 }
 
 
 def _music_font(canvas):
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
-    font = "SegoeUISymbol"
-    if font not in pdfmetrics.getRegisteredFontNames():
-        path = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts", "seguisym.ttf")
-        pdfmetrics.registerFont(TTFont(font, path))
-    return font
+    candidates = [
+        ("TabMusicSegoe", os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts", "seguisym.ttf")),
+        ("TabMusicNoto", "/usr/share/fonts/truetype/noto/NotoMusic-Regular.ttf"),
+        ("TabMusicFreeSerif", "/usr/share/fonts/truetype/freefont/FreeSerif.ttf"),
+    ]
+    for name, path in candidates:
+        if name in pdfmetrics.getRegisteredFontNames():
+            return name
+        if os.path.isfile(path):
+            font = TTFont(name, path)
+            if all(cp in font.face.charToGlyph for cp in GLYPHS.values()):
+                pdfmetrics.registerFont(font)
+                return name
+    raise RuntimeError("楽譜用フォントが見つかりません。Segoe UI Symbol または Noto Music を用意するか、MuseScoreでPDF出力してください。")
+
+
+def _note_y(diatonic, middle, half=3.5):
+    return middle + (diatonic - B4_DIA) * half
+
+
+def _accidental_text(pitch):
+    accidental = pitch.accidental
+    if accidental is None or accidental.displayStatus is False:
+        return ""
+    return {"sharp": "♯", "flat": "♭", "natural": "♮",
+            "double-sharp": "♯♯", "double-flat": "♭♭"}.get(accidental.name, "")
 
 
 def render_pdf(musicxml_path: str, pdf_path: str, title: str = ""):
@@ -58,8 +84,12 @@ def render_pdf(musicxml_path: str, pdf_path: str, title: str = ""):
     half = line_gap / 2                 # distance per diatonic step
     measure_w = 130.0
     bars_per_line = max(1, int((page_w - 2 * margin_x) // measure_w))
-    system_h = 62
-    systems_per_page = int((page_h - margin_top - margin_bottom) // system_h)
+    written = [_diatonic(p) for m in measures for el in m.notesAndRests
+               if float(el.quarterLength) > 0 for p in getattr(el, "pitches", ())]
+    above = max(staff_h/2+30, (max(written, default=B4_DIA)-B4_DIA)*half+30)
+    below = max(staff_h/2+30, (B4_DIA-min(written, default=B4_DIA))*half+30)
+    system_h = max(90, above+below+15)
+    systems_per_page = max(1, int((page_h - margin_top - margin_bottom) // system_h))
 
     c = rlcanvas.Canvas(pdf_path, pagesize=A4)
     c.setTitle(title or "tabs")
@@ -68,10 +98,6 @@ def render_pdf(musicxml_path: str, pdf_path: str, title: str = ""):
     def glyph(ch: str, x: float, y: float, size: float):
         c.setFont(font, size)
         c.drawString(x, y, ch)
-
-    def note_y(dia: int, staff_base_y: float) -> float:
-        # staff_base_y = y of middle line (B4)
-        return staff_base_y + (B4_DIA - dia) * half
 
     total_bars = len(measures)
     bar_no = 0
@@ -85,7 +111,7 @@ def render_pdf(musicxml_path: str, pdf_path: str, title: str = ""):
         y_cursor = page_h - margin_top
         sys_idx = 0
         while sys_idx < systems_per_page and bar_no < total_bars:
-            staff_mid = y_cursor - staff_h / 2
+            staff_mid = y_cursor - above
             # staff lines
             c.setLineWidth(0.7)
             for i in range(5):
@@ -101,13 +127,17 @@ def render_pdf(musicxml_path: str, pdf_path: str, title: str = ""):
                 # barline
                 c.line(mx, staff_mid - staff_h / 2, mx, staff_mid + staff_h / 2)
                 if b == 0:
-                    glyph("4", mx + 14, staff_mid + 2, 12)
-                    glyph("4", mx + 14, staff_mid - 14, 12)
+                    c.setFont("Helvetica", 12)
+                    c.drawString(mx + 17, staff_mid + 2, "4")
+                    c.drawString(mx + 17, staff_mid - 12, "4")
 
                 for el in m.notesAndRests:
                     off = el.offset
-                    x = mx + 16 + float(off) / 4.0 * (measure_w - 30)
+                    left = 42 if b == 0 else 16
+                    x = mx + left + float(off) / 4.0 * (measure_w - left - 12)
                     dur = float(el.quarterLength)
+                    if dur <= 0:
+                        continue  # Chord symbols/grace events are not extra sounding notes.
                     if el.isRest or not hasattr(el, "pitches") or not el.pitches:
                         g = ("rest_whole" if dur >= 4 else "rest_half" if dur >= 2
                              else "rest_quarter" if dur >= 1 else "rest_eighth" if dur >= 0.5
@@ -116,19 +146,22 @@ def render_pdf(musicxml_path: str, pdf_path: str, title: str = ""):
                         continue
                     pitches = sorted(el.pitches, key=lambda p: p.midi)
                     top = pitches[-1]
-                    dia = _diatonic(top.midi)
+                    dia = _diatonic(top)
                     stem_up = dia < B4_DIA
                     stem_x = x + 4.4 if stem_up else x - 1.6
-                    stem_y0 = note_y(dia, staff_mid)
-                    stem_y1 = stem_y0 + 26 if stem_up else stem_y0 - 26
-                    # accidental of top note
-                    pc = top.midi % 12
-                    if pc in (1, 3, 6, 8, 10):
-                        glyph(chr(GLYPHS["sharp"]), x - 9, stem_y0 - 4, 12)
-                    elif pc in (5, 2, 7, 10 - 1):
-                        pass
+                    ys = [_note_y(_diatonic(p), staff_mid, half) for p in pitches]
+                    stem_y0 = min(ys) if stem_up else max(ys)
+                    stem_y1 = max(ys)+26 if stem_up else min(ys)-26
                     for p in pitches:
-                        py = note_y(_diatonic(p.midi), staff_mid)
+                        position = _diatonic(p)
+                        py = _note_y(position, staff_mid, half)
+                        accidental = _accidental_text(p)
+                        if accidental:
+                            glyph(accidental, x - 11 - 5*(len(accidental)-1), py - 4, 12)
+                        direction = 1 if position > B4_DIA else -1
+                        for step in range(6, abs(position-B4_DIA)+1, 2):
+                            ledger_y = staff_mid + direction*step*half
+                            c.line(x-7, ledger_y, x+7, ledger_y)
                         hollow = dur >= 2
                         c.setLineWidth(0.9)
                         if hollow:
@@ -136,7 +169,7 @@ def render_pdf(musicxml_path: str, pdf_path: str, title: str = ""):
                             c.ellipse(x - 4.5, py - 3.2, x + 4.5, py + 3.2, stroke=1, fill=0)
                         else:
                             c.ellipse(x - 4.5, py - 3.2, x + 4.5, py + 3.2, stroke=1, fill=1)
-                    if dur >= 0.25:
+                    if 0.25 <= dur < 4:
                         c.line(stem_x, stem_y0, stem_x, stem_y1)
                     if dur <= 0.5 and dur >= 0.49:
                         # eighth-note flag (simple curve)

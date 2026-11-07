@@ -1,5 +1,5 @@
 # Core
-numpy>=1.24
+numpy>=1.26.4,<2
 scipy>=1.10
 librosa>=0.10
 yt-dlp>=2024.4.9
@@ -8,6 +8,10 @@ pretty_midi>=0.2.10
 soundfile>=0.12
 sounddevice>=0.4.6
 imageio-ffmpeg>=0.5
+music21>=9.9.1,<10
+reportlab>=4.0
+# resampy/basic-pitch still import pkg_resources.
+setuptools<81
 
 # Optional but recommended: guitar stem separation (large, needs torch)
 # demucs>=4.0.1
