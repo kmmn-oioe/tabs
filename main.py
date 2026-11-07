@@ -4,10 +4,12 @@ from __future__ import annotations
 import os
 import threading
 import tkinter as tk
+from tkinter import font as tkfont
 from tkinter import filedialog, messagebox, ttk
 
 from tabgen.pipeline import generate
 from tabgen.player import AudioPlayer
+from tabgen.playhead import PlaybackTiming, TabPlayhead
 from tabgen.tab import STANDARD_TUNING, TabOptions
 
 TUNINGS = {
@@ -31,8 +33,10 @@ class App(tk.Tk):
         self.audio_path = ""
         self.midi_path = ""
         self.tab_text = ""
+        self._tab_audio_path = None
+        self._tab_timing = None
         self._build_ui()
-        self.after(100, self._poll_player)
+        self._poll_job = self.after(50, self._poll_player)
 
     # ---------- UI構築 ----------
 
@@ -191,11 +195,22 @@ class App(tk.Tk):
         self.font_size = tk.IntVar(value=10)
         ttk.Spinbox(font_bar, from_=6, to=24, textvariable=self.font_size,
                     width=4, command=self._apply_font).pack(side="left")
+        self.follow_cursor = tk.BooleanVar(value=True)
+        ttk.Checkbutton(font_bar, text="再生位置を追従", variable=self.follow_cursor).pack(side="left", padx=8)
+        ttk.Label(font_bar, text="追従パート").pack(side="left")
+        self.follow_part = tk.StringVar(value="タブ譜")
+        self.part_box = ttk.Combobox(font_bar, textvariable=self.follow_part, width=14, state="disabled")
+        self.part_box.pack(side="left", padx=4)
+        self.part_box.bind("<<ComboboxSelected>>", lambda event: self.playhead.select_part(self.follow_part.get()))
 
-        self.text = tk.Text(out, font=("Consolas", 10), wrap="none", undo=True)
+        self._tab_font = ("Consolas" if "Consolas" in tkfont.families(self)
+                          else tkfont.nametofont("TkFixedFont").actual("family"))
+        self.text = tk.Text(out, font=(self._tab_font, 10), wrap="none", undo=True)
+        self.playhead = TabPlayhead(self.text, self._playhead_parts)
         hx = ttk.Scrollbar(out, orient="horizontal", command=self.text.xview)
         vy = ttk.Scrollbar(out, orient="vertical", command=self.text.yview)
-        self.text.configure(xscrollcommand=hx.set, yscrollcommand=vy.set)
+        self.text.configure(xscrollcommand=lambda *args: (hx.set(*args), self.playhead.schedule_draw()),
+                            yscrollcommand=lambda *args: (vy.set(*args), self.playhead.schedule_draw()))
         self.text.grid(row=1, column=0, sticky="nsew")
         vy.grid(row=1, column=1, sticky="ns")
         hx.grid(row=2, column=0, sticky="ew")
@@ -264,7 +279,7 @@ class App(tk.Tk):
                 auto_bpm=self.auto_bpm_var.get(),
                 progress=lambda pct, msg: self.after(0, lambda: self._set_progress(pct, msg)),
             )
-            self.after(0, lambda: self._done(tab_text, midi_path, sheet_paths, stem))
+            self.after(0, lambda: self._done(tab_text, midi_path, sheet_paths, stem, opts))
         except Exception as e:
             import traceback
             msg = str(e)
@@ -278,7 +293,7 @@ class App(tk.Tk):
         if msg:
             self.status.config(text=msg)
 
-    def _done(self, tab_text, midi_path, sheet_paths, stem):
+    def _done(self, tab_text, midi_path, sheet_paths, stem, opts):
         self.progress.config(value=100)
         self.tab_text = tab_text
         self.midi_path = midi_path
@@ -286,6 +301,10 @@ class App(tk.Tk):
         self.audio_path = stem
         self.text.delete("1.0", "end")
         self.text.insert("1.0", tab_text)
+        self._tab_audio_path = os.path.realpath(stem)
+        # Keep the actual generation tempo/offset, including automatic estimates;
+        # later edits to the options form must not change the playback clock.
+        self._tab_timing = PlaybackTiming.from_options(opts)
         self.run_btn.config(state="normal")
         self._load_for_playback(stem)
 
@@ -405,9 +424,13 @@ class App(tk.Tk):
         if ok:
             self.audio_path = path
             self.slider.config(to=self.player.duration)
+            linked = os.path.realpath(path) == self._tab_audio_path
+            self.playhead.set_timing(self._tab_timing if linked else None)
             self.status.config(text="プレイヤー準備完了")
         else:
-            self.status.config(text="※ 音声プレビューには sounddevice が必要です (pip install sounddevice)")
+            self.playhead.set_timing(None)
+            self.status.config(text=f"音声を読み込めません: {self.player.last_error}")
+        self._refresh_playback()
 
     def _toggle_play(self):
         if self.player.data is None:
@@ -418,29 +441,40 @@ class App(tk.Tk):
         else:
             if self.player.position >= self.player.duration - 0.05:
                 self.player.seek(0)
-            self.player.play()
-            self.play_btn.config(text="⏸")
+            if not self.player.play():
+                self.status.config(text=f"再生できません: {self.player.last_error}")
+        self._refresh_playback()
 
     def _stop_play(self):
         self.player.stop()
         self.player.seek(0)
-        self.play_btn.config(text="⏵")
+        self._refresh_playback()
 
     def _on_seek(self, _value):
         if self.seeking:
             return
         self.player.seek(self.pos_var.get())
+        self._refresh_playback()
 
     def _poll_player(self):
-        if self.player.playing:
-            pos = self.player.position
-            self.seeking = True
+        self._refresh_playback()
+        self._poll_job = self.after(50, self._poll_player)
+
+    def _refresh_playback(self):
+        pos, dur = self.player.position, self.player.duration
+        self.seeking = True
+        try:
             self.pos_var.set(pos)
+        finally:
             self.seeking = False
-            dur = self.player.duration
-            self.time_label.config(
-                text=f"{self._fmt(pos)} / {self._fmt(dur)}")
-        self.after(100, self._poll_player)
+        self.time_label.config(text=f"{self._fmt(pos)} / {self._fmt(dur)}")
+        self.play_btn.config(text="⏸" if self.player.playing else "⏵")
+        cursor = min(pos, max(0., dur-1e-6)) if dur else pos
+        self.playhead.update(cursor, follow=self.follow_cursor.get())
+
+    def _playhead_parts(self, parts, selected):
+        self.part_box.configure(values=parts, state="readonly" if len(parts)>1 else "disabled")
+        self.follow_part.set(selected)
 
     @staticmethod
     def _fmt(sec: float) -> str:
@@ -450,7 +484,18 @@ class App(tk.Tk):
     # ---------- 表示 ----------
 
     def _apply_font(self):
-        self.text.config(font=("Consolas", self.font_size.get()))
+        self.text.config(font=(self._tab_font, self.font_size.get()))
+        self.playhead.schedule_draw()
+
+    def destroy(self):
+        if getattr(self, "_poll_job", None):
+            self.after_cancel(self._poll_job)
+            self._poll_job = None
+        if hasattr(self, "playhead"):
+            self.playhead.close()
+        if hasattr(self, "player"):
+            self.player.stop()
+        super().destroy()
 
 
 if __name__ == "__main__":
