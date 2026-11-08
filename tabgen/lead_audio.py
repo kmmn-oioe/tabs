@@ -5,7 +5,7 @@ lead-guitar classifier. A lone arpeggio cannot establish a separate lead.
 """
 from __future__ import annotations
 
-from bisect import bisect_left, bisect_right
+from bisect import bisect_left, bisect_right, insort
 from dataclasses import dataclass
 
 import numpy as np
@@ -30,11 +30,14 @@ class LeadAudioEvidence:
     stereo: bool
     reference_found: bool
     features: list[NoteAudioFeatures]
+    method: str = "reference"
 
     def summary(self) -> str:
         supported = sum(s >= .6 for s in self.scores)
         channels = "ステレオ定位・位相・倍音・発音" if self.stereo else "モノラル倍音・発音（定位情報なし）"
-        reference = "伴奏の基準音色を推定しました。" if self.reference_found else "伴奏の基準音色が不足しています。"
+        reference = ("定位が異なる声部の重なりと旋律の動きを確認しました。" if self.method == "spatial_phrase"
+                     else "伴奏の基準音色を推定しました。" if self.reference_found
+                     else "伴奏の基準音色が不足しています。")
         return (f"リード音声判定: {channels}\n"
                 f"{reference}\n"
                 f"独立した声部の根拠あり: {supported}/{len(self.scores)}音。"
@@ -133,7 +136,90 @@ def _chord_anchors(notes):
             for i in group}
 
 
-def infer_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
+def _opposed_voice_evidence(notes, features):
+    """Resolve a clear melodic stream among two persistent stereo sources.
+
+    A frequent melody must not automatically become the backing reference.
+    Use repeated simultaneous sources and phrase motion instead of choosing
+    whichever spatial cluster contains most detections. Ambiguous/centered
+    scenes retain the more conservative reference-based analysis below.
+    """
+    groups = []
+    sorted_pans, centers = [], []
+    for i in sorted(range(len(notes)), key=lambda i: notes[i]["start"]):
+        if not features[i].valid or features[i].spatial_rank < .1:
+            # This more permissive phrase route needs a measurable second
+            # channel component. Quiet/ambiguous scenes may still use the
+            # original phase/timbre evidence; do not extrapolate a later
+            # stereo voice into a nearly rank-one intro.
+            continue
+        nearest = min(range(len(groups)), key=lambda j: abs(features[i].pan-centers[j])) if groups else None
+        if nearest is None or abs(features[i].pan-centers[nearest]) > .32:
+            groups.append([i])
+            sorted_pans.append([features[i].pan])
+            centers.append(features[i].pan)
+        else:
+            groups[nearest].append(i)
+            pans = sorted_pans[nearest]
+            insort(pans, features[i].pan)
+            centers[nearest] = (pans[(len(pans)-1)//2] + pans[len(pans)//2])/2
+    sources = []
+    for group in groups:
+        if len(group) < 3:
+            continue
+        pans = np.array([features[i].pan for i in group])
+        center = float(np.median(pans))
+        # A mixed center channel with unstable fingerprints is not a source.
+        if float(np.median(abs(pans-center))) > .13:
+            continue
+        pitches = np.array([notes[i]["pitch"] for i in group])
+        weights = np.array([notes[i]["confidence"] for i in group])
+        histogram = np.bincount(pitches % 12, weights=weights, minlength=12)
+        diversity = 1-float(histogram.max()/max(histogram.sum(), 1e-12))
+        movement = np.abs(np.diff(pitches))
+        motion = float(np.mean((movement > 0) & (movement % 12 != 0) & (movement <= 12)))
+        role = .6*diversity + .4*motion
+        sources.append((role, center, group))
+    if len(sources) < 2:
+        return None
+    sources.sort(reverse=True, key=lambda s: s[0])
+    role, center, melody = sources[0]
+    backing = [s for s in sources[1:] if abs(s[1]-center) >= .65]
+    if not backing or role < .4 or role-max(s[0] for s in backing) < .12:
+        return None
+    backing_notes = [j for _, _, group in backing for j in group]
+    intervals = []
+    for start, end in sorted((notes[i]['start'], notes[i]['end']) for i in backing_notes):
+        if intervals and start <= intervals[-1][1]:
+            intervals[-1][1] = max(intervals[-1][1], end)
+        else:
+            intervals.append([start, end])
+    starts = [start for start, _ in intervals]
+    scores = [0.] * len(notes)
+    supported = []
+    for i in melody:
+        n = notes[i]
+        at = max(0, bisect_right(starts, n['start'])-1)
+        overlap = False
+        for start, end in intervals[at:]:
+            if start >= n['end']:
+                break
+            if min(n['end'], end)-max(n['start'], start) >= .04:
+                overlap = True
+                break
+        if overlap:
+            supported.append(i)
+    # A single source that changes pan creates only a brief crossfade, not
+    # repeated overlapping attacks from two independently recurring streams.
+    times = sorted(notes[i]['start'] for i in supported)
+    for i in supported:
+        neighbors = bisect_right(times, notes[i]['start']+1)-bisect_left(times, notes[i]['start']-1)
+        if neighbors >= 3:
+            scores[i] = .6 + .25*features[i].attack + .15*features[i].coherence
+    return scores if sum(s >= .6 for s in scores) >= 3 else None
+
+
+def _reference_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
     """Compare persistent source signatures and require simultaneous backing.
 
     Chord attacks favor an accompaniment reference. Otherwise the most common
@@ -216,6 +302,34 @@ def infer_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
         if local < 3 and notes[i]["end"] - notes[i]["start"] < .6:
             scores[i] = 0.
     return LeadAudioEvidence(scores, stereo, True, features)
+
+
+def infer_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
+    """Follow local stereo phrases instead of assigning one role for a song.
+
+    Each four-second section has two seconds of context on either side. Only
+    a clear recurring stereo phrase overrides the conservative reference
+    evidence, including its zero scores for simultaneous accompaniment notes.
+    """
+    reference = _reference_lead_evidence(notes, features, stereo)
+    if not stereo or not notes:
+        return reference
+    scores = list(reference.scores)
+    ordered = sorted(range(len(notes)), key=lambda i: notes[i]['start'])
+    starts = [notes[i]['start'] for i in ordered]
+    applied = False
+    for first in np.arange(0., starts[-1]+.001, 4.):
+        lo, hi = bisect_left(starts,max(0.,first-2)), bisect_left(starts,first+6)
+        indices = ordered[lo:hi]
+        local = _opposed_voice_evidence([notes[i] for i in indices], [features[i] for i in indices])
+        if local is None:
+            continue
+        applied = True
+        for i,score in zip(indices,local):
+            if first <= notes[i]['start'] < first+4 and features[i].spatial_rank >= .1:
+                scores[i] = score
+    return LeadAudioEvidence(scores,stereo,reference.reference_found or applied,features,
+                             "spatial_phrase" if applied else reference.method)
 
 
 def analyze_lead_audio(path: str, notes: list[dict], *, min_confidence: float = .3) -> LeadAudioEvidence:

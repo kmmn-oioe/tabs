@@ -124,7 +124,8 @@ class App(tk.Tk):
         self.lead_start_box.grid(row=7, column=1, sticky="w", padx=4, pady=4)
         self.audio_lead_var = tk.BooleanVar(value=True)
         self.audio_lead_check = ttk.Checkbutton(opts, text="音声で独立したリードを確認（実験的）",
-                                               variable=self.audio_lead_var, state="disabled")
+                                               variable=self.audio_lead_var, state="disabled",
+                                               command=self._toggle_split)
         self.audio_lead_check.grid(row=7, column=2, columnspan=3, sticky="w", padx=4)
 
         btns = ttk.Frame(self)
@@ -143,7 +144,8 @@ class App(tk.Tk):
     def _toggle_split(self):
         self.chord_beats_box.configure(state="readonly" if self.split_var.get() else "disabled")
         self.lead_start_box.configure(state="normal" if self.split_var.get() else "disabled")
-        self.suppress_chords_check.configure(state="normal" if self.split_var.get() else "disabled")
+        self.suppress_chords_check.configure(state="normal" if self.split_var.get() and not self.audio_lead_var.get()
+                                             else "disabled")
         self.audio_lead_check.configure(state="normal" if self.split_var.get() else "disabled")
         if self.split_var.get():
             self.lead_thr_scale.state(["!disabled"])

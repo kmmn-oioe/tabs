@@ -91,6 +91,14 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(result['raw_candidates']['part_confusions'],[])
         self.assertEqual(result['arranged']['overall']['recall'],0)
 
+    def test_audio_gate_and_tracker_can_be_evaluated_separately(self):
+        c=case([note(.5)])
+        detected=dict(start=.5,end=.7,pitch=65)
+        result=evaluate_stages(c,dict(transcribed=[detected],audio_supported=[detected],
+                                     lead_selected=[],lead=[],rhythm=[]))
+        self.assertEqual(result['audio_supported']['parts']['lead']['matched'],1)
+        self.assertEqual(result['lead_before_quantization']['parts']['lead']['matched'],0)
+
     def test_pipeline_diagnostics_do_not_change_results(self):
         from tabgen.pipeline import generate
         raw=[dict(start=.5,end=.9,pitch=p,confidence=.9) for p in [48,52,55]]
@@ -117,6 +125,29 @@ class EvaluationTests(unittest.TestCase):
             reference.write_text(json.dumps(dict(audio_sha256='incorrect')))
             with self.assertRaisesRegex(ValueError,'SHA-256'):
                 run_case(reference,audio,Path(tmp)/'out')
+
+    def test_full_context_changes_analysis_length_without_changing_scoring_window(self):
+        import numpy as np
+        import soundfile as sf
+        with tempfile.TemporaryDirectory() as tmp:
+            audio=Path(tmp)/'audio.wav';audio.touch()
+            reference=Path(tmp)/'reference.json'
+            c=case([])|dict(id='test',bpm=120,grid_offset=0,analysis_window=[0,1.5],
+                            evaluation_window=[.2,1.],tuning=[64,59,55,50,45,40])
+            reference.write_text(json.dumps(c))
+            lengths=[]
+            def generate(path,opts,**kwargs):
+                lengths.append(sf.info(path).duration)
+                kwargs['diagnostics'].update(transcribed=[],lead_selected=[],lead=[],rhythm=[],
+                                             separation_applied=False)
+                return '', '', '', ''
+            with patch('tabgen.audio.read_preview_audio',return_value=(np.zeros((20,2)),10)), \
+                 patch('tabgen.pipeline.generate',side_effect=generate):
+                excerpt=run_case(reference,audio,Path(tmp)/'excerpt')
+                full=run_case(reference,audio,Path(tmp)/'full',full_context=True)
+            self.assertEqual(lengths,[1.5,2.])
+            self.assertEqual(full['evaluation_window'],excerpt['evaluation_window'])
+            self.assertEqual(full['run']['context_mode'],'full')
 
 
 if __name__ == '__main__':

@@ -116,7 +116,7 @@ def evaluate_stages(case, diagnostics, tolerance=.08):
     arranged = part_notes('lead','lead') + part_notes('rhythm','rhythm')
     lead_case = dict(case, notes=[n for n in case['notes'] if n['part'] == 'lead'],
                      rests=[r for r in case.get('rests',[]) if r['part'] == 'lead'])
-    return dict(
+    result = dict(
         arranged=evaluate_notes(case, arranged, tolerance),
         lead_before_quantization=evaluate_notes(lead_case, part_notes('lead_selected','lead'), tolerance),
         raw_candidates=evaluate_notes(case, part_notes('transcribed','unassigned'), tolerance),
@@ -126,6 +126,9 @@ def evaluate_stages(case, diagnostics, tolerance=.08):
             for part in PARTS},
         arranged_sensitivity={str(ms): evaluate_notes(case, arranged, ms/1000)['overall']
                               for ms in (50,80,100)})
+    if diagnostics.get('audio_supported') is not None:
+        result['audio_supported'] = evaluate_notes(lead_case, part_notes('audio_supported','lead'), tolerance)
+    return result
 
 
 def _sha(path):
@@ -165,6 +168,8 @@ def report_markdown(report):
             ('最終リード', scores['arranged']['parts']['lead']),
             ('最終リズム', scores['arranged']['parts']['rhythm']),
             ('最終出力全体', scores['arranged']['overall'])]
+    if 'audio_supported' in scores:
+        rows.insert(1, ('音声根拠あり・追跡前', scores['audio_supported']['parts']['lead']))
     for name, s in rows:
         lines.append(f"| {name} | {s['reference_notes']} | {s['predicted_notes']} | {s['matched']} | {s['extra']} | {s['missing']} | {pct(s['precision'])} | {pct(s['recall'])} | {pct(s['f1'])} |")
     lines += ['', f"パート不問で一致した音のうち役割が異なる対応: {len(scores['arranged']['part_confusions'])} 件。", '',
@@ -181,7 +186,8 @@ def report_markdown(report):
     return '\n'.join(lines)
 
 
-def run_case(reference_path, audio_path, output_dir, *, tempo_mode='auto', separation=False, tolerance=.08):
+def run_case(reference_path, audio_path, output_dir, *, tempo_mode='auto', separation=False, tolerance=.08,
+             full_context=False):
     import soundfile as sf
     from .audio import read_preview_audio
     from .pipeline import generate
@@ -202,8 +208,12 @@ def run_case(reference_path, audio_path, output_dir, *, tempo_mode='auto', separ
     output.mkdir(parents=True, exist_ok=True)
     audio, sr = read_preview_audio(str(audio_path))
     begin, stop = case['analysis_window']
+    if full_context:
+        stop = len(audio)/sr
     if begin != 0 or len(audio)/sr < stop:
         raise ValueError('Analysis must start at zero and fit within the supplied audio')
+    if case['evaluation_window'][1] > stop:
+        raise ValueError('Evaluation window must fit within the analyzed audio')
     diagnostics = {}
     with tempfile.TemporaryDirectory(prefix='tabgen_evaluate_') as tmp:
         wav = Path(tmp)/'excerpt.wav'
@@ -212,9 +222,10 @@ def run_case(reference_path, audio_path, output_dir, *, tempo_mode='auto', separ
             use_separation=separation, auto_bpm=tempo_mode=='auto', diagnostics=diagnostics,
             progress=lambda pct,msg: print(msg, flush=True))
     report = dict(case_id=case['id'], reference_bpm=case['bpm'],
-        evaluation_window=case['evaluation_window'], analysis_window=case['analysis_window'],
+        evaluation_window=case['evaluation_window'], analysis_window=[begin,stop],
         onset_tolerance_ms=tolerance*1000,
-        run=dict(tempo_mode=tempo_mode, separation_requested=separation,
+        run=dict(tempo_mode=tempo_mode, context_mode='full' if full_context else 'excerpt',
+                 lead_evidence_method=diagnostics.get('lead_evidence_method'), separation_requested=separation,
                  separation_applied=diagnostics['separation_applied'], options=asdict(opts),
                  audio_sha256=audio_hash, reference_sha256=_sha(reference_path),
                  source_sha256=_source_hash(), versions=_versions()),
@@ -235,6 +246,7 @@ def main():
     run.add_argument('--output', required=True)
     run.add_argument('--tempo-mode', choices=('auto','reference'),default='auto')
     run.add_argument('--separation',action='store_true')
+    run.add_argument('--full-context',action='store_true',help='全曲を解析し、同じ注釈区間を採点する')
     run.add_argument('--tolerance-ms',type=float,default=80)
     compare = sub.add_parser('compare')
     compare.add_argument('--reference',required=True)
@@ -244,7 +256,8 @@ def main():
     args = parser.parse_args()
     if args.command == 'run':
         result = run_case(args.reference,args.audio,args.output,tempo_mode=args.tempo_mode,
-                          separation=args.separation,tolerance=args.tolerance_ms/1000)
+                          separation=args.separation,tolerance=args.tolerance_ms/1000,
+                          full_context=args.full_context)
         print(report_markdown(result))
     else:
         case = json.loads(Path(args.reference).read_text(encoding='utf-8'))

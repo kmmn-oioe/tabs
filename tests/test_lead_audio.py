@@ -6,9 +6,9 @@ from unittest.mock import patch
 import numpy as np
 import soundfile as sf
 
-from audio_fixtures import SAMPLE_RATE, guitar_scene
+from audio_fixtures import SAMPLE_RATE, guitar_scene, recurring_melody_scene
 from tabgen.audio import load_audio, load_audio_channels
-from tabgen.lead_audio import analyze_lead_audio
+from tabgen.lead_audio import analyze_lead_audio, _opposed_voice_evidence, NoteAudioFeatures
 from tabgen.split import split_notes
 from tabgen.tab import TabOptions
 
@@ -110,8 +110,13 @@ class LeadAudioTests(unittest.TestCase):
                 sf.write(path, audio, SAMPLE_RATE)
                 with patch('tabgen.transcribe.transcribe', return_value=notes), \
                      patch('tabgen.harmony.audio_chord_changes', return_value=[]):
-                    text, midis, _, _ = generate(str(path), split_lead_rhythm=True, auto_bpm=False)
+                    diagnostics = {}
+                    text, midis, _, _ = generate(str(path), split_lead_rhythm=True, auto_bpm=False,
+                                                diagnostics=diagnostics)
                 self.assertIn('リード音声判定: ステレオ', text)
+                self.assertEqual(len(diagnostics['lead_audio_scores']),len(notes))
+                self.assertEqual(diagnostics['audio_supported'],
+                                 [n for n,s in zip(notes,diagnostics['lead_audio_scores']) if s >= .6])
                 midi = pretty_midi.PrettyMIDI(midis.split(';')[0])
                 result = [n for i in midi.instruments for n in i.notes]
                 if has_lead:
@@ -136,6 +141,43 @@ class LeadAudioTests(unittest.TestCase):
     def test_evidence_must_align_with_notes(self):
         with self.assertRaises(ValueError):
             split_notes([], lead_scores=[1.])
+
+    def test_frequent_melody_is_not_misidentified_as_backing(self):
+        for lower in (False, True):
+            for mirror in (False, True):
+                with self.subTest(lower=lower,mirror=mirror), tempfile.TemporaryDirectory() as tmp:
+                    audio,notes,labels = recurring_melody_scene(lower_lead=lower,mirror=mirror)
+                    path = Path(tmp)/'recurring.wav'
+                    sf.write(path,audio,SAMPLE_RATE)
+                    evidence = analyze_lead_audio(str(path),notes)
+                    supported = [s >= .6 for s in evidence.scores]
+                    self.assertEqual(evidence.method,'spatial_phrase')
+                    self.assertFalse(any(s for s,l in zip(supported,labels) if not l))
+                    self.assertGreaterEqual(sum(s for s,l in zip(supported,labels) if l),12)
+                    lead,_ = split_notes(notes,lead_scores=evidence.scores)
+                    self.assertTrue(all(n['start'] >= .8 for n in lead))
+                    self.assertGreaterEqual(len(lead),12)
+
+    def test_later_voice_change_does_not_relabel_the_intro(self):
+        first,first_notes,first_labels = recurring_melody_scene()
+        later,later_notes,_ = recurring_melody_scene(lower_lead=True,mirror=True)
+        audio = np.concatenate([first,np.zeros((SAMPLE_RATE*4,2)),later,later,later])
+        notes = list(first_notes)
+        for shift in [8,12,16]:
+            notes += [dict(n,start=n['start']+shift,end=n['end']+shift) for n in later_notes]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)/'changing_sources.wav'
+            sf.write(path,audio,SAMPLE_RATE)
+            e = analyze_lead_audio(str(path),notes)
+        intro_scores = e.scores[:len(first_notes)]
+        self.assertGreaterEqual(sum(s >= .6 for s,l in zip(intro_scores,first_labels) if l),12)
+        self.assertFalse(any(s >= .6 for s,l in zip(intro_scores,first_labels) if not l))
+
+    def test_rank_one_stereo_does_not_establish_two_phrase_sources(self):
+        _,notes,labels = recurring_melody_scene()
+        features = [NoteAudioFeatures(.7 if l else -.7,np.array([1.,0,0,0,0]),1.,1.,True,
+                                     spatial_rank=.02) for l in labels]
+        self.assertIsNone(_opposed_voice_evidence(notes,features))
 
 
 if __name__ == '__main__':

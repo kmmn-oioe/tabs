@@ -30,6 +30,18 @@ class LeadPresenceTests(unittest.TestCase):
         self.assertEqual(lead, [])
         self.assertEqual(len(rhythm), len(intro()))
 
+    def test_audio_supported_melody_can_leap_at_modest_transcription_confidence(self):
+        notes = [dict(note(p,i*.2,i*.2+.18),confidence=.32)
+                 for i,p in enumerate([60,67,74,65,72])]
+        lead,_ = split_notes(notes,lead_scores=[.9]*len(notes))
+        self.assertEqual([n['pitch'] for n in lead],[60,67,74,65,72])
+
+    def test_supported_voice_is_not_vetoed_with_simultaneous_chord_candidates(self):
+        notes = [note(p,0,.4) for p in [48,55,64]]
+        lead,_ = split_notes(notes,lead_scores=[.6,.6,.95])
+        self.assertEqual([n['pitch'] for n in lead],[64])
+        self.assertEqual(split_notes(notes)[0],[])
+
     def test_fast_nonoverlapping_melody_is_not_a_strum(self):
         notes = [note(p, i*.025, i*.025+.02) for i,p in enumerate([60,62,64,65,67])]
         lead, _ = split_notes(notes, window=.01)

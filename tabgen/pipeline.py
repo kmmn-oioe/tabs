@@ -100,6 +100,7 @@ def generate(
         from .rhythm import arrange_rhythm, progression_text
         from .split import split_notes
         lead_scores = None
+        lead_evidence_method = "disabled"
         lead_method = "リード判定: 検出ノートのみ（音声による存在判定は無効）"
         if opts.audio_lead_detection:
             from .lead_audio import analyze_lead_audio
@@ -107,11 +108,18 @@ def generate(
                 log("音声の定位・倍音・発音から独立したリードの根拠を解析中…", 96)
                 evidence = analyze_lead_audio(stem_path, notes, min_confidence=opts.min_confidence)
                 lead_scores = evidence.scores
+                lead_evidence_method = evidence.method
                 lead_method = evidence.summary()
             except (OSError, ValueError, RuntimeError, ImportError) as error:
                 lead_scores = [0.] * len(notes)
+                lead_evidence_method = "failed"
                 lead_method = "リード音声判定に失敗したため保留（休符）。音声入力や依存関係を確認してください。"
                 log(f"{lead_method}: {error}", 96)
+        if diagnostics is not None:
+            diagnostics["lead_audio_scores"] = lead_scores
+            diagnostics["lead_evidence_method"] = lead_evidence_method
+            diagnostics["audio_supported"] = ([dict(n) for n,s in zip(notes, lead_scores) if s >= .6]
+                                               if lead_scores is not None else None)
         lead, rhythm = split_notes(notes, lead_threshold, min_confidence=opts.min_confidence,
                                    suppress_chords=opts.suppress_chord_attacks,
                                    start_seconds=opts.lead_start_seconds, lead_scores=lead_scores)

@@ -42,9 +42,11 @@ def split_notes(notes: list[dict], lead_threshold: int = DEFAULT_LEAD_THRESHOLD,
                       and n["start"] >= start_seconds
                       and (lead_scores is None or lead_scores[i] >= .6)),
                      key=lambda i: (notes[i]["start"], notes[i]["pitch"]))
-    if suppress_chords:
+    if suppress_chords and lead_scores is None:
         # Strummed chords have slightly staggered attacks: use a wider window
         # than the melody lattice, and require actual overlap to retain runs.
+        # Independently supported audio voices may coincide with a chord:
+        # do not veto them merely because other instruments attack together.
         clusters = []
         for i in ordered:
             if clusters and notes[i]["start"] - notes[clusters[-1][0]]["start"] < .09:
@@ -82,12 +84,18 @@ def split_notes(notes: list[dict], lead_threshold: int = DEFAULT_LEAD_THRESHOLD,
             reward = (2 * (n["confidence"] - .2)
                       + .25 * min(.6, n["end"] - n["start"])
                       + .12 * tanh((n["pitch"] - lead_threshold) / 12))
+            if lead_scores is not None:
+                reward += lead_scores[i]
             def continuation(s):
                 if s.pitch is None:
                     return s.score
                 gap = max(.1, n["start"] - s.start)
                 interval = abs(n["pitch"] - s.pitch)
                 movement = min(1.2, interval * .055 + max(0, interval - 7) * .08)
+                if lead_scores is not None:
+                    # Source evidence can justify a real melodic leap even
+                    # when the transcriber assigns it modest confidence.
+                    movement *= .25
                 return s.score - movement / max(1., gap * 2)
             previous = max(states, key=continuation)
             expanded.append(_State(continuation(previous) + reward, n["pitch"], n["start"], previous, i))
