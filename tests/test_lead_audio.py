@@ -179,6 +179,41 @@ class LeadAudioTests(unittest.TestCase):
                                      spatial_rank=.02) for l in labels]
         self.assertIsNone(_opposed_voice_evidence(notes,features))
 
+    def test_competing_melodic_cluster_does_not_veto_the_supported_lead(self):
+        # Two near-tied melodic signatures plus persistent backing. The old
+        # all-or-nothing role margin withheld both melodic streams.
+        for mirror in (1,-1):
+            for low_lead in (False,True):
+                with self.subTest(mirror=mirror,low_lead=low_lead):
+                    notes,features=[],[]
+                    def add(pitch,start,pan,confidence):
+                        notes.append(dict(pitch=pitch,start=start,end=start+.3,confidence=confidence))
+                        features.append(NoteAudioFeatures(pan*mirror,np.array([1.,0,0,0,0]),
+                                                          1.,1.,True,spatial_rank=.4))
+                    for i in range(16):
+                        add(80 if low_lead else 45,i*.25,-.75,.7)
+                    expected=[52,54,61,59] if low_lead else [64,66,73,71]
+                    first=len(notes)
+                    for i in range(12):
+                        add(expected[i%4],.5+i*.25,.75,.9)
+                    for i in range(8):
+                        add(expected[i%4]-12,.5+i*.25,0.,.35)
+                    scores=_opposed_voice_evidence(notes,features)
+                    self.assertIsNotNone(scores)
+                    self.assertTrue(all(s >= .6 for s in scores[first:first+12]))
+                    self.assertFalse(any(s >= .6 for s in scores[:first]))
+                    lead,_=split_notes(notes,lead_scores=scores)
+                    self.assertEqual([n['pitch'] for n in lead],expected*3)
+
+    def test_tied_voices_without_independent_backing_are_still_ambiguous(self):
+        notes,features=[],[]
+        for pan in (-.75,.75):
+            for i,pitch in enumerate([60,62,69,67]*2):
+                notes.append(dict(pitch=pitch,start=i*.25,end=i*.25+.2,confidence=.8))
+                features.append(NoteAudioFeatures(pan,np.array([1.,0,0,0,0]),1.,1.,True,
+                                                  spatial_rank=.4))
+        self.assertIsNone(_opposed_voice_evidence(notes,features))
+
 
 if __name__ == '__main__':
     unittest.main()

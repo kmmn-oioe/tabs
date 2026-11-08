@@ -137,12 +137,13 @@ def _chord_anchors(notes):
 
 
 def _opposed_voice_evidence(notes, features):
-    """Resolve a clear melodic stream among two persistent stereo sources.
+    """Find melodic streams supported by persistent stereo accompaniment.
 
     A frequent melody must not automatically become the backing reference.
     Use repeated simultaneous sources and phrase motion instead of choosing
-    whichever spatial cluster contains most detections. Ambiguous/centered
-    scenes retain the more conservative reference-based analysis below.
+    whichever spatial cluster contains most detections. Near-tied streams
+    with independent backing remain candidates for the melody tracker;
+    unsupported scenes retain the conservative reference-based analysis.
     """
     groups = []
     sorted_pans, centers = [], []
@@ -185,8 +186,32 @@ def _opposed_voice_evidence(notes, features):
     sources.sort(reverse=True, key=lambda s: s[0])
     role, center, melody = sources[0]
     backing = [s for s in sources[1:] if abs(s[1]-center) >= .65]
-    if not backing or role < .4 or role-max(s[0] for s in backing) < .12:
+    if not backing or role < .4:
         return None
+    if role-max(s[0] for s in backing) >= .12:
+        return _simultaneous_source_scores(notes,features,melody,backing)
+    # A competing melodic cluster must not veto all plausible voices. This
+    # occurs when separation changes which partials fall into a center group.
+    # Keep only near-tied, independently supported streams and let the melody
+    # tracker decide; never relax the repeated-overlap or stereo-rank guards.
+    scores = [0.] * len(notes)
+    found = False
+    for candidate_role,candidate_center,group in sources:
+        if role-candidate_role > .12 or candidate_role < .4:
+            continue
+        candidate_backing = [s for s in sources if abs(s[1]-candidate_center) >= .65
+                             and candidate_role-s[0] >= .12]
+        if not candidate_backing:
+            continue
+        local = _simultaneous_source_scores(notes,features,group,candidate_backing)
+        if local is not None:
+            found = True
+            scores = [max(a,b) for a,b in zip(scores,local)]
+    return scores if found else None
+
+
+def _simultaneous_source_scores(notes, features, melody, backing):
+    """Require persistent simultaneous backing for each proposed stream."""
     backing_notes = [j for _, _, group in backing for j in group]
     intervals = []
     for start, end in sorted((notes[i]['start'], notes[i]['end']) for i in backing_notes):
