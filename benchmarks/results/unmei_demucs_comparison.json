@@ -1,0 +1,1054 @@
+{
+  "application_commit": "76d5787",
+  "scope": "原曲先頭10.3秒を解析し、TAB第2〜6小節85音を比較。",
+  "control_parameters_identical": true,
+  "torchaudio_version": "2.5.1+cpu",
+  "runs": {
+    "none": {
+      "case_id": "unmei_intro_bars_2_6",
+      "reference_bpm": 147.0,
+      "evaluation_window": [
+        1.0873469387755101,
+        9.843265306122449
+      ],
+      "analysis_window": [
+        0.0,
+        10.3
+      ],
+      "onset_tolerance_ms": 80.0,
+      "run": {
+        "tempo_mode": "reference",
+        "context_mode": "excerpt",
+        "tempo_estimation": null,
+        "lead_evidence_method": "spatial_phrase",
+        "separation_requested": false,
+        "separation_applied": false,
+        "options": {
+          "tuning": [
+            64,
+            59,
+            55,
+            50,
+            45,
+            40
+          ],
+          "quantize": 0.25,
+          "bpm": 147.0,
+          "min_confidence": 0.3,
+          "max_fret": 19,
+          "bars_per_line": 4,
+          "capo": 1,
+          "difficulty": "standard",
+          "chord_beats": 2,
+          "suppress_chord_attacks": true,
+          "lead_start_seconds": 0.0,
+          "audio_lead_detection": true,
+          "grid_offset": 0.047346938775510106,
+          "rhythm_mode": "notes"
+        },
+        "audio_sha256": "84c66c7d1c1fcb4fcb826f81eb0ce5dcd5d44d26daeb1b1116c4482b70dbec1b",
+        "reference_sha256": "c8b41a63108315ce66d56348d5db6cd3fb29d2d34ecc9d31cbcf312d53f7c8e1",
+        "source_sha256": "c6da3ff801294d0c8047d4873b7f0d89c07507d0aaedce6e0fea4c5f79505d7c",
+        "versions": {
+          "python": "3.11.17",
+          "basic-pitch": "0.4.0",
+          "numpy": "1.26.4",
+          "scipy": "1.17.1",
+          "tensorflow": "2.14.0",
+          "demucs": "4.0.1",
+          "torch": "2.5.1+cpu"
+        }
+      },
+      "scores": {
+        "arranged": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 85,
+            "predicted_notes": 184,
+            "matched": 53,
+            "extra": 131,
+            "missing": 32,
+            "precision": 0.28804347826086957,
+            "recall": 0.6235294117647059,
+            "f1": 0.3940520446096654,
+            "onset_mae_ms": 2.568347547216859e-07,
+            "score_noteoff_mae_ms": 72.42407053296543,
+            "same_fingering_rate": 0.49056603773584906
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 85,
+            "predicted_notes": 184,
+            "matched": 60,
+            "extra": 124,
+            "missing": 25,
+            "precision": 0.32608695652173914,
+            "recall": 0.7058823529411765,
+            "f1": 0.44609665427509293,
+            "onset_mae_ms": 2.5952375803939276e-07,
+            "score_noteoff_mae_ms": 71.55444448049894,
+            "same_fingering_rate": 0.5
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 37,
+              "matched": 26,
+              "extra": 11,
+              "missing": 14,
+              "precision": 0.7027027027027027,
+              "recall": 0.65,
+              "f1": 0.6753246753246753,
+              "onset_mae_ms": 2.613814805622147e-07,
+              "score_noteoff_mae_ms": 66.10622711643127,
+              "same_fingering_rate": 0.5
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 147,
+              "matched": 27,
+              "extra": 120,
+              "missing": 18,
+              "precision": 0.1836734693877551,
+              "recall": 0.6,
+              "f1": 0.28125,
+              "onset_mae_ms": 2.524564261345101e-07,
+              "score_noteoff_mae_ms": 78.50791974888723,
+              "same_fingering_rate": 0.48148148148148145
+            }
+          },
+          "part_confusions": [
+            {
+              "reference_id": "lead.bar2.e1.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 67,
+              "reference_start": 1.884081633,
+              "predicted_start": 1.8840816326530612
+            },
+            {
+              "reference_id": "lead.bar3.e7.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 4.74122449,
+              "predicted_start": 4.741224489795918
+            },
+            {
+              "reference_id": "rhythm.bar3.e7.n0",
+              "reference_part": "rhythm",
+              "predicted_part": "lead",
+              "pitch": 65,
+              "reference_start": 4.74122449,
+              "predicted_start": 4.741224489795918
+            },
+            {
+              "reference_id": "lead.bar4.e3.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 5.55755102,
+              "predicted_start": 5.557551020408163
+            },
+            {
+              "reference_id": "lead.bar5.e6.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 74,
+              "reference_start": 7.80244898,
+              "predicted_start": 7.802448979591837
+            },
+            {
+              "reference_id": "lead.bar5.e7.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 8.006530612,
+              "predicted_start": 8.006530612244898
+            },
+            {
+              "reference_id": "rhythm.bar6.e3.n0",
+              "reference_part": "rhythm",
+              "predicted_part": "lead",
+              "pitch": 65,
+              "reference_start": 8.822857143,
+              "predicted_start": 8.822857142857142
+            }
+          ],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            },
+            {
+              "part": "rhythm",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 4
+            }
+          ]
+        },
+        "lead_before_quantization": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 40,
+            "predicted_notes": 40,
+            "matched": 28,
+            "extra": 12,
+            "missing": 12,
+            "precision": 0.7,
+            "recall": 0.7,
+            "f1": 0.7,
+            "onset_mae_ms": 23.20422740524765,
+            "score_noteoff_mae_ms": 71.71107869169087,
+            "same_fingering_rate": null
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 40,
+            "predicted_notes": 40,
+            "matched": 28,
+            "extra": 12,
+            "missing": 12,
+            "precision": 0.7,
+            "recall": 0.7,
+            "f1": 0.7,
+            "onset_mae_ms": 23.20422740524765,
+            "score_noteoff_mae_ms": 71.71107869169087,
+            "same_fingering_rate": null
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 40,
+              "matched": 28,
+              "extra": 12,
+              "missing": 12,
+              "precision": 0.7,
+              "recall": 0.7,
+              "f1": 0.7,
+              "onset_mae_ms": 23.20422740524765,
+              "score_noteoff_mae_ms": 71.71107869169087,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 0,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            }
+          },
+          "part_confusions": [],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            }
+          ]
+        },
+        "raw_candidates": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 85,
+            "predicted_notes": 239,
+            "matched": 0,
+            "extra": 239,
+            "missing": 85,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "onset_mae_ms": null,
+            "score_noteoff_mae_ms": null,
+            "same_fingering_rate": null
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 85,
+            "predicted_notes": 239,
+            "matched": 71,
+            "extra": 168,
+            "missing": 14,
+            "precision": 0.29707112970711297,
+            "recall": 0.8352941176470589,
+            "f1": 0.4382716049382716,
+            "onset_mae_ms": 25.001366906741907,
+            "score_noteoff_mae_ms": 149.53783654335544,
+            "same_fingering_rate": null
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 40,
+              "precision": null,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 45,
+              "precision": null,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            }
+          },
+          "part_confusions": [],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            },
+            {
+              "part": "rhythm",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            }
+          ]
+        },
+        "raw_coverage_by_reference_part": {
+          "lead": {
+            "reference_notes": 40,
+            "predicted_notes": 239,
+            "matched": 36,
+            "extra": 203,
+            "missing": 4,
+            "precision": 0.1506276150627615,
+            "recall": 0.9,
+            "f1": 0.25806451612903225,
+            "onset_mae_ms": 23.524829901927298,
+            "score_noteoff_mae_ms": 117.47805496819103,
+            "same_fingering_rate": null
+          },
+          "rhythm": {
+            "reference_notes": 45,
+            "predicted_notes": 239,
+            "matched": 40,
+            "extra": 199,
+            "missing": 5,
+            "precision": 0.16736401673640167,
+            "recall": 0.8888888888888888,
+            "f1": 0.28169014084507044,
+            "onset_mae_ms": 26.347267568083787,
+            "score_noteoff_mae_ms": 191.33589567273245,
+            "same_fingering_rate": null
+          }
+        },
+        "arranged_sensitivity": {
+          "50": {
+            "reference_notes": 85,
+            "predicted_notes": 184,
+            "matched": 53,
+            "extra": 131,
+            "missing": 32,
+            "precision": 0.28804347826086957,
+            "recall": 0.6235294117647059,
+            "f1": 0.3940520446096654,
+            "onset_mae_ms": 2.568347547216859e-07,
+            "score_noteoff_mae_ms": 72.42407053296543,
+            "same_fingering_rate": 0.49056603773584906
+          },
+          "80": {
+            "reference_notes": 85,
+            "predicted_notes": 184,
+            "matched": 53,
+            "extra": 131,
+            "missing": 32,
+            "precision": 0.28804347826086957,
+            "recall": 0.6235294117647059,
+            "f1": 0.3940520446096654,
+            "onset_mae_ms": 2.568347547216859e-07,
+            "score_noteoff_mae_ms": 72.42407053296543,
+            "same_fingering_rate": 0.49056603773584906
+          },
+          "100": {
+            "reference_notes": 85,
+            "predicted_notes": 184,
+            "matched": 53,
+            "extra": 131,
+            "missing": 32,
+            "precision": 0.28804347826086957,
+            "recall": 0.6235294117647059,
+            "f1": 0.3940520446096654,
+            "onset_mae_ms": 2.568347547216859e-07,
+            "score_noteoff_mae_ms": 72.42407053296543,
+            "same_fingering_rate": 0.49056603773584906
+          }
+        },
+        "audio_supported": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 40,
+            "predicted_notes": 48,
+            "matched": 29,
+            "extra": 19,
+            "missing": 11,
+            "precision": 0.6041666666666666,
+            "recall": 0.725,
+            "f1": 0.6590909090909091,
+            "onset_mae_ms": 22.742841497380414,
+            "score_noteoff_mae_ms": 132.60189227578383,
+            "same_fingering_rate": null
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 40,
+            "predicted_notes": 48,
+            "matched": 29,
+            "extra": 19,
+            "missing": 11,
+            "precision": 0.6041666666666666,
+            "recall": 0.725,
+            "f1": 0.6590909090909091,
+            "onset_mae_ms": 22.742841497380414,
+            "score_noteoff_mae_ms": 132.60189227578383,
+            "same_fingering_rate": null
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 48,
+              "matched": 29,
+              "extra": 19,
+              "missing": 11,
+              "precision": 0.6041666666666666,
+              "recall": 0.725,
+              "f1": 0.6590909090909091,
+              "onset_mae_ms": 22.742841497380414,
+              "score_noteoff_mae_ms": 132.60189227578383,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 0,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            }
+          },
+          "part_confusions": [],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            }
+          ]
+        }
+      }
+    },
+    "demucs": {
+      "case_id": "unmei_intro_bars_2_6",
+      "reference_bpm": 147.0,
+      "evaluation_window": [
+        1.0873469387755101,
+        9.843265306122449
+      ],
+      "analysis_window": [
+        0.0,
+        10.3
+      ],
+      "onset_tolerance_ms": 80.0,
+      "run": {
+        "tempo_mode": "reference",
+        "context_mode": "excerpt",
+        "tempo_estimation": null,
+        "lead_evidence_method": "spatial_phrase",
+        "separation_requested": true,
+        "separation_applied": true,
+        "options": {
+          "tuning": [
+            64,
+            59,
+            55,
+            50,
+            45,
+            40
+          ],
+          "quantize": 0.25,
+          "bpm": 147.0,
+          "min_confidence": 0.3,
+          "max_fret": 19,
+          "bars_per_line": 4,
+          "capo": 1,
+          "difficulty": "standard",
+          "chord_beats": 2,
+          "suppress_chord_attacks": true,
+          "lead_start_seconds": 0.0,
+          "audio_lead_detection": true,
+          "grid_offset": 0.047346938775510106,
+          "rhythm_mode": "notes"
+        },
+        "audio_sha256": "84c66c7d1c1fcb4fcb826f81eb0ce5dcd5d44d26daeb1b1116c4482b70dbec1b",
+        "reference_sha256": "c8b41a63108315ce66d56348d5db6cd3fb29d2d34ecc9d31cbcf312d53f7c8e1",
+        "source_sha256": "c6da3ff801294d0c8047d4873b7f0d89c07507d0aaedce6e0fea4c5f79505d7c",
+        "versions": {
+          "python": "3.11.17",
+          "basic-pitch": "0.4.0",
+          "numpy": "1.26.4",
+          "scipy": "1.17.1",
+          "tensorflow": "2.14.0",
+          "demucs": "4.0.1",
+          "torch": "2.5.1+cpu"
+        },
+        "separation_details": {
+          "model": "htdemucs_6s",
+          "stem": "guitar",
+          "device": "cpu",
+          "shifts": 1,
+          "seed": null,
+          "duration_seconds": 27.24188547999998,
+          "output_sha256": "fe4953bb906fbdd5aef956aebc8cd3e684e4fd1162ba0ad64a936b0056091dc2",
+          "frames": 454230,
+          "sample_rate": 44100,
+          "channels": 2,
+          "checkpoint_sha256": "34c22ccb381c6f9fdbf324f04e1e2fe21aaaf293f5ded163a162697ff9a02ddd",
+          "execution": "Official htdemucs_6s executed once; its saved guitar stem reused for serial transcription."
+        }
+      },
+      "scores": {
+        "arranged": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 85,
+            "predicted_notes": 150,
+            "matched": 47,
+            "extra": 103,
+            "missing": 38,
+            "precision": 0.31333333333333335,
+            "recall": 0.5529411764705883,
+            "f1": 0.4,
+            "onset_mae_ms": 2.46200639071987e-07,
+            "score_noteoff_mae_ms": 43.630154052299076,
+            "same_fingering_rate": 0.5319148936170213
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 85,
+            "predicted_notes": 150,
+            "matched": 68,
+            "extra": 82,
+            "missing": 17,
+            "precision": 0.4533333333333333,
+            "recall": 0.8,
+            "f1": 0.5787234042553191,
+            "onset_mae_ms": 2.506002725594419e-07,
+            "score_noteoff_mae_ms": 48.91501948812876,
+            "same_fingering_rate": 0.47058823529411764
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 31,
+              "matched": 19,
+              "extra": 12,
+              "missing": 21,
+              "precision": 0.6129032258064516,
+              "recall": 0.475,
+              "f1": 0.5352112676056338,
+              "onset_mae_ms": 2.459720848055201e-07,
+              "score_noteoff_mae_ms": 54.2215301272229,
+              "same_fingering_rate": 0.631578947368421
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 119,
+              "matched": 28,
+              "extra": 91,
+              "missing": 17,
+              "precision": 0.23529411764705882,
+              "recall": 0.6222222222222222,
+              "f1": 0.34146341463414637,
+              "onset_mae_ms": 2.463557294670896e-07,
+              "score_noteoff_mae_ms": 36.443148858600765,
+              "same_fingering_rate": 0.4642857142857143
+            }
+          },
+          "part_confusions": [
+            {
+              "reference_id": "rhythm.bar2.e0.n1",
+              "reference_part": "rhythm",
+              "predicted_part": "lead",
+              "pitch": 51,
+              "reference_start": 1.68,
+              "predicted_start": 1.68
+            },
+            {
+              "reference_id": "lead.bar2.e1.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 67,
+              "reference_start": 1.884081633,
+              "predicted_start": 1.8840816326530612
+            },
+            {
+              "reference_id": "rhythm.bar2.e1.n0",
+              "reference_part": "rhythm",
+              "predicted_part": "lead",
+              "pitch": 58,
+              "reference_start": 1.884081633,
+              "predicted_start": 1.8840816326530612
+            },
+            {
+              "reference_id": "lead.bar2.e2.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 74,
+              "reference_start": 2.088163265,
+              "predicted_start": 2.0881632653061226
+            },
+            {
+              "reference_id": "lead.bar2.e3.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 2.292244898,
+              "predicted_start": 2.2922448979591836
+            },
+            {
+              "reference_id": "rhythm.bar2.e3.n0",
+              "reference_part": "rhythm",
+              "predicted_part": "lead",
+              "pitch": 65,
+              "reference_start": 2.292244898,
+              "predicted_start": 2.2922448979591836
+            },
+            {
+              "reference_id": "lead.bar2.e4.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 65,
+              "reference_start": 2.496326531,
+              "predicted_start": 2.4963265306122446
+            },
+            {
+              "reference_id": "rhythm.bar2.e5.n0",
+              "reference_part": "rhythm",
+              "predicted_part": "lead",
+              "pitch": 60,
+              "reference_start": 2.700408163,
+              "predicted_start": 2.7004081632653056
+            },
+            {
+              "reference_id": "lead.bar2.e6.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 74,
+              "reference_start": 2.904489796,
+              "predicted_start": 2.9044897959183675
+            },
+            {
+              "reference_id": "lead.bar2.e7.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 3.108571429,
+              "predicted_start": 3.1085714285714285
+            },
+            {
+              "reference_id": "rhythm.bar2.e7.n0",
+              "reference_part": "rhythm",
+              "predicted_part": "lead",
+              "pitch": 58,
+              "reference_start": 3.108571429,
+              "predicted_start": 3.1085714285714285
+            },
+            {
+              "reference_id": "lead.bar3.e0.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 65,
+              "reference_start": 3.312653061,
+              "predicted_start": 3.3126530612244895
+            },
+            {
+              "reference_id": "lead.bar3.e1.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 67,
+              "reference_start": 3.516734694,
+              "predicted_start": 3.5167346938775506
+            },
+            {
+              "reference_id": "lead.bar3.e2.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 74,
+              "reference_start": 3.720816327,
+              "predicted_start": 3.7208163265306125
+            },
+            {
+              "reference_id": "lead.bar3.e3.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 3.924897959,
+              "predicted_start": 3.9248979591836735
+            },
+            {
+              "reference_id": "lead.bar3.e5.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 67,
+              "reference_start": 4.333061224,
+              "predicted_start": 4.3330612244897955
+            },
+            {
+              "reference_id": "lead.bar4.e3.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 5.55755102,
+              "predicted_start": 5.557551020408163
+            },
+            {
+              "reference_id": "lead.bar5.e1.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 67,
+              "reference_start": 6.782040816,
+              "predicted_start": 6.78204081632653
+            },
+            {
+              "reference_id": "lead.bar5.e3.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 7.190204082,
+              "predicted_start": 7.190204081632653
+            },
+            {
+              "reference_id": "lead.bar5.e5.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 67,
+              "reference_start": 7.598367347,
+              "predicted_start": 7.598367346938775
+            },
+            {
+              "reference_id": "lead.bar6.e3.n0",
+              "reference_part": "lead",
+              "predicted_part": "rhythm",
+              "pitch": 72,
+              "reference_start": 8.822857143,
+              "predicted_start": 8.822857142857142
+            }
+          ],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            },
+            {
+              "part": "rhythm",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            }
+          ]
+        },
+        "lead_before_quantization": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 40,
+            "predicted_notes": 32,
+            "matched": 19,
+            "extra": 13,
+            "missing": 21,
+            "precision": 0.59375,
+            "recall": 0.475,
+            "f1": 0.5277777777777778,
+            "onset_mae_ms": 21.199092932927414,
+            "score_noteoff_mae_ms": 66.95794243012286,
+            "same_fingering_rate": null
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 40,
+            "predicted_notes": 32,
+            "matched": 19,
+            "extra": 13,
+            "missing": 21,
+            "precision": 0.59375,
+            "recall": 0.475,
+            "f1": 0.5277777777777778,
+            "onset_mae_ms": 21.199092932927414,
+            "score_noteoff_mae_ms": 66.95794243012286,
+            "same_fingering_rate": null
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 32,
+              "matched": 19,
+              "extra": 13,
+              "missing": 21,
+              "precision": 0.59375,
+              "recall": 0.475,
+              "f1": 0.5277777777777778,
+              "onset_mae_ms": 21.199092932927414,
+              "score_noteoff_mae_ms": 66.95794243012286,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 0,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            }
+          },
+          "part_confusions": [],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            }
+          ]
+        },
+        "raw_candidates": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 85,
+            "predicted_notes": 168,
+            "matched": 0,
+            "extra": 168,
+            "missing": 85,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "onset_mae_ms": null,
+            "score_noteoff_mae_ms": null,
+            "same_fingering_rate": null
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 85,
+            "predicted_notes": 168,
+            "matched": 74,
+            "extra": 94,
+            "missing": 11,
+            "precision": 0.44047619047619047,
+            "recall": 0.8705882352941177,
+            "f1": 0.5849802371541502,
+            "onset_mae_ms": 26.078923793374926,
+            "score_noteoff_mae_ms": 209.36932647098115,
+            "same_fingering_rate": null
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 40,
+              "precision": null,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 45,
+              "precision": null,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            }
+          },
+          "part_confusions": [],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            },
+            {
+              "part": "rhythm",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            }
+          ]
+        },
+        "raw_coverage_by_reference_part": {
+          "lead": {
+            "reference_notes": 40,
+            "predicted_notes": 168,
+            "matched": 38,
+            "extra": 130,
+            "missing": 2,
+            "precision": 0.2261904761904762,
+            "recall": 0.95,
+            "f1": 0.36538461538461536,
+            "onset_mae_ms": 23.7530254029716,
+            "score_noteoff_mae_ms": 155.75024464208138,
+            "same_fingering_rate": null
+          },
+          "rhythm": {
+            "reference_notes": 45,
+            "predicted_notes": 168,
+            "matched": 41,
+            "extra": 127,
+            "missing": 4,
+            "precision": 0.24404761904761904,
+            "recall": 0.9111111111111111,
+            "f1": 0.38497652582159625,
+            "onset_mae_ms": 28.402997598418192,
+            "score_noteoff_mae_ms": 280.26825951136544,
+            "same_fingering_rate": null
+          }
+        },
+        "arranged_sensitivity": {
+          "50": {
+            "reference_notes": 85,
+            "predicted_notes": 150,
+            "matched": 47,
+            "extra": 103,
+            "missing": 38,
+            "precision": 0.31333333333333335,
+            "recall": 0.5529411764705883,
+            "f1": 0.4,
+            "onset_mae_ms": 2.46200639071987e-07,
+            "score_noteoff_mae_ms": 43.630154052299076,
+            "same_fingering_rate": 0.5319148936170213
+          },
+          "80": {
+            "reference_notes": 85,
+            "predicted_notes": 150,
+            "matched": 47,
+            "extra": 103,
+            "missing": 38,
+            "precision": 0.31333333333333335,
+            "recall": 0.5529411764705883,
+            "f1": 0.4,
+            "onset_mae_ms": 2.46200639071987e-07,
+            "score_noteoff_mae_ms": 43.630154052299076,
+            "same_fingering_rate": 0.5319148936170213
+          },
+          "100": {
+            "reference_notes": 85,
+            "predicted_notes": 150,
+            "matched": 47,
+            "extra": 103,
+            "missing": 38,
+            "precision": 0.31333333333333335,
+            "recall": 0.5529411764705883,
+            "f1": 0.4,
+            "onset_mae_ms": 2.46200639071987e-07,
+            "score_noteoff_mae_ms": 43.630154052299076,
+            "same_fingering_rate": 0.5319148936170213
+          }
+        },
+        "audio_supported": {
+          "onset_tolerance_ms": 80.0,
+          "overall": {
+            "reference_notes": 40,
+            "predicted_notes": 40,
+            "matched": 19,
+            "extra": 21,
+            "missing": 21,
+            "precision": 0.475,
+            "recall": 0.475,
+            "f1": 0.475,
+            "onset_mae_ms": 21.199092932927414,
+            "score_noteoff_mae_ms": 151.82651863253366,
+            "same_fingering_rate": null
+          },
+          "pitch_onset_ignoring_part": {
+            "reference_notes": 40,
+            "predicted_notes": 40,
+            "matched": 19,
+            "extra": 21,
+            "missing": 21,
+            "precision": 0.475,
+            "recall": 0.475,
+            "f1": 0.475,
+            "onset_mae_ms": 21.199092932927414,
+            "score_noteoff_mae_ms": 151.82651863253366,
+            "same_fingering_rate": null
+          },
+          "parts": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 40,
+              "matched": 19,
+              "extra": 21,
+              "missing": 21,
+              "precision": 0.475,
+              "recall": 0.475,
+              "f1": 0.475,
+              "onset_mae_ms": 21.199092932927414,
+              "score_noteoff_mae_ms": 151.82651863253366,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 0,
+              "predicted_notes": 0,
+              "matched": 0,
+              "extra": 0,
+              "missing": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            }
+          },
+          "part_confusions": [],
+          "annotated_rests": [
+            {
+              "part": "lead",
+              "start": 1.0873469387755101,
+              "end": 1.68,
+              "false_attacks": 0
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -31,7 +31,7 @@ TAB生成後の再生対象は既定で「元の音源」です。「再生音�
 
 - 🎵 音声ファイル(wav / mp3 / flac / m4a / ogg など)を読み込んで解析
 - 📺 YouTube URL から音声をダウンロードして解析
-- 🎚️ (任意)Demucs によるギターパート分離 → 精度アップ
+- 🎚️ (任意)Demucs によるギターパート分離（採譜への効果は音源・判定処理によります）
 - 🎼 音程検出は Spotify の **basic-pitch**
 - 🎸 チューニング選択(レギュラー / ドロップD / 半音下 / Open G)、カポ位置指定
 - ⏱ BPMの自動推定とグリッド原点(オフセット)合わせ
@@ -61,13 +61,19 @@ tabs.bat
 手動指定する場合はBPMの「自動推定」を外してください。
 [添付曲での修正前後の比較](benchmarks/results/unmei_tempo_improvement.md)も参照できます。
 
-### ギターパート分離を使う場合(推奨・容量大)
+### ギターパート分離を使う場合（任意）
+
+今回の比較に使ったCPU構成を導入する例です。アプリと同じ仮想環境にインストールします。
 
 ```bat
-py -3 -m pip install demucs torch
+.venv\Scripts\python.exe -m pip install torch==2.5.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+.venv\Scripts\python.exe -m pip install demucs==4.0.1
 ```
 
-※ torch は数GBダウンロードされます。CPUでも動作しますが処理に時間がかかります。
+初回はPyTorchと学習済みモデルをダウンロードします。CPUでも動作しますが処理に時間がかかります。
+添付曲の[分離あり／なしの比較](benchmarks/results/unmei_demucs_comparison.md)では、
+リズムの余計な音は減る一方、分離後のリード選別には課題が残りました。分離を有効にすれば
+必ず全パートが改善するわけではないため、既定ではOFFのままです。
 
 ## 使い方
 
