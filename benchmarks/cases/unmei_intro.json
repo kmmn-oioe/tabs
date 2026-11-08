@@ -1,0 +1,1032 @@
+{
+  "schema_version": 1,
+  "id": "unmei_intro_bars_2_6",
+  "title": "運命に賭けたい論理・冒頭2〜6小節",
+  "audio_sha256": "84c66c7d1c1fcb4fcb826f81eb0ce5dcd5d44d26daeb1b1116c4482b70dbec1b",
+  "source": {
+    "audio_file": "Official Music Videoトゲナシトゲアリ運命に賭けたい論理 - アニメガールズバンドクライ.mp3",
+    "tab_video_file": "TABS運命に賭けたい論理Lonely fate to be destined トゲナシトゲアリTOGENASHI TOGEAR.mp4",
+    "tab_video_sha256": "42a89ccb472d61b0f5803c905ee01fa4a3fe96c2f5f6a7b4a346518991996ce2",
+    "audio_url": "https://youtu.be/waC_L2udTco",
+    "tab_url": "https://youtu.be/XNJO3_lSqC4"
+  },
+  "annotation": {
+    "status": "manual_tab_reference",
+    "scope": "TAB動画の上段Lead・下段Rhythmの2〜6小節。全曲・実録音の完全な正解ではない。",
+    "frames_reviewed_seconds": [
+      1,
+      2,
+      4,
+      7,
+      10
+    ],
+    "bpm_source": "動画に四分音符=147と表示",
+    "fingering": "動画のフレットはナット基準の絶対位置として読み、カポ1を引いて相対フレットへ正規化。五線譜の音名とも照合。",
+    "pitch_check": "Lead: 3弦10=F4(65), 2弦8=G4(67), 1弦10=D5(74), 1弦8=C5(72)。Rhythm: 1弦1=F4(65)。",
+    "durations": "全て譜面上の8分音符。弦の残響・実録音のリリースは未注釈。",
+    "timing": "第2小節頭を原曲1.680秒に置いた固定147 BPMグリッド。動画カーソルと音声発音を照合。",
+    "timing_uncertainty_seconds": 0.04
+  },
+  "alignment": {
+    "original_seconds_equals": "tab_video_seconds + original_minus_tab_seconds",
+    "original_minus_tab_seconds": 1.0873469387755101,
+    "method": "音声モノラル化・5512.5Hzへリサンプル後、10秒窓の波形相互相関。",
+    "checks": [
+      {
+        "tab_window_start": 0,
+        "offset_seconds": 1.0873469387755101,
+        "normalized_waveform_correlation": 0.37903
+      },
+      {
+        "tab_window_start": 10,
+        "offset_seconds": 1.0873469387755101,
+        "normalized_waveform_correlation": 0.703356
+      },
+      {
+        "tab_window_start": 30,
+        "offset_seconds": 1.0873469387755101,
+        "normalized_waveform_correlation": 0.65448
+      },
+      {
+        "tab_window_start": 90,
+        "offset_seconds": 1.0873469387755101,
+        "normalized_waveform_correlation": 0.612931
+      },
+      {
+        "tab_window_start": 150,
+        "offset_seconds": 1.0873469387755101,
+        "normalized_waveform_correlation": 0.575373
+      }
+    ],
+    "tab_bar_2_start_seconds": 0.5926530612244898,
+    "original_bar_2_start_seconds": 1.68
+  },
+  "bpm": 147.0,
+  "grid_offset": 0.047346938775510106,
+  "tuning": [
+    64,
+    59,
+    55,
+    50,
+    45,
+    40
+  ],
+  "capo": 1,
+  "analysis_window": [
+    0.0,
+    10.3
+  ],
+  "evaluation_window": [
+    1.0873469387755101,
+    9.843265306122449
+  ],
+  "rests": [
+    {
+      "part": "lead",
+      "start": 1.0873469387755101,
+      "end": 1.68
+    },
+    {
+      "part": "rhythm",
+      "start": 1.0873469387755101,
+      "end": 1.68
+    }
+  ],
+  "notes": [
+    {
+      "id": "lead.bar2.e0.n0",
+      "part": "lead",
+      "start": 1.68,
+      "end": 1.884081633,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 2,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar2.e0.n0",
+      "part": "rhythm",
+      "start": 1.68,
+      "end": 1.884081633,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 2,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar2.e0.n1",
+      "part": "rhythm",
+      "start": 1.68,
+      "end": 1.884081633,
+      "pitch": 51,
+      "string": 3,
+      "fret": 0,
+      "score_bar": 2,
+      "eighth": 0
+    },
+    {
+      "id": "lead.bar2.e1.n0",
+      "part": "lead",
+      "start": 1.884081633,
+      "end": 2.088163265,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 2,
+      "eighth": 1
+    },
+    {
+      "id": "rhythm.bar2.e1.n0",
+      "part": "rhythm",
+      "start": 1.884081633,
+      "end": 2.088163265,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 2,
+      "eighth": 1
+    },
+    {
+      "id": "lead.bar2.e2.n0",
+      "part": "lead",
+      "start": 2.088163265,
+      "end": 2.292244898,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 2,
+      "eighth": 2
+    },
+    {
+      "id": "rhythm.bar2.e2.n0",
+      "part": "rhythm",
+      "start": 2.088163265,
+      "end": 2.292244898,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 2,
+      "eighth": 2
+    },
+    {
+      "id": "lead.bar2.e3.n0",
+      "part": "lead",
+      "start": 2.292244898,
+      "end": 2.496326531,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 2,
+      "eighth": 3
+    },
+    {
+      "id": "rhythm.bar2.e3.n0",
+      "part": "rhythm",
+      "start": 2.292244898,
+      "end": 2.496326531,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 2,
+      "eighth": 3
+    },
+    {
+      "id": "lead.bar2.e4.n0",
+      "part": "lead",
+      "start": 2.496326531,
+      "end": 2.700408163,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 2,
+      "eighth": 4
+    },
+    {
+      "id": "rhythm.bar2.e4.n0",
+      "part": "rhythm",
+      "start": 2.496326531,
+      "end": 2.700408163,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 2,
+      "eighth": 4
+    },
+    {
+      "id": "lead.bar2.e5.n0",
+      "part": "lead",
+      "start": 2.700408163,
+      "end": 2.904489796,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 2,
+      "eighth": 5
+    },
+    {
+      "id": "rhythm.bar2.e5.n0",
+      "part": "rhythm",
+      "start": 2.700408163,
+      "end": 2.904489796,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 2,
+      "eighth": 5
+    },
+    {
+      "id": "lead.bar2.e6.n0",
+      "part": "lead",
+      "start": 2.904489796,
+      "end": 3.108571429,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 2,
+      "eighth": 6
+    },
+    {
+      "id": "rhythm.bar2.e6.n0",
+      "part": "rhythm",
+      "start": 2.904489796,
+      "end": 3.108571429,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 2,
+      "eighth": 6
+    },
+    {
+      "id": "lead.bar2.e7.n0",
+      "part": "lead",
+      "start": 3.108571429,
+      "end": 3.312653061,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 2,
+      "eighth": 7
+    },
+    {
+      "id": "rhythm.bar2.e7.n0",
+      "part": "rhythm",
+      "start": 3.108571429,
+      "end": 3.312653061,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 2,
+      "eighth": 7
+    },
+    {
+      "id": "lead.bar3.e0.n0",
+      "part": "lead",
+      "start": 3.312653061,
+      "end": 3.516734694,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 3,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar3.e0.n0",
+      "part": "rhythm",
+      "start": 3.312653061,
+      "end": 3.516734694,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 3,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar3.e0.n1",
+      "part": "rhythm",
+      "start": 3.312653061,
+      "end": 3.516734694,
+      "pitch": 53,
+      "string": 3,
+      "fret": 2,
+      "score_bar": 3,
+      "eighth": 0
+    },
+    {
+      "id": "lead.bar3.e1.n0",
+      "part": "lead",
+      "start": 3.516734694,
+      "end": 3.720816327,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 3,
+      "eighth": 1
+    },
+    {
+      "id": "rhythm.bar3.e1.n0",
+      "part": "rhythm",
+      "start": 3.516734694,
+      "end": 3.720816327,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 3,
+      "eighth": 1
+    },
+    {
+      "id": "lead.bar3.e2.n0",
+      "part": "lead",
+      "start": 3.720816327,
+      "end": 3.924897959,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 3,
+      "eighth": 2
+    },
+    {
+      "id": "rhythm.bar3.e2.n0",
+      "part": "rhythm",
+      "start": 3.720816327,
+      "end": 3.924897959,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 3,
+      "eighth": 2
+    },
+    {
+      "id": "lead.bar3.e3.n0",
+      "part": "lead",
+      "start": 3.924897959,
+      "end": 4.128979592,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 3,
+      "eighth": 3
+    },
+    {
+      "id": "rhythm.bar3.e3.n0",
+      "part": "rhythm",
+      "start": 3.924897959,
+      "end": 4.128979592,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 3,
+      "eighth": 3
+    },
+    {
+      "id": "lead.bar3.e4.n0",
+      "part": "lead",
+      "start": 4.128979592,
+      "end": 4.333061224,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 3,
+      "eighth": 4
+    },
+    {
+      "id": "rhythm.bar3.e4.n0",
+      "part": "rhythm",
+      "start": 4.128979592,
+      "end": 4.333061224,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 3,
+      "eighth": 4
+    },
+    {
+      "id": "lead.bar3.e5.n0",
+      "part": "lead",
+      "start": 4.333061224,
+      "end": 4.537142857,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 3,
+      "eighth": 5
+    },
+    {
+      "id": "rhythm.bar3.e5.n0",
+      "part": "rhythm",
+      "start": 4.333061224,
+      "end": 4.537142857,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 3,
+      "eighth": 5
+    },
+    {
+      "id": "lead.bar3.e6.n0",
+      "part": "lead",
+      "start": 4.537142857,
+      "end": 4.74122449,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 3,
+      "eighth": 6
+    },
+    {
+      "id": "rhythm.bar3.e6.n0",
+      "part": "rhythm",
+      "start": 4.537142857,
+      "end": 4.74122449,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 3,
+      "eighth": 6
+    },
+    {
+      "id": "lead.bar3.e7.n0",
+      "part": "lead",
+      "start": 4.74122449,
+      "end": 4.945306122,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 3,
+      "eighth": 7
+    },
+    {
+      "id": "rhythm.bar3.e7.n0",
+      "part": "rhythm",
+      "start": 4.74122449,
+      "end": 4.945306122,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 3,
+      "eighth": 7
+    },
+    {
+      "id": "lead.bar4.e0.n0",
+      "part": "lead",
+      "start": 4.945306122,
+      "end": 5.149387755,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 4,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar4.e0.n0",
+      "part": "rhythm",
+      "start": 4.945306122,
+      "end": 5.149387755,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 4,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar4.e0.n1",
+      "part": "rhythm",
+      "start": 4.945306122,
+      "end": 5.149387755,
+      "pitch": 50,
+      "string": 4,
+      "fret": 4,
+      "score_bar": 4,
+      "eighth": 0
+    },
+    {
+      "id": "lead.bar4.e1.n0",
+      "part": "lead",
+      "start": 5.149387755,
+      "end": 5.353469388,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 4,
+      "eighth": 1
+    },
+    {
+      "id": "rhythm.bar4.e1.n0",
+      "part": "rhythm",
+      "start": 5.149387755,
+      "end": 5.353469388,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 4,
+      "eighth": 1
+    },
+    {
+      "id": "lead.bar4.e2.n0",
+      "part": "lead",
+      "start": 5.353469388,
+      "end": 5.55755102,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 4,
+      "eighth": 2
+    },
+    {
+      "id": "rhythm.bar4.e2.n0",
+      "part": "rhythm",
+      "start": 5.353469388,
+      "end": 5.55755102,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 4,
+      "eighth": 2
+    },
+    {
+      "id": "lead.bar4.e3.n0",
+      "part": "lead",
+      "start": 5.55755102,
+      "end": 5.761632653,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 4,
+      "eighth": 3
+    },
+    {
+      "id": "rhythm.bar4.e3.n0",
+      "part": "rhythm",
+      "start": 5.55755102,
+      "end": 5.761632653,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 4,
+      "eighth": 3
+    },
+    {
+      "id": "lead.bar4.e4.n0",
+      "part": "lead",
+      "start": 5.761632653,
+      "end": 5.965714286,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 4,
+      "eighth": 4
+    },
+    {
+      "id": "rhythm.bar4.e4.n0",
+      "part": "rhythm",
+      "start": 5.761632653,
+      "end": 5.965714286,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 4,
+      "eighth": 4
+    },
+    {
+      "id": "lead.bar4.e5.n0",
+      "part": "lead",
+      "start": 5.965714286,
+      "end": 6.169795918,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 4,
+      "eighth": 5
+    },
+    {
+      "id": "rhythm.bar4.e5.n0",
+      "part": "rhythm",
+      "start": 5.965714286,
+      "end": 6.169795918,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 4,
+      "eighth": 5
+    },
+    {
+      "id": "lead.bar4.e6.n0",
+      "part": "lead",
+      "start": 6.169795918,
+      "end": 6.373877551,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 4,
+      "eighth": 6
+    },
+    {
+      "id": "rhythm.bar4.e6.n0",
+      "part": "rhythm",
+      "start": 6.169795918,
+      "end": 6.373877551,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 4,
+      "eighth": 6
+    },
+    {
+      "id": "lead.bar4.e7.n0",
+      "part": "lead",
+      "start": 6.373877551,
+      "end": 6.577959184,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 4,
+      "eighth": 7
+    },
+    {
+      "id": "rhythm.bar4.e7.n0",
+      "part": "rhythm",
+      "start": 6.373877551,
+      "end": 6.577959184,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 4,
+      "eighth": 7
+    },
+    {
+      "id": "lead.bar5.e0.n0",
+      "part": "lead",
+      "start": 6.577959184,
+      "end": 6.782040816,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 5,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar5.e0.n0",
+      "part": "rhythm",
+      "start": 6.577959184,
+      "end": 6.782040816,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 5,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar5.e0.n1",
+      "part": "rhythm",
+      "start": 6.577959184,
+      "end": 6.782040816,
+      "pitch": 55,
+      "string": 3,
+      "fret": 4,
+      "score_bar": 5,
+      "eighth": 0
+    },
+    {
+      "id": "lead.bar5.e1.n0",
+      "part": "lead",
+      "start": 6.782040816,
+      "end": 6.986122449,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 5,
+      "eighth": 1
+    },
+    {
+      "id": "rhythm.bar5.e1.n0",
+      "part": "rhythm",
+      "start": 6.782040816,
+      "end": 6.986122449,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 5,
+      "eighth": 1
+    },
+    {
+      "id": "lead.bar5.e2.n0",
+      "part": "lead",
+      "start": 6.986122449,
+      "end": 7.190204082,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 5,
+      "eighth": 2
+    },
+    {
+      "id": "rhythm.bar5.e2.n0",
+      "part": "rhythm",
+      "start": 6.986122449,
+      "end": 7.190204082,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 5,
+      "eighth": 2
+    },
+    {
+      "id": "lead.bar5.e3.n0",
+      "part": "lead",
+      "start": 7.190204082,
+      "end": 7.394285714,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 5,
+      "eighth": 3
+    },
+    {
+      "id": "rhythm.bar5.e3.n0",
+      "part": "rhythm",
+      "start": 7.190204082,
+      "end": 7.394285714,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 5,
+      "eighth": 3
+    },
+    {
+      "id": "lead.bar5.e4.n0",
+      "part": "lead",
+      "start": 7.394285714,
+      "end": 7.598367347,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 5,
+      "eighth": 4
+    },
+    {
+      "id": "rhythm.bar5.e4.n0",
+      "part": "rhythm",
+      "start": 7.394285714,
+      "end": 7.598367347,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 5,
+      "eighth": 4
+    },
+    {
+      "id": "lead.bar5.e5.n0",
+      "part": "lead",
+      "start": 7.598367347,
+      "end": 7.80244898,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 5,
+      "eighth": 5
+    },
+    {
+      "id": "rhythm.bar5.e5.n0",
+      "part": "rhythm",
+      "start": 7.598367347,
+      "end": 7.80244898,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 5,
+      "eighth": 5
+    },
+    {
+      "id": "lead.bar5.e6.n0",
+      "part": "lead",
+      "start": 7.80244898,
+      "end": 8.006530612,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 5,
+      "eighth": 6
+    },
+    {
+      "id": "rhythm.bar5.e6.n0",
+      "part": "rhythm",
+      "start": 7.80244898,
+      "end": 8.006530612,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 5,
+      "eighth": 6
+    },
+    {
+      "id": "lead.bar5.e7.n0",
+      "part": "lead",
+      "start": 8.006530612,
+      "end": 8.210612245,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 5,
+      "eighth": 7
+    },
+    {
+      "id": "rhythm.bar5.e7.n0",
+      "part": "rhythm",
+      "start": 8.006530612,
+      "end": 8.210612245,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 5,
+      "eighth": 7
+    },
+    {
+      "id": "lead.bar6.e0.n0",
+      "part": "lead",
+      "start": 8.210612245,
+      "end": 8.414693878,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 6,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar6.e0.n0",
+      "part": "rhythm",
+      "start": 8.210612245,
+      "end": 8.414693878,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 6,
+      "eighth": 0
+    },
+    {
+      "id": "rhythm.bar6.e0.n1",
+      "part": "rhythm",
+      "start": 8.210612245,
+      "end": 8.414693878,
+      "pitch": 51,
+      "string": 3,
+      "fret": 0,
+      "score_bar": 6,
+      "eighth": 0
+    },
+    {
+      "id": "lead.bar6.e1.n0",
+      "part": "lead",
+      "start": 8.414693878,
+      "end": 8.61877551,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 6,
+      "eighth": 1
+    },
+    {
+      "id": "rhythm.bar6.e1.n0",
+      "part": "rhythm",
+      "start": 8.414693878,
+      "end": 8.61877551,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 6,
+      "eighth": 1
+    },
+    {
+      "id": "lead.bar6.e2.n0",
+      "part": "lead",
+      "start": 8.61877551,
+      "end": 8.822857143,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 6,
+      "eighth": 2
+    },
+    {
+      "id": "rhythm.bar6.e2.n0",
+      "part": "rhythm",
+      "start": 8.61877551,
+      "end": 8.822857143,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 6,
+      "eighth": 2
+    },
+    {
+      "id": "lead.bar6.e3.n0",
+      "part": "lead",
+      "start": 8.822857143,
+      "end": 9.026938776,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 6,
+      "eighth": 3
+    },
+    {
+      "id": "rhythm.bar6.e3.n0",
+      "part": "rhythm",
+      "start": 8.822857143,
+      "end": 9.026938776,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 6,
+      "eighth": 3
+    },
+    {
+      "id": "lead.bar6.e4.n0",
+      "part": "lead",
+      "start": 9.026938776,
+      "end": 9.231020408,
+      "pitch": 65,
+      "string": 2,
+      "fret": 9,
+      "score_bar": 6,
+      "eighth": 4
+    },
+    {
+      "id": "rhythm.bar6.e4.n0",
+      "part": "rhythm",
+      "start": 9.026938776,
+      "end": 9.231020408,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 6,
+      "eighth": 4
+    },
+    {
+      "id": "lead.bar6.e5.n0",
+      "part": "lead",
+      "start": 9.231020408,
+      "end": 9.435102041,
+      "pitch": 67,
+      "string": 1,
+      "fret": 7,
+      "score_bar": 6,
+      "eighth": 5
+    },
+    {
+      "id": "rhythm.bar6.e5.n0",
+      "part": "rhythm",
+      "start": 9.231020408,
+      "end": 9.435102041,
+      "pitch": 60,
+      "string": 1,
+      "fret": 0,
+      "score_bar": 6,
+      "eighth": 5
+    },
+    {
+      "id": "lead.bar6.e6.n0",
+      "part": "lead",
+      "start": 9.435102041,
+      "end": 9.639183673,
+      "pitch": 74,
+      "string": 0,
+      "fret": 9,
+      "score_bar": 6,
+      "eighth": 6
+    },
+    {
+      "id": "rhythm.bar6.e6.n0",
+      "part": "rhythm",
+      "start": 9.435102041,
+      "end": 9.639183673,
+      "pitch": 65,
+      "string": 0,
+      "fret": 0,
+      "score_bar": 6,
+      "eighth": 6
+    },
+    {
+      "id": "lead.bar6.e7.n0",
+      "part": "lead",
+      "start": 9.639183673,
+      "end": 9.843265306,
+      "pitch": 72,
+      "string": 0,
+      "fret": 7,
+      "score_bar": 6,
+      "eighth": 7
+    },
+    {
+      "id": "rhythm.bar6.e7.n0",
+      "part": "rhythm",
+      "start": 9.639183673,
+      "end": 9.843265306,
+      "pitch": 58,
+      "string": 2,
+      "fret": 2,
+      "score_bar": 6,
+      "eighth": 7
+    }
+  ]
+}

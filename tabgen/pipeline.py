@@ -19,15 +19,19 @@ def generate(
     auto_bpm: bool = True,
     progress: Callable[[str], None] | None = None,
     audio_sources: dict[str, str] | None = None,
+    diagnostics: dict | None = None,
 ) -> tuple[str, str, str, str]:
     """Returns (tab_text, midi_paths, sheet_paths, stem_wav_path).
 
     source: local audio file path or YouTube URL.
     audio_sources: optional output dictionary containing original/separated paths.
+    diagnostics: optional snapshots for offline evaluation; does not affect generation.
     """
     opts = opts or TabOptions()
     if audio_sources is not None:
         audio_sources.clear()
+    if diagnostics is not None:
+        diagnostics.clear()
 
     def log(msg: str, pct: float | None = None):
         if progress:
@@ -65,6 +69,8 @@ def generate(
                        min_note_length_ms=min_note_length_ms,
                        stereo_candidates=split_lead_rhythm and opts.audio_lead_detection)
     log(f"{len(notes)} ノートを検出しました", 95)
+    if diagnostics is not None:
+        diagnostics["transcribed"] = [dict(n) for n in notes]
 
     # 3.5 tempo & grid-offset estimation
     if auto_bpm:
@@ -110,6 +116,8 @@ def generate(
                                    suppress_chords=opts.suppress_chord_attacks,
                                    start_seconds=opts.lead_start_seconds, lead_scores=lead_scores)
         log(f"旋律追跡: {len(lead)} ノートを採用 / その他 {len(rhythm)} ノート")
+        if diagnostics is not None:
+            diagnostics["lead_selected"] = [dict(n) for n in lead]
         lead = arrange_melody(lead, opts)
         entry_text = (f"リード開始指定: {opts.lead_start_seconds:g}秒（それ以前は休符）\n"
                       if opts.lead_start_seconds > 0 else "")
@@ -144,6 +152,13 @@ def generate(
         notes = arrange(notes)
         tab_text = with_header(notes_to_tab(notes, opts, arranged=True))
         lead_notes, rhythm_notes = notes, []
+
+    if diagnostics is not None:
+        from dataclasses import asdict
+        diagnostics.update(lead=[dict(n) for n in lead_notes],
+                           rhythm=[dict(n) for n in rhythm_notes],
+                           options=asdict(opts),
+                           separation_applied=os.path.realpath(stem_path) != os.path.realpath(wav))
 
     # 5. export MIDI + sheet music (MusicXML)
     midi_paths: list[str] = []

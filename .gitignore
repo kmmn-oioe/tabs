@@ -8,6 +8,7 @@ __pycache__/
 test.pdf
 test.musicxml
 stems/
+benchmark-output/
 
 # Build
 build/
