@@ -23,6 +23,7 @@ class TabOptions:
     lead_start_seconds: float = 0. # manual intro exclusion, 0 = automatic only
     audio_lead_detection: bool = True
     grid_offset: float = 0.0        # seconds; grid origin (beat 0) of the song
+    rhythm_mode: str = "chords"    # chords = held accompaniment; notes = detected attacks
 
 
 def notes_to_tab(notes: list[dict], opts: TabOptions | None = None, *, arranged: bool = False,

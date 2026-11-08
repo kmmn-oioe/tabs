@@ -158,6 +158,8 @@ def report_markdown(report):
         return '—' if value is None else f'{value*100:.1f}%'
     lines = [f"# {report['case_id']} 比較結果", '',
              f"モード: {report['run']['tempo_mode']} / 分離適用: {report['run']['separation_applied']}",
+             'リズム出力: '+('検出した発音を保持' if report['run']['options'].get('rhythm_mode') == 'notes'
+                            else 'コード伴奏（保持）'),
              f"出力BPM: {report['run']['options']['bpm']:g} / TAB記載BPM: {report['reference_bpm']:g}",
              f"発音許容差: ±{report['onset_tolerance_ms']:g} ms。評価は指定した短い区間に限定。", '',
              '| 段階・パート | 正解音 | 出力音 | 一致 | 余計な音 | 抜けた音 | 適合率 | 再現率 | F1 |',
@@ -178,7 +180,9 @@ def report_markdown(report):
               '注意:', '',
               '- 正解はTAB動画から手で転記した冒頭5小節。原曲の全ギタートラックを保証するものではない。',
               '- 生の音程候補には歌・ベースなども含まれる。「余計な音」をすべてギター誤検出とはみなせない。',
-              '- リズム出力はコードを保持する伴奏への編曲。原譜のアルペジオとの相違も欠落・追加に含む。',
+              ('- リズム出力は検出した発音を保持。検出・声部分けの誤りも残る。運指制限と量子化による省略はありえる。'
+               if report['run']['options'].get('rhythm_mode') == 'notes'
+               else '- リズム出力はコードを保持する伴奏への編曲。原譜のアルペジオとの相違も欠落・追加に含む。'),
               '- 音の終了時刻は譜面上の音価。実録音の残響・サステインの正解ではない。',
               '- 運指の一致は参考値。同じ音を別の弦で弾くことも可能。',
               '- referenceモードは正解のBPM・グリッドを与えた診断。自動採譜の精度として扱わない。',
@@ -187,7 +191,7 @@ def report_markdown(report):
 
 
 def run_case(reference_path, audio_path, output_dir, *, tempo_mode='auto', separation=False, tolerance=.08,
-             full_context=False):
+             full_context=False, rhythm_mode='chords'):
     import soundfile as sf
     from .audio import read_preview_audio
     from .pipeline import generate
@@ -199,7 +203,9 @@ def run_case(reference_path, audio_path, output_dir, *, tempo_mode='auto', separ
     audio_hash = _sha(audio_path)
     if case.get('audio_sha256') and audio_hash != case['audio_sha256']:
         raise ValueError('原曲ファイルのSHA-256が正解データと異なります。同じ添付MP3を指定してください。')
-    opts = TabOptions(capo=case.get('capo',0), tuning=case['tuning'])
+    if rhythm_mode not in ('notes','chords'):
+        raise ValueError('Unknown rhythm mode')
+    opts = TabOptions(capo=case.get('capo',0), tuning=case['tuning'], rhythm_mode=rhythm_mode)
     if tempo_mode == 'reference':
         opts.bpm, opts.grid_offset = case['bpm'], case['grid_offset']
     elif tempo_mode != 'auto':
@@ -248,6 +254,7 @@ def main():
     run.add_argument('--tempo-mode', choices=('auto','reference'),default='auto')
     run.add_argument('--separation',action='store_true')
     run.add_argument('--full-context',action='store_true',help='全曲を解析し、同じ注釈区間を採点する')
+    run.add_argument('--rhythm-mode',choices=('chords','notes'),default='chords')
     run.add_argument('--tolerance-ms',type=float,default=80)
     compare = sub.add_parser('compare')
     compare.add_argument('--reference',required=True)
@@ -258,7 +265,7 @@ def main():
     if args.command == 'run':
         result = run_case(args.reference,args.audio,args.output,tempo_mode=args.tempo_mode,
                           separation=args.separation,tolerance=args.tolerance_ms/1000,
-                          full_context=args.full_context)
+                          full_context=args.full_context,rhythm_mode=args.rhythm_mode)
         print(report_markdown(result))
     else:
         case = json.loads(Path(args.reference).read_text(encoding='utf-8'))

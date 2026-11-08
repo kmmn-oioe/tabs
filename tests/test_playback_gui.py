@@ -136,6 +136,22 @@ class PlaybackGuiTests(unittest.TestCase):
         app.update()
         self.assertIsNotNone(app.text.dlineinfo(f'{app.playhead.blocks[1].rows[-1]}.0'))
 
+    def test_rhythm_output_choice_reaches_generation_options(self):
+        app=self.app
+        app.split_var.set(True)
+        app._toggle_split()
+        self.assertEqual(str(app.rhythm_mode_box.cget('state')),'readonly')
+        app.rhythm_mode_var.set('検出した発音を保持')
+        with patch('main.generate',return_value=(self.content,'','',str(self.path))) as generate:
+            app._worker(str(self.path))
+        self.assertEqual(generate.call_args.args[1].rhythm_mode,'notes')
+        self.assertTrue(generate.call_args.kwargs['split_lead_rhythm'])
+        app.update()
+        app.split_var.set(False)
+        app._toggle_split()
+        self.assertEqual(str(app.rhythm_mode_box.cget('state')),'disabled')
+        self.assertEqual(app.rhythm_mode_var.get(),'検出した発音を保持')
+
     def setup_sources(self, stereo=False):
         original = Path(self.temp.name)/'original.wav'
         separated = Path(self.temp.name)/'guitar.wav'

@@ -28,6 +28,8 @@ def generate(
     diagnostics: optional snapshots for offline evaluation; does not affect generation.
     """
     opts = opts or TabOptions()
+    if opts.rhythm_mode not in ("notes", "chords"):
+        raise ValueError("Unknown rhythm mode: " + opts.rhythm_mode)
     if audio_sources is not None:
         audio_sources.clear()
     if diagnostics is not None:
@@ -132,6 +134,7 @@ def generate(
         log(f"旋律追跡: {len(lead)} ノートを採用 / その他 {len(rhythm)} ノート")
         if diagnostics is not None:
             diagnostics["lead_selected"] = [dict(n) for n in lead]
+            diagnostics["rhythm_candidates"] = [dict(n) for n in rhythm]
         lead = arrange_melody(lead, opts)
         entry_text = (f"リード開始指定: {opts.lead_start_seconds:g}秒（それ以前は休符）\n"
                       if opts.lead_start_seconds > 0 else "")
@@ -148,16 +151,24 @@ def generate(
             log(f"音声コード解析を利用できないため検出ノートから推定します: {error}", 97)
             changes = None
             analysis_method = "コード推定: 検出ノート（音声解析を利用できなかったため）"
-        rhythm, changes = arrange_rhythm(notes, opts, changes=changes)
-        log(f"リズム伴奏: {len(changes)} 区間のコード切替を作成しました", 97)
+        if changes is None:
+            from .rhythm import chord_changes
+            changes = chord_changes(notes, opts)
+        rhythm_input = rhythm if opts.rhythm_mode == "notes" else notes
+        rhythm, changes = arrange_rhythm(rhythm_input, opts, changes=changes)
+        rhythm_method = ("リズム出力: 検出した発音を保持（拍位置・運指を調整）" if opts.rhythm_mode == "notes"
+                         else "リズム出力: コード伴奏（次の切替まで保持）")
+        log(f"{rhythm_method}: {len(rhythm)} 音", 97)
         tab_text = (
             "====== リードギター ======\n"
             + lead_method + "\n"
             + entry_text + with_header(lead_text)
             + "\n\n====== リズムギター ======\n"
+            + rhythm_method + "\n"
             + analysis_method + "\n"
             + progression_text(changes, opts) + "\n\n"
-            + with_header(notes_to_tab(rhythm, opts, arranged=True))
+            + with_header(notes_to_tab(rhythm, opts, arranged=True,
+                                       duration=duration if opts.rhythm_mode == "notes" else None))
         )
         lead_notes, rhythm_notes = lead, rhythm
     else:
@@ -196,7 +207,9 @@ def generate(
         if split_lead_rhythm:
             export_musicxml(lead_notes, os.path.join(tmp_dir, "tabgen_lead.musicxml"), opts, "lead",
                             duration=duration, start_floor=opts.lead_start_seconds)
-            export_musicxml(rhythm_notes, os.path.join(tmp_dir, "tabgen_rhythm.musicxml"), opts, "rhythm")
+            export_musicxml(rhythm_notes, os.path.join(tmp_dir, "tabgen_rhythm.musicxml"), opts, "rhythm",
+                            duration=duration if opts.rhythm_mode == "notes" else None,
+                            chord_changes=changes if opts.rhythm_mode == "notes" else None)
             sheet_paths = [os.path.join(tmp_dir, "tabgen_lead.musicxml"),
                            os.path.join(tmp_dir, "tabgen_rhythm.musicxml")]
         else:

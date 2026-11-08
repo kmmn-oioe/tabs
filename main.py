@@ -21,6 +21,7 @@ TUNINGS = {
 
 
 DIFFICULTY_LABELS = {"初級（最大3音）": "easy", "標準（最大4音）": "standard", "上級（最大6音）": "advanced"}
+RHYTHM_MODE_LABELS = {"コード伴奏（保持）": "chords", "検出した発音を保持": "notes"}
 
 
 class App(tk.Tk):
@@ -83,7 +84,7 @@ class App(tk.Tk):
                         variable=self.sep_var).grid(row=2, column=0, columnspan=2, sticky="w", padx=4)
 
         self.split_var = tk.BooleanVar(value=False)
-        ttk.Checkbutton(opts, text="リード / コード伴奏に分けて生成", variable=self.split_var,
+        ttk.Checkbutton(opts, text="リード / リズムに分けて生成", variable=self.split_var,
                         command=self._toggle_split).grid(row=2, column=2, columnspan=2, sticky="w", padx=4)
 
         ttk.Label(opts, text="リード音域の目安（補助）").grid(row=3, column=0, sticky="w", padx=4)
@@ -101,6 +102,11 @@ class App(tk.Tk):
         self.note_len_var = tk.IntVar(value=70)
         ttk.Spinbox(opts, from_=30, to=300, increment=10, textvariable=self.note_len_var,
                     width=6).grid(row=4, column=1, sticky="w")
+        ttk.Label(opts, text="リズム出力").grid(row=4, column=2, sticky="w")
+        self.rhythm_mode_var = tk.StringVar(value="コード伴奏（保持）")
+        self.rhythm_mode_box = ttk.Combobox(opts, textvariable=self.rhythm_mode_var,
+                                           values=list(RHYTHM_MODE_LABELS), width=22, state="disabled")
+        self.rhythm_mode_box.grid(row=4, column=3, sticky="w", padx=4)
 
         ttk.Label(opts, text="演奏難易度").grid(row=5, column=0, sticky="w", padx=4)
         self.difficulty_var = tk.StringVar(value="標準（最大4音）")
@@ -142,6 +148,7 @@ class App(tk.Tk):
         self.bpm_spin.state(["disabled"] if self.auto_bpm_var.get() else ["!disabled"])
 
     def _toggle_split(self):
+        self.rhythm_mode_box.configure(state="readonly" if self.split_var.get() else "disabled")
         self.chord_beats_box.configure(state="readonly" if self.split_var.get() else "disabled")
         self.lead_start_box.configure(state="normal" if self.split_var.get() else "disabled")
         self.suppress_chords_check.configure(state="normal" if self.split_var.get() and not self.audio_lead_var.get()
@@ -286,6 +293,7 @@ class App(tk.Tk):
                 suppress_chord_attacks=self.suppress_chords_var.get(),
                 lead_start_seconds=float(self.lead_start_var.get()),
                 audio_lead_detection=self.audio_lead_var.get(),
+                rhythm_mode=RHYTHM_MODE_LABELS[self.rhythm_mode_var.get()],
             )
             tab_text, midi_path, sheet_paths, stem = generate(
                 src, opts, use_separation=self.sep_var.get(),

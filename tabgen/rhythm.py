@@ -5,7 +5,7 @@ from dataclasses import dataclass, replace
 from itertools import product
 from math import ceil, floor
 
-from .tab import TabOptions, DIFFICULTIES, playable, _effort, _transition
+from .tab import TabOptions, DIFFICULTIES, playable, _effort, _transition, arrange_notes
 
 NAMES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
 QUALITIES = (
@@ -143,12 +143,20 @@ def _voicings(change, opts):
 
 def arrange_rhythm(notes: list[dict], opts: TabOptions, *,
                    changes: list[ChordChange] | None = None) -> tuple[list[dict], list[ChordChange]]:
-    """Hold one playable voicing until the chord changes; silence remains silence.
+    """Preserve detected attacks or synthesize a held chord accompaniment.
 
-    Uses the full transcription, including arpeggios, to retain chord evidence
-    that would otherwise disappear when the top note is split into the lead.
+    Chord mode accepts the full transcription to retain harmony evidence.
+    Notes mode accepts the remaining non-lead detections; supplied changes are
+    annotation only and do not replace or create sounding notes.
     """
+    if opts.rhythm_mode not in ("notes", "chords"):
+        raise ValueError("Unknown rhythm mode: " + opts.rhythm_mode)
     changes = chord_changes(notes, opts) if changes is None else list(changes)
+    if opts.rhythm_mode == "notes":
+        # Harmony is annotation only. Never invent a voicing, repeat a stroke,
+        # or drop an arpeggio because its chord label is unknown (N.C.).
+        detected = [{k:v for k,v in n.items() if k != "chord"} for n in notes]
+        return arrange_notes(detected, opts), changes
     if not changes:
         return [], []
     cache, layers = {}, []
@@ -188,7 +196,8 @@ def arrange_rhythm(notes: list[dict], opts: TabOptions, *,
 
 
 def progression_text(changes: list[ChordChange], opts: TabOptions) -> str:
-    lines = ["コード進行（実音・~ は次の切替まで保持）"]
+    lines = ["コード進行（実音・~ は次の切替まで保持）" if opts.rhythm_mode == "chords"
+             else "コード進行（実音・コード名は注釈／発音は検出音を保持）"]
     beat = 60 / max(opts.bpm, 1)
     for c in changes:
         position = max(0., (c.start - opts.grid_offset) / beat)

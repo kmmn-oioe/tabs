@@ -22,6 +22,7 @@ def export_tab_data(notes, sheet_path, opts: TabOptions, title, changes, duratio
         'grid_offset': opts.grid_offset, 'quantize': opts.quantize,
         'tuning': opts.tuning, 'capo': opts.capo,
         'bars_per_line': opts.bars_per_line, 'duration': duration,
+        'rhythm_mode': opts.rhythm_mode,
         'notes': [{k: n[k] for k in ('start', 'end', 'string', 'fret')}
                   | ({'chord': n['chord']} if n.get('chord') else {}) for n in notes],
         'chords': [{'start': c.start, 'end': c.end, 'name': c.name} for c in changes],
@@ -86,7 +87,10 @@ def render_tab_pdf(data, pdf_path):
               for i in range(total_bars * steps)]
     bar_widths = [sum(widths[b*steps:(b+1)*steps]) + 12 for b in range(total_bars)]
     c = Canvas(str(pdf_path), pagesize=A4, pageCompression=1)
-    c.setTitle(f"{data['title']} - Guitar TAB")
+    title = f"{data['title']} - Guitar TAB"
+    if data['title'] == 'rhythm' and data.get('rhythm_mode') == 'notes':
+        title += ' (Detected attacks)'
+    c.setTitle(title)
     names = ('C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B')
     tuning = ' '.join(names[p % 12] for p in data['tuning'])
     page, y = 0, 0
@@ -97,7 +101,7 @@ def render_tab_pdf(data, pdf_path):
             c.showPage()
         page += 1
         c.setFont('Helvetica-Bold', 15)
-        c.drawString(margin, page_h - 38, f"{data['title']} - Guitar TAB")
+        c.drawString(margin, page_h - 38, title)
         c.setFont('Helvetica', 9)
         c.drawString(margin, page_h - 56,
                      f"BPM {data['bpm']:g} | 4/4 | Capo {data['capo']} | Tuning (1-{string_count}): {tuning}")
