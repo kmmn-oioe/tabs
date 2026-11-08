@@ -77,10 +77,16 @@ def generate(
         log("テンポを推定中…", 96)
         from .tempo import estimate_bpm_and_offset
         try:
-            bpm, offset = estimate_bpm_and_offset(stem_path)
+            tempo_diagnostics = {}
+            bpm, offset = estimate_bpm_and_offset(stem_path, diagnostics=tempo_diagnostics)
             opts.bpm = round(bpm, 1)
             opts.grid_offset = round(offset, 3)
-            log(f"BPM {opts.bpm:g} を自動推定しました", 96)
+            if diagnostics is not None:
+                diagnostics["tempo"] = tempo_diagnostics
+            if tempo_diagnostics.get("fallback"):
+                log(f"拍の情報が不足しているため BPM {opts.bpm:g} を仮設定しました", 96)
+            else:
+                log(f"BPM {opts.bpm:g} を自動推定しました", 96)
         except Exception as e:
             log(f"テンポ推定をスキップ: {e}")
 

@@ -225,6 +225,7 @@ def run_case(reference_path, audio_path, output_dir, *, tempo_mode='auto', separ
         evaluation_window=case['evaluation_window'], analysis_window=[begin,stop],
         onset_tolerance_ms=tolerance*1000,
         run=dict(tempo_mode=tempo_mode, context_mode='full' if full_context else 'excerpt',
+                 tempo_estimation=diagnostics.get('tempo'),
                  lead_evidence_method=diagnostics.get('lead_evidence_method'), separation_requested=separation,
                  separation_applied=diagnostics['separation_applied'], options=asdict(opts),
                  audio_sha256=audio_hash, reference_sha256=_sha(reference_path),
