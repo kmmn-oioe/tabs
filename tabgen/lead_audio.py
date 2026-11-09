@@ -6,6 +6,7 @@ lead-guitar classifier. A lone arpeggio cannot establish a separate lead.
 from __future__ import annotations
 
 from bisect import bisect_left, bisect_right, insort
+from collections import Counter
 from dataclasses import dataclass
 
 import numpy as np
@@ -31,6 +32,7 @@ class LeadAudioEvidence:
     reference_found: bool
     features: list[NoteAudioFeatures]
     method: str = "reference"
+    recurring_supported: int = 0
 
     def summary(self) -> str:
         supported = sum(s >= .6 for s in self.scores)
@@ -38,8 +40,10 @@ class LeadAudioEvidence:
         reference = ("定位が異なる声部の重なりと旋律の動きを確認しました。" if self.method == "spatial_phrase"
                      else "伴奏の基準音色を推定しました。" if self.reference_found
                      else "伴奏の基準音色が不足しています。")
+        recurring = (f"同じ声部の反復を前後から確認して補完: {self.recurring_supported}候補\n"
+                     if self.recurring_supported else "")
         return (f"リード音声判定: {channels}\n"
-                f"{reference}\n"
+                f"{reference}\n{recurring}"
                 f"独立した声部の根拠あり: {supported}/{len(self.scores)}音。"
                 "根拠が弱い／判別不能な候補は休符にします。\n"
                 "※ 実験的な証拠スコアです。学習済みの存在確率ではありません。")
@@ -353,8 +357,56 @@ def infer_lead_evidence(notes, features, stereo) -> LeadAudioEvidence:
         for i,score in zip(indices,local):
             if first <= notes[i]['start'] < first+4 and features[i].spatial_rank >= .1:
                 scores[i] = score
+    extended = extend_recurring_lead(notes, features, scores)
+    recurring = sum(a < .6 <= b for a,b in zip(scores,extended))
+    scores = extended
     return LeadAudioEvidence(scores,stereo,reference.reference_found or applied,features,
-                             "spatial_phrase" if applied else reference.method)
+                             "spatial_phrase" if applied else reference.method,recurring)
+
+
+def extend_recurring_lead(notes, features, scores):
+    """Fill bracketed holes in a recurring, independently established voice.
+
+    Only original audio-supported notes can be anchors. Never extrapolate into
+    an intro or grow a source by recursively using newly accepted candidates.
+    A period must recur across multiple pitches, with matching source pan.
+    """
+    anchors = [i for i, s in enumerate(scores) if s >= .6 and features[i].valid
+               and features[i].spatial_rank >= .1]
+    gaps = []
+    for pitch in {notes[i]['pitch'] for i in anchors}:
+        group = sorted((i for i in anchors if notes[i]['pitch'] == pitch),
+                       key=lambda i: notes[i]['start'])
+        gaps.extend((notes[b]['start']-notes[a]['start'], pitch)
+                    for a, b in zip(group, group[1:])
+                    if .3 <= notes[b]['start']-notes[a]['start'] <= 2.)
+    if len(gaps) < 4:
+        return list(scores)
+    bucket = Counter(round(g/.04) for g, _ in gaps).most_common(1)[0][0]
+    recurring = [(g, pitch) for g, pitch in gaps if abs(g-bucket*.04) < .04]
+    if len(recurring) < 4 or len({p for _, p in recurring}) < 2:
+        return list(scores)
+    period = float(np.median([g for g, _ in recurring]))
+    result = list(scores)
+    for i, n in enumerate(notes):
+        feature = features[i]
+        if scores[i] >= .6 or not feature.valid or feature.spatial_rank < .1 or feature.coherence < .4:
+            continue
+        before, after = [], []
+        for j in anchors:
+            if notes[j]['pitch'] != n['pitch']:
+                continue
+            gap = notes[j]['start']-n['start']
+            if not .25 < abs(gap) < 2.1*period:
+                continue
+            if abs(abs(gap)-round(abs(gap)/period)*period) > .07:
+                continue
+            if abs(features[j].pan-feature.pan) > .6 or features[j].pan*feature.pan <= 0:
+                continue
+            (before if gap < 0 else after).append(j)
+        if any(abs(features[a].pan-features[b].pan) <= .35 for a in before for b in after):
+            result[i] = max(result[i], .85)
+    return result
 
 
 def analyze_lead_audio(path: str, notes: list[dict], *, min_confidence: float = .3) -> LeadAudioEvidence:

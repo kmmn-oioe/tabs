@@ -206,7 +206,7 @@ def arrange_notes(notes: list[dict], opts: TabOptions | None = None) -> list[dic
     groups = {}
     for n in notes:
         if n["confidence"] >= opts.min_confidence:
-            step = max(0, int(round((n["start"] - opts.grid_offset) / grid)))
+            step = max(0, int(round((n.get('_snap_start', n["start"]) - opts.grid_offset) / grid)))
             groups.setdefault(step, []).append(n)
     steps = sorted(groups)
     if not steps:
@@ -238,7 +238,8 @@ def arrange_notes(notes: list[dict], opts: TabOptions | None = None) -> list[dic
         next_start = max(0.0, opts.grid_offset + steps[i + 1] * grid) if i + 1 < len(steps) else float("inf")
         for (string, fret), note in zip(node[1], node[2]):
             end = max(start + 0.01, note["end"])
-            result.append(dict(note, string=string, fret=fret, start=start, end=min(end, next_start)))
+            clean = {k:v for k,v in note.items() if k != '_snap_start'}
+            result.append(dict(clean, string=string, fret=fret, start=start, end=min(end, next_start)))
     return result
 
 

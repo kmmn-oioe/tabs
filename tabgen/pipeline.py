@@ -176,6 +176,27 @@ def generate(
             from .rhythm import chord_changes
             changes = chord_changes(notes, opts)
         rhythm_input = rhythm if opts.rhythm_mode == "notes" else notes
+        rhythm_audio_method = ""
+        if opts.rhythm_mode == "notes":
+            from .rhythm_audio import analyze_rhythm_attacks, filter_rhythm_attacks, align_rhythm_grid
+            try:
+                log("リズム候補の音高別の発音を確認中…", 97)
+                attacks = analyze_rhythm_attacks(stem_path, rhythm_input)
+                supported = filter_rhythm_attacks(rhythm_input, attacks)
+                rhythm_input, timing = align_rhythm_grid(supported, opts)
+                rhythm_audio_method = f"リズム音声確認: {len(rhythm)} → {len(supported)}候補（基本音・発音の立ち上がり）\n"
+                if timing['applied']:
+                    rhythm_audio_method += f"拍位置調整: 検出の遅れを約{timing['delay_seconds']*1000:.0f}ms補正\n"
+                if diagnostics is not None:
+                    diagnostics.update(rhythm_attacks=attacks,
+                                       rhythm_audio_supported=[dict(n) for n in supported],
+                                       rhythm_timing=timing)
+            except (OSError, RuntimeError, ValueError, ImportError) as error:
+                rhythm_input = rhythm
+                rhythm_audio_method = "リズム音声確認: 利用できないため検出候補を保持\n"
+                log(f"{rhythm_audio_method.strip()}: {error}", 97)
+            if diagnostics is not None:
+                diagnostics['rhythm_arrangement_input'] = [dict(n) for n in rhythm_input]
         rhythm, changes = arrange_rhythm(rhythm_input, opts, changes=changes)
         rhythm_method = ("リズム出力: 検出した発音を保持（拍位置・運指を調整）" if opts.rhythm_mode == "notes"
                          else "リズム出力: コード伴奏（次の切替まで保持）")
@@ -186,6 +207,7 @@ def generate(
             + entry_text + with_header(lead_text)
             + "\n\n====== リズムギター ======\n"
             + rhythm_method + "\n"
+            + rhythm_audio_method
             + analysis_method + "\n"
             + progression_text(changes, opts) + "\n\n"
             + with_header(notes_to_tab(rhythm, opts, arranged=True,

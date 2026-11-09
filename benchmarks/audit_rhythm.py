@@ -26,8 +26,9 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
     for i, note in enumerate(raw):
         available[json.dumps(note, sort_keys=True)].append(i)
     tagged = []
-    for note in diagnostics['rhythm_candidates']:
-        indices = available[json.dumps(note, sort_keys=True)]
+    for note in diagnostics.get('rhythm_arrangement_input', diagnostics['rhythm_candidates']):
+        original = {k:v for k,v in note.items() if k != '_snap_start'}
+        indices = available[json.dumps(original, sort_keys=True)]
         if not indices:
             raise ValueError('A rhythm candidate has no original transcription')
         tagged.append(dict(note, _audit_raw_index=indices.popleft()))
@@ -46,6 +47,8 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
     def score(notes):
         return evaluate_notes(case, [dict(n, part='rhythm') for n in notes], tolerance)
     stages = {k: score(diagnostics[k]) for k in ('transcribed', 'rhythm_candidates', 'rhythm')}
+    if 'rhythm_audio_supported' in diagnostics:
+        stages['rhythm_audio_supported'] = score(diagnostics['rhythm_audio_supported'])
     final_window = [(i, n) for i, n in enumerate(replay) if lo <= n['start'] < hi]
     matched = {m['predicted_index'] for m in stages['rhythm']['matches']}
     extras = []
@@ -82,6 +85,8 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
         ref_id = note['id']
         category = ('absent_from_transcription' if ref_id not in matched_ids['transcribed'] else
                     'removed_by_lead_selection' if ref_id not in matched_ids['rhythm_candidates'] else
+                    'removed_by_rhythm_audio' if 'rhythm_audio_supported' in matched_ids
+                    and ref_id not in matched_ids['rhythm_audio_supported'] else
                     'quantized_out_of_tolerance' if any(
                         ref_id in x['raw_rhythm_reference_ids'] for x in extras
                         if x['category'] == 'quantized_out_of_tolerance') else

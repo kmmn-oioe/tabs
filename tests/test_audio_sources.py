@@ -33,6 +33,8 @@ class PipelineSourceTests(unittest.TestCase):
                      patch('tabgen.separate.demucs_available',return_value=True), \
                      patch('tabgen.separate.separate_guitar',return_value=str(separated)) as separate, \
                      patch('tabgen.harmony.audio_chord_changes',return_value=[]), \
+                     patch('tabgen.rhythm_audio.analyze_rhythm_attacks',
+                           side_effect=lambda path, notes: [dict(energy=.1,share=.5,novelty=.5) for n in notes]), \
                      patch('tabgen.synth.render_tab_mix',wraps=render_tab_mix) as render:
                     generate(str(original),opts,use_separation=use_separation,
                              split_lead_rhythm=True,auto_bpm=False,prepare_playback=True,

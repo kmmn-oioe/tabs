@@ -8,12 +8,38 @@ import soundfile as sf
 
 from audio_fixtures import SAMPLE_RATE, guitar_scene, recurring_melody_scene
 from tabgen.audio import load_audio, load_audio_channels
-from tabgen.lead_audio import analyze_lead_audio, _opposed_voice_evidence, NoteAudioFeatures
+from tabgen.lead_audio import analyze_lead_audio, _opposed_voice_evidence, NoteAudioFeatures, extend_recurring_lead
 from tabgen.split import split_notes
 from tabgen.tab import TabOptions
 
 
 class LeadAudioTests(unittest.TestCase):
+    def test_recurring_voice_fills_only_bracketed_same_source_holes(self):
+        for pan in (-.75,.75):
+            for shift in (-12,0):
+                with self.subTest(pan=pan,shift=shift):
+                    notes,features,scores=[],[],[]
+                    for k in range(5):
+                        for pitch,offset in ((60,0.),(64,.2)):
+                            notes.append(dict(pitch=pitch+shift,start=1+k*.8+offset,end=1.1+k*.8+offset,confidence=.8))
+                            features.append(NoteAudioFeatures(pan,np.array([1.,0,0,0,0]),.8,.9,True,spatial_rank=.4))
+                            scores.append(0. if k==2 and pitch==64 else .9)
+                    # Same pitch before/after the established phrase and a
+                    # simultaneous opposite source cannot acquire its label.
+                    for time,p in ((.4,pan),(5.2,pan),(2.8,-pan)):
+                        notes.append(dict(pitch=64+shift,start=time,end=time+.1,confidence=.8))
+                        features.append(NoteAudioFeatures(p,np.array([1.,0,0,0,0]),.8,.9,True,spatial_rank=.4))
+                        scores.append(0.)
+                    result=extend_recurring_lead(notes,features,scores)
+                    self.assertGreaterEqual(result[5],.6)
+                    self.assertEqual(result[-3:],[0.,0.,0.])
+                    self.assertEqual(scores[5],0.)
+
+    def test_repetition_without_independent_audio_anchors_cannot_create_lead(self):
+        notes=[dict(pitch=60+i%2,start=i*.2,end=i*.2+.15,confidence=.9) for i in range(20)]
+        features=[NoteAudioFeatures(.75,np.array([1.,0,0,0,0]),1.,1.,True,spatial_rank=.4) for n in notes]
+        self.assertEqual(extend_recurring_lead(notes,features,[0.]*20),[0.]*20)
+
     def analyze(self, **kwargs):
         audio, notes, labels = guitar_scene(**kwargs)
         with tempfile.TemporaryDirectory() as tmp:
