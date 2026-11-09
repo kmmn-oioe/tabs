@@ -224,6 +224,18 @@ def generate(
             if diagnostics is not None:
                 diagnostics['rhythm_arrangement_input'] = [dict(n) for n in rhythm_input]
         rhythm, changes = arrange_rhythm(rhythm_input, opts, changes=changes)
+        if opts.rhythm_mode == 'notes' and lead_evidence is not None:
+            from .unison import recover_unisons
+            try:
+                log("伴奏の反復と同音の空間成分からユニゾンを確認中…", 97)
+                rhythm, unisons, unison_checks = recover_unisons(
+                    stem_path, lead, rhythm, notes, lead_evidence.features, opts)
+                if unisons:
+                    rhythm_audio_method += f"ユニゾン確認: 両声部の根拠がある{len(unisons)}音をリズムにも復元\n"
+                if diagnostics is not None:
+                    diagnostics.update(rhythm_unison_restored=unisons, unison_checks=unison_checks)
+            except (OSError, RuntimeError, ValueError) as error:
+                log(f"ユニゾン確認をスキップ（既存の発音を保持）: {error}", 97)
         rhythm_method = ("リズム出力: 検出した発音を保持（拍位置・運指を調整）" if opts.rhythm_mode == "notes"
                          else "リズム出力: コード伴奏（次の切替まで保持）")
         log(f"{rhythm_method}: {len(rhythm)} 音", 97)

@@ -33,6 +33,19 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
             raise ValueError('A rhythm candidate has no original transcription')
         tagged.append(dict(note, _audit_raw_index=indices.popleft()))
     replay, _ = arrange_rhythm(tagged, opts, changes=[])
+    restored = diagnostics.get('rhythm_unison_restored', [])
+    for note in restored:
+        proofs = [p for p in diagnostics.get('unison_checks', [])
+                  if p.get('restored') and p.get('restored_note') == note]
+        if len(proofs) != 1:
+            raise ValueError('A restored unison has no unique proof')
+        i = proofs[0]['raw_index']
+        if (not isinstance(i, int) or not 0 <= i < len(raw)
+                or raw[i]['pitch'] != note['pitch'] or raw[i]['confidence'] != note['confidence']):
+            raise ValueError('A restored unison has no matching raw detection')
+        replay.append(dict(note, _audit_raw_index=i))
+    if restored:
+        replay.sort(key=lambda n:n['start'])
     plain = [{k: v for k, v in n.items() if k != '_audit_raw_index'} for n in replay]
     if plain != diagnostics['rhythm']:
         raise ValueError('Replay differs from saved rhythm; do not infer provenance')
@@ -96,6 +109,9 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
     sweep = []
     for confidence in (.3, .35, .4, .45, .5, .55):
         adjusted, _ = arrange_rhythm(tagged, replace(opts, min_confidence=confidence), changes=[])
+        # Keep the saved audio/unison decisions fixed, as with attack filtering
+        # and grid calibration; only the arrangement threshold is swept.
+        adjusted += [dict(n) for n in restored if n['confidence'] >= confidence]
         sweep.append(dict(min_confidence=confidence, **score(adjusted)['parts']['rhythm']))
     return dict(case_id=case['id'], evaluation_window=case['evaluation_window'],
         options=diagnostics['options'], onset_tolerance_ms=tolerance*1000,
