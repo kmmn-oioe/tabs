@@ -33,6 +33,14 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
             raise ValueError('A rhythm candidate has no original transcription')
         tagged.append(dict(note, _audit_raw_index=indices.popleft()))
     replay, _ = arrange_rhythm(tagged, opts, changes=[])
+    role_removed = diagnostics.get('rhythm_role_removed', [])
+    without_tag = lambda n: {k:v for k,v in n.items() if k != '_audit_raw_index'}
+    for note in role_removed:
+        proofs = [p for p in diagnostics.get('part_role_checks', [])
+                  if p.get('accepted') and note in p.get('removed_rhythm', [])]
+        if len(proofs) != 1 or sum(without_tag(n) == note for n in replay) != 1:
+            raise ValueError('A role removal has no unique proof or original rhythm note')
+        replay = [n for n in replay if without_tag(n) != note]
     restored = diagnostics.get('rhythm_unison_restored', [])
     for note in restored:
         proofs = [p for p in diagnostics.get('unison_checks', [])
@@ -109,6 +117,7 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
     sweep = []
     for confidence in (.3, .35, .4, .45, .5, .55):
         adjusted, _ = arrange_rhythm(tagged, replace(opts, min_confidence=confidence), changes=[])
+        adjusted = [n for n in adjusted if without_tag(n) not in role_removed]
         # Keep the saved audio/unison decisions fixed, as with attack filtering
         # and grid calibration; only the arrangement threshold is swept.
         adjusted += [dict(n) for n in restored if n['confidence'] >= confidence]

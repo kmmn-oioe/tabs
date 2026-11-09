@@ -225,6 +225,20 @@ def generate(
                 diagnostics['rhythm_arrangement_input'] = [dict(n) for n in rhythm_input]
         rhythm, changes = arrange_rhythm(rhythm_input, opts, changes=changes)
         if opts.rhythm_mode == 'notes' and lead_evidence is not None:
+            from .part_roles import refine_part_roles
+            try:
+                log("同じ周波数のリード基本音・伴奏倍音と旋律の流れを照合中…", 97)
+                lead, rhythm, role_checks = refine_part_roles(
+                    stem_path, lead, rhythm, notes, lead_evidence.features, opts)
+                accepted = sum(c['accepted'] for c in role_checks)
+                if accepted:
+                    lead_text = notes_to_tab(lead, opts, arranged=True, duration=duration)
+                    lead_method += f"\n周波数ごとの空間モデルと旋律で再判定: {accepted}候補\n"
+                if diagnostics is not None:
+                    diagnostics.update(part_role_checks=role_checks,
+                        rhythm_role_removed=[n for c in role_checks if c['accepted'] for n in c['removed_rhythm']])
+            except (OSError, RuntimeError, ValueError) as error:
+                log(f"周波数別のパート判定をスキップ（既存の発音を保持）: {error}", 97)
             from .unison import recover_unisons
             try:
                 log("伴奏の反復と同音の空間成分からユニゾンを確認中…", 97)
