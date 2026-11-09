@@ -20,12 +20,15 @@ def generate(
     progress: Callable[[str], None] | None = None,
     audio_sources: dict[str, str] | None = None,
     diagnostics: dict | None = None,
+    prepare_playback: bool = False,
 ) -> tuple[str, str, str, str]:
     """Returns (tab_text, midi_paths, sheet_paths, stem_wav_path).
 
     source: local audio file path or YouTube URL.
-    audio_sources: optional output dictionary containing original/separated paths.
+    audio_sources: output paths (original/separated/backing/playback), and
+        playback_error when guitar-free playback cannot be prepared.
     diagnostics: optional snapshots for offline evaluation; does not affect generation.
+    prepare_playback: render guitar-free backing + final TAB synth for the GUI.
     """
     opts = opts or TabOptions()
     if opts.rhythm_mode not in ("notes", "chords"):
@@ -54,13 +57,31 @@ def generate(
     if audio_sources is not None:
         audio_sources["original"] = wav
     stem_path = wav
-    if use_separation:
+    backing_path = None
+    playback_error = ""
+    if use_separation or prepare_playback:
         log("ギターパートを分離中…(Demucs・時間がかかります)")
         from .separate import demucs_available, separate_guitar
         if not demucs_available():
             log("※ demucs/torch が未インストールのため分離をスキップします")
+            playback_error = "再生にはDemucs・torchとギター専用モデルが必要です。導入後にTABを再生成してください。"
         else:
-            stem_path = separate_guitar(wav, tmp_dir, progress=progress)
+            try:
+                separated = separate_guitar(wav, tmp_dir, progress=progress)
+            except (OSError, RuntimeError) as error:
+                if use_separation:
+                    raise
+                playback_error = f"ギターオフ音源を作成できませんでした: {error}"
+                log(playback_error)
+            else:
+                if use_separation:
+                    stem_path = separated
+                if prepare_playback:
+                    from .separate import guitar_backing_path
+                    try:
+                        backing_path = guitar_backing_path(separated)
+                    except RuntimeError as error:
+                        playback_error = str(error)
     if audio_sources is not None and os.path.realpath(stem_path) != os.path.realpath(wav):
         audio_sources["separated"] = stem_path
 
@@ -221,5 +242,21 @@ def generate(
     except Exception as e:
         log(f"楽譜出力をスキップ: {e}")
 
+    if prepare_playback:
+        if backing_path:
+            try:
+                from .synth import render_tab_mix
+                log("ギターオフ伴奏とTABのシンセ音を作成中…", 99)
+                playback = render_tab_mix(backing_path, [lead_notes, rhythm_notes],
+                                          os.path.join(tmp_dir, 'tabgen_playback.wav'))
+                if audio_sources is not None:
+                    audio_sources['backing'] = backing_path
+                    audio_sources['playback'] = playback
+            except (OSError, RuntimeError, ValueError) as error:
+                playback_error = f"TABの再生音を作成できませんでした: {error}"
+        if playback_error:
+            log(playback_error)
+            if audio_sources is not None:
+                audio_sources['playback_error'] = playback_error
     log("完了!", 100)
     return tab_text, ";".join(midi_paths), ";".join(sheet_paths), stem_path

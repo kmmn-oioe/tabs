@@ -9,7 +9,7 @@ from unittest.mock import patch
 import numpy as np
 import soundfile as sf
 
-from main import App
+from main import App, PLAYBACK_LABEL
 from tabgen import player as module
 from tabgen.tab import TabOptions, notes_to_tab
 from tabgen.playhead import cursor_cells
@@ -32,7 +32,7 @@ class PlaybackGuiTests(unittest.TestCase):
         self.opts = TabOptions(bpm=120, grid_offset=.25)
         tab = notes_to_tab([dict(pitch=64,start=.25,end=24.,confidence=.9)],self.opts,duration=24.)
         self.content = '====== リードギター ======\n'+tab+'\n====== リズムギター ======\n説明\n'+tab
-        self.app._done(self.content,'','',str(self.path),self.opts)
+        self.app._done(self.content,'','',str(self.path),self.opts, {'playback':str(self.path)})
         self.app.update()
 
     def tearDown(self):
@@ -146,94 +146,84 @@ class PlaybackGuiTests(unittest.TestCase):
             app._worker(str(self.path))
         self.assertEqual(generate.call_args.args[1].rhythm_mode,'notes')
         self.assertTrue(generate.call_args.kwargs['split_lead_rhythm'])
+        self.assertTrue(generate.call_args.kwargs['prepare_playback'])
         app.update()
         app.split_var.set(False)
         app._toggle_split()
         self.assertEqual(str(app.rhythm_mode_box.cget('state')),'disabled')
         self.assertEqual(app.rhythm_mode_var.get(),'検出した発音を保持')
 
-    def setup_sources(self, stereo=False):
+    def setup_mix(self):
         original = Path(self.temp.name)/'original.wav'
         separated = Path(self.temp.name)/'guitar.wav'
-        a = np.tile([.125,.25],(24000,1)) if stereo else np.full(24000,.125)
-        b = np.tile([.375,.5],(24000,1)) if stereo else np.full(24000,.375)
-        sf.write(original,a,1000,subtype='FLOAT')
-        sf.write(separated,b,1000,subtype='FLOAT')
+        playback = Path(self.temp.name)/'tabgen_playback.wav'
+        for path, values in [(original, [.75,.8]), (separated, [.5,.6]), (playback, [.125,.25])]:
+            sf.write(path,np.tile(values,(24000,1)),1000,subtype='FLOAT')
         self.app._done(self.content,'','',str(separated),self.opts,
-                       {'original':str(original),'separated':str(separated)})
+                       {'original':str(original),'separated':str(separated),'playback':str(playback)})
         self.app.update()
-        return original,separated
+        return playback
 
-    def test_generation_defaults_to_original_not_separated_and_does_not_autoplay(self):
+    def test_generation_selects_only_mix_stops_old_stream_and_does_not_autoplay(self):
         self.app.player.play()
         previous = FakeStream.instances[-1]
-        original,_ = self.setup_sources()
+        playback = self.setup_mix()
         self.assertTrue(previous.closed)
         self.assertFalse(self.app.player.playing)
-        self.assertEqual(self.app.audio_path,str(original))
-        self.assertEqual(self.app.audio_source_var.get(),'元の音源')
-        self.assertEqual(self.app.audio_file_var.get(),'original.wav')
-        np.testing.assert_array_equal(self.app.player.data[:,0],np.full(24000,.125))
-
-    def test_switch_source_while_playing_closes_previous_and_preserves_time(self):
-        app = self.app
-        self.setup_sources()
-        app.player.play()
-        original_stream = FakeStream.instances[-1]
-        original_stream.emit(16000)
-        original_stream.time = 12.35
-        app.audio_source_var.set('分離後の音源')
-        app._switch_audio_source()
-        current = FakeStream.instances[-1]
-        self.assertTrue(original_stream.closed)
-        self.assertTrue(app.player.playing)
-        self.assertAlmostEqual(app.player.position,2.25,delta=.001)
-        self.assertIsNotNone(app.playhead.timing)
-        np.testing.assert_array_equal(current.emit(8).ravel(),np.full(8,.375))
-        np.testing.assert_array_equal(original_stream.emit(8).ravel(),np.zeros(8))
+        self.assertEqual(self.app.audio_path,str(playback))
+        self.assertEqual(self.app.audio_source_var.get(),PLAYBACK_LABEL)
+        self.assertEqual(tuple(self.app.audio_source_box.cget('values')), (PLAYBACK_LABEL,))
+        self.app.player.play()
+        np.testing.assert_array_equal(FakeStream.instances[-1].emit(8),np.tile([.125,.25],(8,1)))
+        np.testing.assert_array_equal(previous.emit(8),np.zeros((8,1)))
         self.assertEqual(FakeStream.peak_active,1)
 
-    def test_paused_source_switch_stays_paused_and_both_paths_keep_tab_sync(self):
+    def test_seek_pause_resume_and_stop_use_one_mixed_stream(self):
         app = self.app
-        original,_ = self.setup_sources()
+        self.setup_mix()
+        app._toggle_play()
+        old = FakeStream.instances[-1]
         app.player.seek(3)
-        for name in ['分離後の音源','元の音源']:
-            app.audio_source_var.set(name)
-            app._switch_audio_source()
-            self.assertFalse(app.player.playing)
-            self.assertAlmostEqual(app.player.position,3)
-            self.assertIsNotNone(app.playhead.timing)
-        self.assertEqual(app.audio_path,str(original))
-        self.assertFalse(FakeStream.instances)
-
-    def test_stop_after_switch_leaves_no_output_active(self):
-        app = self.app
-        self.setup_sources()
-        app.player.play()
-        for name in ['分離後の音源','元の音源','分離後の音源']:
-            app.audio_source_var.set(name)
-            app._switch_audio_source()
+        current = FakeStream.instances[-1]
+        self.assertTrue(old.closed)
+        self.assertEqual(app.player.position,3)
+        self.assertIsNotNone(app.playhead.timing)
+        np.testing.assert_array_equal(current.emit(8),np.tile([.125,.25],(8,1)))
+        app._toggle_play()
+        self.assertFalse(any(s.active for s in FakeStream.instances))
+        position=app.player.position
+        app._toggle_play()
+        self.assertEqual(app.player.position,position)
         app._stop_play()
         self.assertFalse(any(s.active for s in FakeStream.instances))
         self.assertEqual(app.player.position,0)
         self.assertEqual(FakeStream.peak_active,1)
 
-    def test_selecting_same_source_does_not_restart_it(self):
+    def test_missing_mix_never_falls_back_to_original_or_guitar_stem(self):
         app = self.app
-        self.setup_sources()
         app.player.play()
-        app._switch_audio_source()
+        old = FakeStream.instances[-1]
+        app._done(self.content,'','',str(self.path),self.opts,
+                  {'original':str(self.path),'separated':str(self.path),'playback_error':'Demucsが必要です'})
+        self.assertTrue(old.closed)
+        self.assertIsNone(app.player.data)
+        self.assertIsNone(app.playhead.timing)
+        self.assertEqual(app.audio_path,'')
+        self.assertEqual(app.pos_var.get(),0)
+        self.assertIn('Demucs',app.status.cget('text'))
+        app._toggle_play()
+        self.assertFalse(any(s.active for s in FakeStream.instances))
         self.assertEqual(len(FakeStream.instances),1)
 
-    def test_stereo_output_contains_only_the_selected_source(self):
+    def test_browsing_new_audio_clears_mix_instead_of_playing_original(self):
         app = self.app
-        self.setup_sources(stereo=True)
         app.player.play()
-        np.testing.assert_array_equal(FakeStream.instances[-1].emit(8),np.tile([.125,.25],(8,1)))
-        app.audio_source_var.set('分離後の音源')
-        app._switch_audio_source()
-        np.testing.assert_array_equal(FakeStream.instances[-1].emit(8),np.tile([.375,.5],(8,1)))
-        self.assertEqual(FakeStream.peak_active,1)
+        with patch('main.filedialog.askopenfilename',return_value=str(self.path)):
+            app._browse()
+        self.assertIsNone(app.player.data)
+        self.assertFalse(any(s.active for s in FakeStream.instances))
+        self.assertIsNone(app.playhead.timing)
+        self.assertIn('TABを生成',app.status.cget('text'))
 
     def test_generation_start_stops_preview(self):
         self.app.player.play()

@@ -13,6 +13,7 @@ reportlab>=4.0
 # resampy/basic-pitch still import pkg_resources.
 setuptools<81
 
-# Optional but recommended: guitar stem separation (large, needs torch)
+# Required for guitar-off + TAB synth playback; optional for transcription.
+# Guitar stem separation is large and needs torch.
 # demucs>=4.0.1
 # torch>=2.0

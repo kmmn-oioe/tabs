@@ -19,6 +19,16 @@ def demucs_available() -> bool:
         return False
 
 
+def guitar_backing_path(guitar_path: str) -> str:
+    """Return Demucs's actual complementary stem, never a 4-stem 'other'."""
+    if os.path.basename(guitar_path) != 'guitar.wav':
+        raise RuntimeError("ギターオフ再生にはhtdemucs_6sのギター専用分離が必要です")
+    backing = os.path.join(os.path.dirname(guitar_path), 'no_guitar.wav')
+    if not os.path.isfile(backing):
+        raise RuntimeError("ギターオフ音源（no_guitar.wav）が見つかりません")
+    return backing
+
+
 def _device_args() -> list[str]:
     try:
         import torch
