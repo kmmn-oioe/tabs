@@ -27,7 +27,7 @@ def audit_rhythm(case, diagnostics, tolerance=.08):
         available[json.dumps(note, sort_keys=True)].append(i)
     tagged = []
     for note in diagnostics.get('rhythm_arrangement_input', diagnostics['rhythm_candidates']):
-        original = {k:v for k,v in note.items() if k != '_snap_start'}
+        original = {k:v for k,v in note.items() if k not in ('_snap_start', '_audio_rejection')}
         indices = available[json.dumps(original, sort_keys=True)]
         if not indices:
             raise ValueError('A rhythm candidate has no original transcription')

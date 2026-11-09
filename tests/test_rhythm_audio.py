@@ -8,12 +8,90 @@ import soundfile as sf
 
 from audio_fixtures import guitar_scene, SAMPLE_RATE
 from tabgen.rhythm_audio import (analyze_rhythm_attacks, filter_rhythm_attacks,
-                                  align_rhythm_grid)
-from tabgen.tab import TabOptions, arrange_notes
+                                  align_rhythm_grid, rhythm_voice_checks, recover_lead_holes)
+from tabgen.lead_audio import NoteAudioFeatures
+from tabgen.rhythm import arrange_rhythm
+from tabgen.tab import TabOptions, arrange_notes, arrange_melody
 from benchmarks.audit_rhythm import audit_rhythm
 
 
 class RhythmAudioTests(unittest.TestCase):
+    def test_confirmed_lead_with_fresh_attack_fills_only_an_empty_cell(self):
+        opts=TabOptions(bpm=120)
+        raw=[dict(pitch=p,start=t,end=t+.2,confidence=.9) for p,t in ((67,0.),(71,.5))]
+        lead=arrange_melody(raw,opts)
+        candidate=dict(pitch=72,start=.25,end=.45,confidence=.8)
+        result,recovered=recover_lead_holes(lead,[candidate],[dict(reject=True,attack=.8)],opts)
+        self.assertEqual([(n['pitch'],n['start']) for n in result],[(67,0.),(72,.25),(71,.5)])
+        self.assertEqual([n for n in result if n not in recovered],lead)
+        self.assertEqual(candidate['start'],.25)
+
+    def test_handoff_does_not_overwrite_melody_or_create_notes_from_ambiguous_attack(self):
+        opts=TabOptions(bpm=120)
+        candidate=dict(pitch=72,start=.25,end=.45,confidence=.8)
+        lead=arrange_melody([dict(candidate,pitch=67)],opts)
+        self.assertEqual(recover_lead_holes(lead,[candidate],[dict(reject=True,attack=.8)],opts)[0],lead)
+        for reject,attack in ((False,.9),(True,.1)):
+            self.assertEqual(recover_lead_holes([],[candidate],[dict(reject=reject,attack=attack)],opts),([],[]))
+        opts.lead_start_seconds=.5
+        self.assertEqual(recover_lead_holes([],[candidate],[dict(reject=True,attack=.8)],opts),([],[]))
+        opts.lead_start_seconds=.3
+        lead=arrange_melody([dict(candidate,start=.37,pitch=67,end=.6)],opts)
+        self.assertEqual(recover_lead_holes(lead,[dict(candidate,start=.31)],
+                                         [dict(reject=True,attack=.8)],opts)[0],lead)
+
+    def voice_scene(self, mirror=1, lower_lead=False):
+        def note(pitch,start):
+            return dict(pitch=pitch,start=start,end=start+.3,confidence=.8)
+        def feature(pan):
+            h=np.array([1.,.3,.1,0.,0.]);h/=np.linalg.norm(h)
+            return NoteAudioFeatures(pan*mirror,h,1.,.9,True,spatial_rank=.5)
+        backing=[note(72 if lower_lead else 48,i*.4) for i in range(6)]
+        lead=[note(52 if lower_lead else 76,i*.4) for i in range(6)]
+        # Include real octave accompaniment; pitch height must not decide role.
+        notes=backing+[note(84 if lower_lead else 60,1.),note(55 if lower_lead else 79,1.)]
+        return notes,[feature(-.8) for n in notes[:-1]]+[feature(.8)],lead,[feature(.8) for n in lead]
+
+    def test_lead_residue_is_withheld_but_real_octave_backing_is_kept(self):
+        for mirror in (-1,1):
+            for lower_lead in (False,True):
+                with self.subTest(mirror=mirror,lower_lead=lower_lead):
+                    notes,features,lead,lf=self.voice_scene(mirror,lower_lead)
+                    checks=rhythm_voice_checks(notes,features,lead,lf)
+                    self.assertEqual([c['reject'] for c in checks],[False]*7+[True])
+
+    def test_pan_alone_or_missing_backing_does_not_establish_lead_ownership(self):
+        notes,features,lead,lf=self.voice_scene()
+        self.assertFalse(rhythm_voice_checks(notes,features,[],[])[-1]['reject'])
+        self.assertFalse(rhythm_voice_checks(notes[-1:],features[-1:],lead,lf)[-1]['reject'])
+        features[-1].harmonics=np.array([0.,0.,0.,1.,0.])
+        self.assertFalse(rhythm_voice_checks(notes,features,lead,lf)[-1]['reject'])
+
+    def test_mono_ambiguous_channels_and_unbracketed_candidate_are_preserved(self):
+        notes,features,lead,lf=self.voice_scene()
+        for f in features+lf:
+            f.spatial_rank=0.
+        self.assertFalse(any(c['reject'] for c in rhythm_voice_checks(notes,features,lead,lf)))
+        notes,features,lead,lf=self.voice_scene()
+        notes[-1]['start']=0.
+        self.assertFalse(rhythm_voice_checks(notes,features,lead,lf)[-1]['reject'])
+
+    def test_post_selection_check_does_not_change_other_notes_or_voicings(self):
+        opts=TabOptions(rhythm_mode='notes')
+        notes=[dict(pitch=p,start=t,end=t+.3,confidence=.9)
+               for t in (0.,.5) for p in (52,55,59,64)]
+        before,_=arrange_rhythm(notes,opts,changes=[])
+        target=before[0]
+        flagged=[dict(n,_audio_rejection='confirmed_lead_source')
+                 if n['pitch']==target['pitch'] and n['start']==target['start'] else n for n in notes]
+        after,_=arrange_rhythm(flagged,opts,changes=[])
+        self.assertEqual(after,[n for n in before if n!=target])
+        self.assertFalse(any('_audio_rejection' in n for n in after))
+        diagnostics=dict(options=asdict(opts),transcribed=notes,rhythm_candidates=notes,
+                         rhythm_arrangement_input=flagged,rhythm=after)
+        audit=audit_rhythm(dict(id='fixture',evaluation_window=[0,1],notes=[]),diagnostics)
+        self.assertTrue(audit['provenance_replay_identical'])
+
     def test_quiet_arpeggio_retains_the_same_attacks_as_loud_arpeggio(self):
         audio, notes, _ = guitar_scene()
         for gain in (1., .001):

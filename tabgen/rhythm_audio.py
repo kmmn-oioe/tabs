@@ -5,6 +5,8 @@ ambiguous but strong fundamental is retained, including quiet legato notes.
 """
 from __future__ import annotations
 
+from math import ceil
+
 import numpy as np
 
 from .audio import load_audio_channels
@@ -54,6 +56,80 @@ def filter_rhythm_attacks(notes, attacks):
     return [dict(n) for n, a in zip(notes, attacks)
             if a['energy'] > 1e-8 and a['share'] >= .01
             and (a['novelty'] >= .05 or a['share'] >= .5)]
+
+
+def rhythm_voice_checks(notes, features, lead_notes, lead_features):
+    """Withhold a residual lead voice, requiring two stable stereo sources.
+
+    Lead anchors must already have independent audio evidence. Pan alone,
+    pitch height, or an isolated matching timbre cannot establish ownership.
+    Weak fundamentals, mono and ambiguous mixtures are left undecided.
+    """
+    if len(notes) != len(features) or len(lead_notes) != len(lead_features):
+        raise ValueError('Voice features must align with their notes')
+    checks = []
+    for note, feature in zip(notes, features):
+        check = dict(reject=False, reason='ambiguous', pan=feature.pan,
+                     lead_anchors=0, backing_anchors=0, attack=feature.attack)
+        checks.append(check)
+        if not feature.valid or feature.spatial_rank < .1:
+            continue
+        anchors = [(n, f) for n, f in zip(lead_notes, lead_features)
+                   if f.valid and f.spatial_rank >= .1
+                   and abs(n['start']-note['start']) <= 1.5
+                   and abs(f.pan-feature.pan) <= .2
+                   and float(np.dot(f.harmonics, feature.harmonics)) >= .8]
+        check['lead_anchors'] = len(anchors)
+        if (len({round(n['start']/.05) for n, f in anchors}) < 3
+                or not any(n['start'] < note['start'] for n, f in anchors)
+                or not any(n['start'] > note['start'] for n, f in anchors)):
+            continue
+        backing = [(n, f) for n, f in zip(notes, features)
+                   if f.valid and f.spatial_rank >= .1
+                   and abs(n['start']-note['start']) <= 1.5
+                   and abs(f.pan-feature.pan) >= 1.4]
+        check['backing_anchors'] = len(backing)
+        if len({round(n['start']/.05) for n, f in backing}) < 3:
+            continue
+        pans = np.array([f.pan for n, f in backing])
+        center = float(np.median(pans))
+        check['backing_pan'] = center
+        if float(np.median(abs(pans-center))) > .15:
+            continue
+        check.update(reject=True, reason='confirmed_lead_source',
+                     lead_pan=float(np.median([f.pan for n, f in anchors])))
+    return checks
+
+
+def recover_lead_holes(lead, candidates, checks, opts):
+    """Move a clearly rearticulated lead source into an empty melody cell.
+
+    Never replace an existing lead attack or use ambiguous/held evidence to
+    create one. Existing pitches, onsets and fingerings remain fixed.
+    """
+    from .tab import arrange_melody
+    if len(candidates) != len(checks):
+        raise ValueError('Voice checks must align with candidates')
+    grid = opts.quantize*60/max(opts.bpm, 1)
+    cutoff = max(0, ceil((opts.lead_start_seconds-opts.grid_offset)/grid))
+    step = lambda n: max(cutoff, round((n['start']-opts.grid_offset)/grid))
+    occupied = {step(n) for n in lead}
+    choices = {}
+    for note, check in zip(candidates, checks):
+        cell = step(note)
+        if (not check['reject'] or check['attack'] < .6 or cell in occupied
+                or note['start'] < opts.lead_start_seconds):
+            continue
+        if cell not in choices or note['confidence'] > choices[cell]['confidence']:
+            choices[cell] = note
+    recovered = []
+    for note in choices.values():
+        clean = {k:v for k,v in note.items() if k not in ('_snap_start', '_audio_rejection')}
+        recovered.extend(arrange_melody([clean], opts))
+    combined = sorted([dict(n) for n in lead]+recovered, key=lambda n:n['start'])
+    for current, following in zip(combined, combined[1:]):
+        current['end'] = min(current['end'], following['start'])
+    return combined, recovered
 
 
 def align_rhythm_grid(notes, opts):

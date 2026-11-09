@@ -156,7 +156,12 @@ def arrange_rhythm(notes: list[dict], opts: TabOptions, *,
         # Harmony is annotation only. Never invent a voicing, repeat a stroke,
         # or drop an arpeggio because its chord label is unknown (N.C.).
         detected = [{k:v for k,v in n.items() if k != "chord"} for n in notes]
-        return arrange_notes(detected, opts), changes
+        arranged = arrange_notes(detected, opts)
+        # Verify ownership after choosing voicings. Removing a rejected note
+        # must not change the other pitches or the learned timing calibration.
+        arranged = [{k:v for k,v in n.items() if k != '_audio_rejection'}
+                    for n in arranged if not n.get('_audio_rejection')]
+        return arranged, changes
     if not changes:
         return [], []
     cache, layers = {}, []

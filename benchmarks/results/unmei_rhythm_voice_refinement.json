@@ -1,0 +1,4977 @@
+{
+  "baseline_commit": "369e8a1",
+  "scope": "原曲先頭10.3秒、TAB第2〜6小節。固定した音程検出結果と分離音源を使用。",
+  "analysis": "基本音・倍音・発音・定位を数値解析。個々の楽器や実際の演奏を聴取で確定した注釈ではない。",
+  "stem_sha256": "fe4953bb906fbdd5aef956aebc8cd3e684e4fd1162ba0ad64a936b0056091dc2",
+  "reference_sha256": "c8b41a63108315ce66d56348d5db6cd3fb29d2d34ecc9d31cbcf312d53f7c8e1",
+  "runs": {
+    "demucs": {
+      "before": {
+        "case_id": "unmei_intro_bars_2_6",
+        "reference_bpm": 147.0,
+        "evaluation_window": [
+          1.0873469387755101,
+          9.843265306122449
+        ],
+        "analysis_window": [
+          0.0,
+          10.3
+        ],
+        "onset_tolerance_ms": 80.0,
+        "run": {
+          "tempo_mode": "reference",
+          "context_mode": "excerpt",
+          "tempo_estimation": null,
+          "lead_evidence_method": "spatial_phrase",
+          "separation_requested": true,
+          "separation_applied": true,
+          "options": {
+            "tuning": [
+              64,
+              59,
+              55,
+              50,
+              45,
+              40
+            ],
+            "quantize": 0.25,
+            "bpm": 147.0,
+            "min_confidence": 0.3,
+            "max_fret": 19,
+            "bars_per_line": 4,
+            "capo": 1,
+            "difficulty": "standard",
+            "chord_beats": 2,
+            "suppress_chord_attacks": true,
+            "lead_start_seconds": 0.0,
+            "audio_lead_detection": true,
+            "grid_offset": 0.047346938775510106,
+            "rhythm_mode": "notes"
+          },
+          "audio_sha256": "84c66c7d1c1fcb4fcb826f81eb0ce5dcd5d44d26daeb1b1116c4482b70dbec1b",
+          "reference_sha256": "c8b41a63108315ce66d56348d5db6cd3fb29d2d34ecc9d31cbcf312d53f7c8e1",
+          "source_sha256": "eae3c46f899d72705b5d695838ffadd0790717472211571cf90ec5d3cb78709e",
+          "versions": {
+            "python": "3.11.17",
+            "basic-pitch": "0.4.0",
+            "numpy": "1.26.4",
+            "scipy": "1.17.1",
+            "tensorflow": "2.14.0",
+            "demucs": "4.0.1",
+            "torch": "2.5.1+cpu"
+          }
+        },
+        "scores": {
+          "arranged": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 144,
+              "matched": 70,
+              "extra": 74,
+              "missing": 15,
+              "precision": 0.4861111111111111,
+              "recall": 0.8235294117647058,
+              "f1": 0.611353711790393,
+              "onset_mae_ms": 2.5714286573068943e-07,
+              "score_noteoff_mae_ms": 35.852847572206095,
+              "same_fingering_rate": 0.5428571428571428
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 144,
+              "matched": 73,
+              "extra": 71,
+              "missing": 12,
+              "precision": 0.5069444444444444,
+              "recall": 0.8588235294117647,
+              "f1": 0.6375545851528385,
+              "onset_mae_ms": 2.541235897512071e-07,
+              "score_noteoff_mae_ms": 35.77726229512635,
+              "same_fingering_rate": 0.547945205479452
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 39,
+                "matched": 34,
+                "extra": 5,
+                "missing": 6,
+                "precision": 0.8717948717948718,
+                "recall": 0.85,
+                "f1": 0.8607594936708861,
+                "onset_mae_ms": 2.5450180525113224e-07,
+                "score_noteoff_mae_ms": 26.9475258245966,
+                "same_fingering_rate": 0.6764705882352942
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 105,
+                "matched": 36,
+                "extra": 69,
+                "missing": 9,
+                "precision": 0.34285714285714286,
+                "recall": 0.8,
+                "f1": 0.48,
+                "onset_mae_ms": 2.5963720062804896e-07,
+                "score_noteoff_mae_ms": 44.26342922272617,
+                "same_fingering_rate": 0.4166666666666667
+              }
+            },
+            "part_confusions": [
+              {
+                "reference_id": "lead.bar2.e3.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 2.292244898,
+                "predicted_start": 2.2922448979591836
+              },
+              {
+                "reference_id": "lead.bar5.e3.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 7.190204082,
+                "predicted_start": 7.190204081632653
+              },
+              {
+                "reference_id": "lead.bar6.e3.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 8.822857143,
+                "predicted_start": 8.822857142857142
+              }
+            ],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "lead_before_quantization": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 35,
+              "extra": 7,
+              "missing": 5,
+              "precision": 0.8333333333333334,
+              "recall": 0.875,
+              "f1": 0.8536585365853658,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 41.18837703537412,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 35,
+              "extra": 7,
+              "missing": 5,
+              "precision": 0.8333333333333334,
+              "recall": 0.875,
+              "f1": 0.8536585365853658,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 41.18837703537412,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 42,
+                "matched": 35,
+                "extra": 7,
+                "missing": 5,
+                "precision": 0.8333333333333334,
+                "recall": 0.875,
+                "f1": 0.8536585365853658,
+                "onset_mae_ms": 23.733307414706744,
+                "score_noteoff_mae_ms": 41.18837703537412,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_candidates": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 168,
+              "matched": 0,
+              "extra": 168,
+              "missing": 85,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 168,
+              "matched": 74,
+              "extra": 94,
+              "missing": 11,
+              "precision": 0.44047619047619047,
+              "recall": 0.8705882352941177,
+              "f1": 0.5849802371541502,
+              "onset_mae_ms": 26.078923793374926,
+              "score_noteoff_mae_ms": 209.36932647098115,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 40,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 45,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_coverage_by_reference_part": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 168,
+              "matched": 38,
+              "extra": 130,
+              "missing": 2,
+              "precision": 0.2261904761904762,
+              "recall": 0.95,
+              "f1": 0.36538461538461536,
+              "onset_mae_ms": 23.7530254029716,
+              "score_noteoff_mae_ms": 155.75024464208138,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 168,
+              "matched": 41,
+              "extra": 127,
+              "missing": 4,
+              "precision": 0.24404761904761904,
+              "recall": 0.9111111111111111,
+              "f1": 0.38497652582159625,
+              "onset_mae_ms": 28.402997598418192,
+              "score_noteoff_mae_ms": 280.26825951136544,
+              "same_fingering_rate": null
+            }
+          },
+          "arranged_sensitivity": {
+            "50": {
+              "reference_notes": 85,
+              "predicted_notes": 144,
+              "matched": 70,
+              "extra": 74,
+              "missing": 15,
+              "precision": 0.4861111111111111,
+              "recall": 0.8235294117647058,
+              "f1": 0.611353711790393,
+              "onset_mae_ms": 2.5714286573068943e-07,
+              "score_noteoff_mae_ms": 35.852847572206095,
+              "same_fingering_rate": 0.5428571428571428
+            },
+            "80": {
+              "reference_notes": 85,
+              "predicted_notes": 144,
+              "matched": 70,
+              "extra": 74,
+              "missing": 15,
+              "precision": 0.4861111111111111,
+              "recall": 0.8235294117647058,
+              "f1": 0.611353711790393,
+              "onset_mae_ms": 2.5714286573068943e-07,
+              "score_noteoff_mae_ms": 35.852847572206095,
+              "same_fingering_rate": 0.5428571428571428
+            },
+            "100": {
+              "reference_notes": 85,
+              "predicted_notes": 144,
+              "matched": 70,
+              "extra": 74,
+              "missing": 15,
+              "precision": 0.4861111111111111,
+              "recall": 0.8235294117647058,
+              "f1": 0.611353711790393,
+              "onset_mae_ms": 2.5714286573068943e-07,
+              "score_noteoff_mae_ms": 35.852847572206095,
+              "same_fingering_rate": 0.5428571428571428
+            }
+          },
+          "audio_supported": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 51,
+              "matched": 35,
+              "extra": 16,
+              "missing": 5,
+              "precision": 0.6862745098039216,
+              "recall": 0.875,
+              "f1": 0.7692307692307693,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 162.5955684833819,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 51,
+              "matched": 35,
+              "extra": 16,
+              "missing": 5,
+              "precision": 0.6862745098039216,
+              "recall": 0.875,
+              "f1": 0.7692307692307693,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 162.5955684833819,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 51,
+                "matched": 35,
+                "extra": 16,
+                "missing": 5,
+                "precision": 0.6862745098039216,
+                "recall": 0.875,
+                "f1": 0.7692307692307693,
+                "onset_mae_ms": 23.733307414706744,
+                "score_noteoff_mae_ms": 162.5955684833819,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          }
+        }
+      },
+      "after": {
+        "case_id": "unmei_intro_bars_2_6",
+        "reference_bpm": 147.0,
+        "evaluation_window": [
+          1.0873469387755101,
+          9.843265306122449
+        ],
+        "analysis_window": [
+          0.0,
+          10.3
+        ],
+        "onset_tolerance_ms": 80.0,
+        "run": {
+          "tempo_mode": "reference",
+          "context_mode": "excerpt",
+          "tempo_estimation": null,
+          "lead_evidence_method": "spatial_phrase",
+          "separation_requested": true,
+          "separation_applied": true,
+          "options": {
+            "tuning": [
+              64,
+              59,
+              55,
+              50,
+              45,
+              40
+            ],
+            "quantize": 0.25,
+            "bpm": 147.0,
+            "min_confidence": 0.3,
+            "max_fret": 19,
+            "bars_per_line": 4,
+            "capo": 1,
+            "difficulty": "standard",
+            "chord_beats": 2,
+            "suppress_chord_attacks": true,
+            "lead_start_seconds": 0.0,
+            "audio_lead_detection": true,
+            "grid_offset": 0.047346938775510106,
+            "rhythm_mode": "notes"
+          },
+          "audio_sha256": "84c66c7d1c1fcb4fcb826f81eb0ce5dcd5d44d26daeb1b1116c4482b70dbec1b",
+          "reference_sha256": "c8b41a63108315ce66d56348d5db6cd3fb29d2d34ecc9d31cbcf312d53f7c8e1",
+          "source_sha256": "c74e728c00da06bd774e46220392c83f21f337bf43c58879a762b1aa0e301e26",
+          "versions": {
+            "python": "3.11.17",
+            "basic-pitch": "0.4.0",
+            "numpy": "1.26.4",
+            "scipy": "1.17.1",
+            "tensorflow": "2.14.0",
+            "demucs": "4.0.1",
+            "torch": "2.5.1+cpu"
+          },
+          "separation_details": {
+            "model": "htdemucs_6s",
+            "stem": "guitar",
+            "device": "cpu",
+            "shifts": 1,
+            "seed": null,
+            "duration_seconds": 27.24188547999998,
+            "output_sha256": "fe4953bb906fbdd5aef956aebc8cd3e684e4fd1162ba0ad64a936b0056091dc2",
+            "frames": 454230,
+            "sample_rate": 44100,
+            "channels": 2,
+            "checkpoint_sha256": "34c22ccb381c6f9fdbf324f04e1e2fe21aaaf293f5ded163a162697ff9a02ddd",
+            "execution": "Retained same guitar stem reused; Demucs not rerun."
+          }
+        },
+        "scores": {
+          "arranged": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 141,
+              "matched": 71,
+              "extra": 70,
+              "missing": 14,
+              "precision": 0.5035460992907801,
+              "recall": 0.8352941176470589,
+              "f1": 0.6283185840707964,
+              "onset_mae_ms": 2.5409601183697995e-07,
+              "score_noteoff_mae_ms": 35.34787789355185,
+              "same_fingering_rate": 0.5492957746478874
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 141,
+              "matched": 73,
+              "extra": 68,
+              "missing": 12,
+              "precision": 0.5177304964539007,
+              "recall": 0.8588235294117647,
+              "f1": 0.6460176991150443,
+              "onset_mae_ms": 2.541235897512071e-07,
+              "score_noteoff_mae_ms": 35.77726229512635,
+              "same_fingering_rate": 0.547945205479452
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 40,
+                "matched": 35,
+                "extra": 5,
+                "missing": 5,
+                "precision": 0.875,
+                "recall": 0.875,
+                "f1": 0.875,
+                "onset_mae_ms": 2.4839650336616614e-07,
+                "score_noteoff_mae_ms": 26.17759652640113,
+                "same_fingering_rate": 0.6857142857142857
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 101,
+                "matched": 36,
+                "extra": 65,
+                "missing": 9,
+                "precision": 0.3564356435643564,
+                "recall": 0.8,
+                "f1": 0.4931506849315068,
+                "onset_mae_ms": 2.5963720062804896e-07,
+                "score_noteoff_mae_ms": 44.26342922272617,
+                "same_fingering_rate": 0.4166666666666667
+              }
+            },
+            "part_confusions": [
+              {
+                "reference_id": "lead.bar5.e3.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 7.190204082,
+                "predicted_start": 7.190204081632653
+              },
+              {
+                "reference_id": "lead.bar6.e3.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 8.822857143,
+                "predicted_start": 8.822857142857142
+              }
+            ],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "lead_before_quantization": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 35,
+              "extra": 7,
+              "missing": 5,
+              "precision": 0.8333333333333334,
+              "recall": 0.875,
+              "f1": 0.8536585365853658,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 41.18837703537412,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 35,
+              "extra": 7,
+              "missing": 5,
+              "precision": 0.8333333333333334,
+              "recall": 0.875,
+              "f1": 0.8536585365853658,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 41.18837703537412,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 42,
+                "matched": 35,
+                "extra": 7,
+                "missing": 5,
+                "precision": 0.8333333333333334,
+                "recall": 0.875,
+                "f1": 0.8536585365853658,
+                "onset_mae_ms": 23.733307414706744,
+                "score_noteoff_mae_ms": 41.18837703537412,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_candidates": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 168,
+              "matched": 0,
+              "extra": 168,
+              "missing": 85,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 168,
+              "matched": 74,
+              "extra": 94,
+              "missing": 11,
+              "precision": 0.44047619047619047,
+              "recall": 0.8705882352941177,
+              "f1": 0.5849802371541502,
+              "onset_mae_ms": 26.078923793374926,
+              "score_noteoff_mae_ms": 209.36932647098115,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 40,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 45,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_coverage_by_reference_part": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 168,
+              "matched": 38,
+              "extra": 130,
+              "missing": 2,
+              "precision": 0.2261904761904762,
+              "recall": 0.95,
+              "f1": 0.36538461538461536,
+              "onset_mae_ms": 23.7530254029716,
+              "score_noteoff_mae_ms": 155.75024464208138,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 168,
+              "matched": 41,
+              "extra": 127,
+              "missing": 4,
+              "precision": 0.24404761904761904,
+              "recall": 0.9111111111111111,
+              "f1": 0.38497652582159625,
+              "onset_mae_ms": 28.402997598418192,
+              "score_noteoff_mae_ms": 280.26825951136544,
+              "same_fingering_rate": null
+            }
+          },
+          "arranged_sensitivity": {
+            "50": {
+              "reference_notes": 85,
+              "predicted_notes": 141,
+              "matched": 71,
+              "extra": 70,
+              "missing": 14,
+              "precision": 0.5035460992907801,
+              "recall": 0.8352941176470589,
+              "f1": 0.6283185840707964,
+              "onset_mae_ms": 2.5409601183697995e-07,
+              "score_noteoff_mae_ms": 35.34787789355185,
+              "same_fingering_rate": 0.5492957746478874
+            },
+            "80": {
+              "reference_notes": 85,
+              "predicted_notes": 141,
+              "matched": 71,
+              "extra": 70,
+              "missing": 14,
+              "precision": 0.5035460992907801,
+              "recall": 0.8352941176470589,
+              "f1": 0.6283185840707964,
+              "onset_mae_ms": 2.5409601183697995e-07,
+              "score_noteoff_mae_ms": 35.34787789355185,
+              "same_fingering_rate": 0.5492957746478874
+            },
+            "100": {
+              "reference_notes": 85,
+              "predicted_notes": 141,
+              "matched": 71,
+              "extra": 70,
+              "missing": 14,
+              "precision": 0.5035460992907801,
+              "recall": 0.8352941176470589,
+              "f1": 0.6283185840707964,
+              "onset_mae_ms": 2.5409601183697995e-07,
+              "score_noteoff_mae_ms": 35.34787789355185,
+              "same_fingering_rate": 0.5492957746478874
+            }
+          },
+          "audio_supported": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 51,
+              "matched": 35,
+              "extra": 16,
+              "missing": 5,
+              "precision": 0.6862745098039216,
+              "recall": 0.875,
+              "f1": 0.7692307692307693,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 162.5955684833819,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 51,
+              "matched": 35,
+              "extra": 16,
+              "missing": 5,
+              "precision": 0.6862745098039216,
+              "recall": 0.875,
+              "f1": 0.7692307692307693,
+              "onset_mae_ms": 23.733307414706744,
+              "score_noteoff_mae_ms": 162.5955684833819,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 51,
+                "matched": 35,
+                "extra": 16,
+                "missing": 5,
+                "precision": 0.6862745098039216,
+                "recall": 0.875,
+                "f1": 0.7692307692307693,
+                "onset_mae_ms": 23.733307414706744,
+                "score_noteoff_mae_ms": 162.5955684833819,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          }
+        }
+      },
+      "identical_transcription": true,
+      "identical_options": true,
+      "identical_rhythm_timing": true,
+      "previous_rhythm_notes_unchanged": true,
+      "removed_rhythm_notes": [
+        {
+          "start": 2.0881632653061226,
+          "end": 2.2922448979591836,
+          "pitch": 67,
+          "confidence": 0.3580918312072754,
+          "string": 1,
+          "fret": 7
+        },
+        {
+          "start": 2.2922448979591836,
+          "end": 2.4963265306122446,
+          "pitch": 72,
+          "confidence": 0.4225800037384033,
+          "string": 0,
+          "fret": 7
+        },
+        {
+          "start": 2.2922448979591836,
+          "end": 2.4393791383219954,
+          "pitch": 67,
+          "confidence": 0.34046557545661926,
+          "string": 1,
+          "fret": 7
+        },
+        {
+          "start": 8.618775510204081,
+          "end": 8.822857142857142,
+          "pitch": 67,
+          "confidence": 0.41463610529899597,
+          "string": 3,
+          "fret": 16
+        }
+      ],
+      "recovered_lead_notes": [
+        {
+          "start": 2.2922448979591836,
+          "end": 2.4963265306122446,
+          "pitch": 72,
+          "confidence": 0.4225800037384033,
+          "string": 0,
+          "fret": 7
+        }
+      ]
+    },
+    "none": {
+      "before": {
+        "case_id": "unmei_intro_bars_2_6",
+        "reference_bpm": 147.0,
+        "evaluation_window": [
+          1.0873469387755101,
+          9.843265306122449
+        ],
+        "analysis_window": [
+          0.0,
+          10.3
+        ],
+        "onset_tolerance_ms": 80.0,
+        "run": {
+          "tempo_mode": "reference",
+          "context_mode": "excerpt",
+          "tempo_estimation": null,
+          "lead_evidence_method": "spatial_phrase",
+          "separation_requested": false,
+          "separation_applied": false,
+          "options": {
+            "tuning": [
+              64,
+              59,
+              55,
+              50,
+              45,
+              40
+            ],
+            "quantize": 0.25,
+            "bpm": 147.0,
+            "min_confidence": 0.3,
+            "max_fret": 19,
+            "bars_per_line": 4,
+            "capo": 1,
+            "difficulty": "standard",
+            "chord_beats": 2,
+            "suppress_chord_attacks": true,
+            "lead_start_seconds": 0.0,
+            "audio_lead_detection": true,
+            "grid_offset": 0.047346938775510106,
+            "rhythm_mode": "notes"
+          },
+          "audio_sha256": "84c66c7d1c1fcb4fcb826f81eb0ce5dcd5d44d26daeb1b1116c4482b70dbec1b",
+          "reference_sha256": "c8b41a63108315ce66d56348d5db6cd3fb29d2d34ecc9d31cbcf312d53f7c8e1",
+          "source_sha256": "eae3c46f899d72705b5d695838ffadd0790717472211571cf90ec5d3cb78709e",
+          "versions": {
+            "python": "3.11.17",
+            "basic-pitch": "0.4.0",
+            "numpy": "1.26.4",
+            "scipy": "1.17.1",
+            "tensorflow": "2.14.0",
+            "demucs": "4.0.1",
+            "torch": "2.5.1+cpu"
+          }
+        },
+        "scores": {
+          "arranged": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 179,
+              "matched": 57,
+              "extra": 122,
+              "missing": 28,
+              "precision": 0.31843575418994413,
+              "recall": 0.6705882352941176,
+              "f1": 0.4318181818181818,
+              "onset_mae_ms": 2.5993551171148666e-07,
+              "score_noteoff_mae_ms": 71.37579665449343,
+              "same_fingering_rate": 0.49122807017543857
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 179,
+              "matched": 63,
+              "extra": 116,
+              "missing": 22,
+              "precision": 0.35195530726256985,
+              "recall": 0.7411764705882353,
+              "f1": 0.4772727272727273,
+              "onset_mae_ms": 2.5979911696376733e-07,
+              "score_noteoff_mae_ms": 70.17730990170256,
+              "same_fingering_rate": 0.5079365079365079
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 39,
+                "matched": 28,
+                "extra": 11,
+                "missing": 12,
+                "precision": 0.717948717948718,
+                "recall": 0.7,
+                "f1": 0.7088607594936709,
+                "onset_mae_ms": 2.609329577804179e-07,
+                "score_noteoff_mae_ms": 64.08846778482356,
+                "same_fingering_rate": 0.5357142857142857
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 140,
+                "matched": 29,
+                "extra": 111,
+                "missing": 16,
+                "precision": 0.20714285714285716,
+                "recall": 0.6444444444444445,
+                "f1": 0.31351351351351353,
+                "onset_mae_ms": 2.589724603345875e-07,
+                "score_noteoff_mae_ms": 78.4118383217609,
+                "same_fingering_rate": 0.4482758620689655
+              }
+            },
+            "part_confusions": [
+              {
+                "reference_id": "lead.bar2.e1.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 67,
+                "reference_start": 1.884081633,
+                "predicted_start": 1.8840816326530612
+              },
+              {
+                "reference_id": "lead.bar3.e7.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 4.74122449,
+                "predicted_start": 4.741224489795918
+              },
+              {
+                "reference_id": "rhythm.bar3.e7.n0",
+                "reference_part": "rhythm",
+                "predicted_part": "lead",
+                "pitch": 65,
+                "reference_start": 4.74122449,
+                "predicted_start": 4.741224489795918
+              },
+              {
+                "reference_id": "lead.bar4.e3.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 5.55755102,
+                "predicted_start": 5.557551020408163
+              },
+              {
+                "reference_id": "lead.bar5.e7.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 8.006530612,
+                "predicted_start": 8.006530612244898
+              },
+              {
+                "reference_id": "rhythm.bar6.e3.n0",
+                "reference_part": "rhythm",
+                "predicted_part": "lead",
+                "pitch": 65,
+                "reference_start": 8.822857143,
+                "predicted_start": 8.822857142857142
+              }
+            ],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 4
+              }
+            ]
+          },
+          "lead_before_quantization": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 30,
+              "extra": 12,
+              "missing": 10,
+              "precision": 0.7142857142857143,
+              "recall": 0.75,
+              "f1": 0.7317073170731707,
+              "onset_mae_ms": 23.408102779667256,
+              "score_noteoff_mae_ms": 69.45417987717305,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 30,
+              "extra": 12,
+              "missing": 10,
+              "precision": 0.7142857142857143,
+              "recall": 0.75,
+              "f1": 0.7317073170731707,
+              "onset_mae_ms": 23.408102779667256,
+              "score_noteoff_mae_ms": 69.45417987717305,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 42,
+                "matched": 30,
+                "extra": 12,
+                "missing": 10,
+                "precision": 0.7142857142857143,
+                "recall": 0.75,
+                "f1": 0.7317073170731707,
+                "onset_mae_ms": 23.408102779667256,
+                "score_noteoff_mae_ms": 69.45417987717305,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_candidates": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 239,
+              "matched": 0,
+              "extra": 239,
+              "missing": 85,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 239,
+              "matched": 71,
+              "extra": 168,
+              "missing": 14,
+              "precision": 0.29707112970711297,
+              "recall": 0.8352941176470589,
+              "f1": 0.4382716049382716,
+              "onset_mae_ms": 25.001366906741907,
+              "score_noteoff_mae_ms": 149.53783654335544,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 40,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 45,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_coverage_by_reference_part": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 239,
+              "matched": 36,
+              "extra": 203,
+              "missing": 4,
+              "precision": 0.1506276150627615,
+              "recall": 0.9,
+              "f1": 0.25806451612903225,
+              "onset_mae_ms": 23.524829901927298,
+              "score_noteoff_mae_ms": 117.47805496819103,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 239,
+              "matched": 40,
+              "extra": 199,
+              "missing": 5,
+              "precision": 0.16736401673640167,
+              "recall": 0.8888888888888888,
+              "f1": 0.28169014084507044,
+              "onset_mae_ms": 26.347267568083787,
+              "score_noteoff_mae_ms": 191.33589567273245,
+              "same_fingering_rate": null
+            }
+          },
+          "arranged_sensitivity": {
+            "50": {
+              "reference_notes": 85,
+              "predicted_notes": 179,
+              "matched": 57,
+              "extra": 122,
+              "missing": 28,
+              "precision": 0.31843575418994413,
+              "recall": 0.6705882352941176,
+              "f1": 0.4318181818181818,
+              "onset_mae_ms": 2.5993551171148666e-07,
+              "score_noteoff_mae_ms": 71.37579665449343,
+              "same_fingering_rate": 0.49122807017543857
+            },
+            "80": {
+              "reference_notes": 85,
+              "predicted_notes": 179,
+              "matched": 57,
+              "extra": 122,
+              "missing": 28,
+              "precision": 0.31843575418994413,
+              "recall": 0.6705882352941176,
+              "f1": 0.4318181818181818,
+              "onset_mae_ms": 2.5993551171148666e-07,
+              "score_noteoff_mae_ms": 71.37579665449343,
+              "same_fingering_rate": 0.49122807017543857
+            },
+            "100": {
+              "reference_notes": 85,
+              "predicted_notes": 179,
+              "matched": 57,
+              "extra": 122,
+              "missing": 28,
+              "precision": 0.31843575418994413,
+              "recall": 0.6705882352941176,
+              "f1": 0.4318181818181818,
+              "onset_mae_ms": 2.5993551171148666e-07,
+              "score_noteoff_mae_ms": 71.37579665449343,
+              "same_fingering_rate": 0.49122807017543857
+            }
+          },
+          "audio_supported": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 50,
+              "matched": 31,
+              "extra": 19,
+              "missing": 9,
+              "precision": 0.62,
+              "recall": 0.775,
+              "f1": 0.6888888888888889,
+              "onset_mae_ms": 22.969907079584374,
+              "score_noteoff_mae_ms": 126.48935706276058,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 50,
+              "matched": 31,
+              "extra": 19,
+              "missing": 9,
+              "precision": 0.62,
+              "recall": 0.775,
+              "f1": 0.6888888888888889,
+              "onset_mae_ms": 22.969907079584374,
+              "score_noteoff_mae_ms": 126.48935706276058,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 50,
+                "matched": 31,
+                "extra": 19,
+                "missing": 9,
+                "precision": 0.62,
+                "recall": 0.775,
+                "f1": 0.6888888888888889,
+                "onset_mae_ms": 22.969907079584374,
+                "score_noteoff_mae_ms": 126.48935706276058,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          }
+        }
+      },
+      "after": {
+        "case_id": "unmei_intro_bars_2_6",
+        "reference_bpm": 147.0,
+        "evaluation_window": [
+          1.0873469387755101,
+          9.843265306122449
+        ],
+        "analysis_window": [
+          0.0,
+          10.3
+        ],
+        "onset_tolerance_ms": 80.0,
+        "run": {
+          "tempo_mode": "reference",
+          "context_mode": "excerpt",
+          "tempo_estimation": null,
+          "lead_evidence_method": "spatial_phrase",
+          "separation_requested": false,
+          "separation_applied": false,
+          "options": {
+            "tuning": [
+              64,
+              59,
+              55,
+              50,
+              45,
+              40
+            ],
+            "quantize": 0.25,
+            "bpm": 147.0,
+            "min_confidence": 0.3,
+            "max_fret": 19,
+            "bars_per_line": 4,
+            "capo": 1,
+            "difficulty": "standard",
+            "chord_beats": 2,
+            "suppress_chord_attacks": true,
+            "lead_start_seconds": 0.0,
+            "audio_lead_detection": true,
+            "grid_offset": 0.047346938775510106,
+            "rhythm_mode": "notes"
+          },
+          "audio_sha256": "84c66c7d1c1fcb4fcb826f81eb0ce5dcd5d44d26daeb1b1116c4482b70dbec1b",
+          "reference_sha256": "c8b41a63108315ce66d56348d5db6cd3fb29d2d34ecc9d31cbcf312d53f7c8e1",
+          "source_sha256": "c74e728c00da06bd774e46220392c83f21f337bf43c58879a762b1aa0e301e26",
+          "versions": {
+            "python": "3.11.17",
+            "basic-pitch": "0.4.0",
+            "numpy": "1.26.4",
+            "scipy": "1.17.1",
+            "tensorflow": "2.14.0",
+            "demucs": "4.0.1",
+            "torch": "2.5.1+cpu"
+          }
+        },
+        "scores": {
+          "arranged": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 177,
+              "matched": 58,
+              "extra": 119,
+              "missing": 27,
+              "precision": 0.327683615819209,
+              "recall": 0.6823529411764706,
+              "f1": 0.44274809160305345,
+              "onset_mae_ms": 2.6143557051017886e-07,
+              "score_noteoff_mae_ms": 67.37693332844638,
+              "same_fingering_rate": 0.4827586206896552
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 177,
+              "matched": 63,
+              "extra": 114,
+              "missing": 22,
+              "precision": 0.3559322033898305,
+              "recall": 0.7411764705882353,
+              "f1": 0.48091603053435117,
+              "onset_mae_ms": 2.5979911696376733e-07,
+              "score_noteoff_mae_ms": 66.00907034175583,
+              "same_fingering_rate": 0.5079365079365079
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 40,
+                "matched": 29,
+                "extra": 11,
+                "missing": 11,
+                "precision": 0.725,
+                "recall": 0.725,
+                "f1": 0.725,
+                "onset_mae_ms": 2.6389868068577016e-07,
+                "score_noteoff_mae_ms": 56.342028335131864,
+                "same_fingering_rate": 0.5172413793103449
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 137,
+                "matched": 29,
+                "extra": 108,
+                "missing": 16,
+                "precision": 0.2116788321167883,
+                "recall": 0.6444444444444445,
+                "f1": 0.31868131868131866,
+                "onset_mae_ms": 2.589724603345875e-07,
+                "score_noteoff_mae_ms": 78.4118383217609,
+                "same_fingering_rate": 0.4482758620689655
+              }
+            },
+            "part_confusions": [
+              {
+                "reference_id": "lead.bar3.e7.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 4.74122449,
+                "predicted_start": 4.741224489795918
+              },
+              {
+                "reference_id": "rhythm.bar3.e7.n0",
+                "reference_part": "rhythm",
+                "predicted_part": "lead",
+                "pitch": 65,
+                "reference_start": 4.74122449,
+                "predicted_start": 4.741224489795918
+              },
+              {
+                "reference_id": "lead.bar4.e3.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 5.55755102,
+                "predicted_start": 5.557551020408163
+              },
+              {
+                "reference_id": "lead.bar5.e7.n0",
+                "reference_part": "lead",
+                "predicted_part": "rhythm",
+                "pitch": 72,
+                "reference_start": 8.006530612,
+                "predicted_start": 8.006530612244898
+              },
+              {
+                "reference_id": "rhythm.bar6.e3.n0",
+                "reference_part": "rhythm",
+                "predicted_part": "lead",
+                "pitch": 65,
+                "reference_start": 8.822857143,
+                "predicted_start": 8.822857142857142
+              }
+            ],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 4
+              }
+            ]
+          },
+          "lead_before_quantization": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 30,
+              "extra": 12,
+              "missing": 10,
+              "precision": 0.7142857142857143,
+              "recall": 0.75,
+              "f1": 0.7317073170731707,
+              "onset_mae_ms": 23.408102779667256,
+              "score_noteoff_mae_ms": 69.45417987717305,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 42,
+              "matched": 30,
+              "extra": 12,
+              "missing": 10,
+              "precision": 0.7142857142857143,
+              "recall": 0.75,
+              "f1": 0.7317073170731707,
+              "onset_mae_ms": 23.408102779667256,
+              "score_noteoff_mae_ms": 69.45417987717305,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 42,
+                "matched": 30,
+                "extra": 12,
+                "missing": 10,
+                "precision": 0.7142857142857143,
+                "recall": 0.75,
+                "f1": 0.7317073170731707,
+                "onset_mae_ms": 23.408102779667256,
+                "score_noteoff_mae_ms": 69.45417987717305,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_candidates": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 85,
+              "predicted_notes": 239,
+              "matched": 0,
+              "extra": 239,
+              "missing": 85,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "onset_mae_ms": null,
+              "score_noteoff_mae_ms": null,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 85,
+              "predicted_notes": 239,
+              "matched": 71,
+              "extra": 168,
+              "missing": 14,
+              "precision": 0.29707112970711297,
+              "recall": 0.8352941176470589,
+              "f1": 0.4382716049382716,
+              "onset_mae_ms": 25.001366906741907,
+              "score_noteoff_mae_ms": 149.53783654335544,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 40,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 45,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 45,
+                "precision": null,
+                "recall": 0.0,
+                "f1": 0.0,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              },
+              {
+                "part": "rhythm",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          },
+          "raw_coverage_by_reference_part": {
+            "lead": {
+              "reference_notes": 40,
+              "predicted_notes": 239,
+              "matched": 36,
+              "extra": 203,
+              "missing": 4,
+              "precision": 0.1506276150627615,
+              "recall": 0.9,
+              "f1": 0.25806451612903225,
+              "onset_mae_ms": 23.524829901927298,
+              "score_noteoff_mae_ms": 117.47805496819103,
+              "same_fingering_rate": null
+            },
+            "rhythm": {
+              "reference_notes": 45,
+              "predicted_notes": 239,
+              "matched": 40,
+              "extra": 199,
+              "missing": 5,
+              "precision": 0.16736401673640167,
+              "recall": 0.8888888888888888,
+              "f1": 0.28169014084507044,
+              "onset_mae_ms": 26.347267568083787,
+              "score_noteoff_mae_ms": 191.33589567273245,
+              "same_fingering_rate": null
+            }
+          },
+          "arranged_sensitivity": {
+            "50": {
+              "reference_notes": 85,
+              "predicted_notes": 177,
+              "matched": 58,
+              "extra": 119,
+              "missing": 27,
+              "precision": 0.327683615819209,
+              "recall": 0.6823529411764706,
+              "f1": 0.44274809160305345,
+              "onset_mae_ms": 2.6143557051017886e-07,
+              "score_noteoff_mae_ms": 67.37693332844638,
+              "same_fingering_rate": 0.4827586206896552
+            },
+            "80": {
+              "reference_notes": 85,
+              "predicted_notes": 177,
+              "matched": 58,
+              "extra": 119,
+              "missing": 27,
+              "precision": 0.327683615819209,
+              "recall": 0.6823529411764706,
+              "f1": 0.44274809160305345,
+              "onset_mae_ms": 2.6143557051017886e-07,
+              "score_noteoff_mae_ms": 67.37693332844638,
+              "same_fingering_rate": 0.4827586206896552
+            },
+            "100": {
+              "reference_notes": 85,
+              "predicted_notes": 177,
+              "matched": 58,
+              "extra": 119,
+              "missing": 27,
+              "precision": 0.327683615819209,
+              "recall": 0.6823529411764706,
+              "f1": 0.44274809160305345,
+              "onset_mae_ms": 2.6143557051017886e-07,
+              "score_noteoff_mae_ms": 67.37693332844638,
+              "same_fingering_rate": 0.4827586206896552
+            }
+          },
+          "audio_supported": {
+            "onset_tolerance_ms": 80.0,
+            "overall": {
+              "reference_notes": 40,
+              "predicted_notes": 50,
+              "matched": 31,
+              "extra": 19,
+              "missing": 9,
+              "precision": 0.62,
+              "recall": 0.775,
+              "f1": 0.6888888888888889,
+              "onset_mae_ms": 22.969907079584374,
+              "score_noteoff_mae_ms": 126.48935706276058,
+              "same_fingering_rate": null
+            },
+            "pitch_onset_ignoring_part": {
+              "reference_notes": 40,
+              "predicted_notes": 50,
+              "matched": 31,
+              "extra": 19,
+              "missing": 9,
+              "precision": 0.62,
+              "recall": 0.775,
+              "f1": 0.6888888888888889,
+              "onset_mae_ms": 22.969907079584374,
+              "score_noteoff_mae_ms": 126.48935706276058,
+              "same_fingering_rate": null
+            },
+            "parts": {
+              "lead": {
+                "reference_notes": 40,
+                "predicted_notes": 50,
+                "matched": 31,
+                "extra": 19,
+                "missing": 9,
+                "precision": 0.62,
+                "recall": 0.775,
+                "f1": 0.6888888888888889,
+                "onset_mae_ms": 22.969907079584374,
+                "score_noteoff_mae_ms": 126.48935706276058,
+                "same_fingering_rate": null
+              },
+              "rhythm": {
+                "reference_notes": 0,
+                "predicted_notes": 0,
+                "matched": 0,
+                "extra": 0,
+                "missing": 0,
+                "precision": null,
+                "recall": null,
+                "f1": null,
+                "onset_mae_ms": null,
+                "score_noteoff_mae_ms": null,
+                "same_fingering_rate": null
+              }
+            },
+            "part_confusions": [],
+            "annotated_rests": [
+              {
+                "part": "lead",
+                "start": 1.0873469387755101,
+                "end": 1.68,
+                "false_attacks": 0
+              }
+            ]
+          }
+        }
+      },
+      "identical_transcription": true,
+      "identical_options": true,
+      "identical_rhythm_timing": true,
+      "previous_rhythm_notes_unchanged": true,
+      "removed_rhythm_notes": [
+        {
+          "start": 1.8840816326530612,
+          "end": 1.986122448979592,
+          "pitch": 67,
+          "confidence": 0.30915626883506775,
+          "string": 3,
+          "fret": 16
+        },
+        {
+          "start": 2.2922448979591836,
+          "end": 2.4393791383219954,
+          "pitch": 70,
+          "confidence": 0.6144727468490601,
+          "string": 2,
+          "fret": 14
+        },
+        {
+          "start": 9.026938775510205,
+          "end": 9.128979591836735,
+          "pitch": 72,
+          "confidence": 0.3705580532550812,
+          "string": 1,
+          "fret": 12
+        }
+      ],
+      "recovered_lead_notes": [
+        {
+          "start": 1.8840816326530612,
+          "end": 2.044639909297052,
+          "pitch": 67,
+          "confidence": 0.30915626883506775,
+          "string": 0,
+          "fret": 2
+        }
+      ]
+    }
+  },
+  "previous_69_notes": [
+    {
+      "raw_index": 1,
+      "detected": {
+        "start": 1.7066666666666668,
+        "end": 1.9040362811791383,
+        "pitch": 60,
+        "confidence": 0.39074599742889404
+      },
+      "before_arranged": {
+        "start": 1.68,
+        "end": 1.8840816326530612,
+        "pitch": 60,
+        "confidence": 0.39074599742889404,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 1.696666666666667,
+        "novelty": 0.9438656598180705,
+        "share": 0.022557169526074106,
+        "energy": 0.0015595700775356256
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.4606840158569785,
+        "attack": 0.9999751455382049,
+        "harmonics": [
+          0.1294557621859158,
+          0.5517286413489377,
+          0.39354516210584944,
+          0.72011767550603,
+          0.07341287869980158
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.4606840158569785,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.9999751455382049
+      }
+    },
+    {
+      "raw_index": 4,
+      "detected": {
+        "start": 1.9040362811791383,
+        "end": 2.311669387755102,
+        "pitch": 60,
+        "confidence": 0.33383214473724365
+      },
+      "before_arranged": {
+        "start": 1.8840816326530612,
+        "end": 2.0881632653061226,
+        "pitch": 60,
+        "confidence": 0.33383214473724365,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 1.9240362811791385,
+        "novelty": 0.4395815734459451,
+        "share": 0.1086384653536772,
+        "energy": 0.008109499031437793
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.19212424826941618,
+        "attack": 0.3949221134350931,
+        "harmonics": [
+          0.20665943844780577,
+          0.5217442276168577,
+          0.6628774159979174,
+          0.49239832108707277,
+          0.056676822418710325
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.19212424826941618,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.3949221134350931
+      }
+    },
+    {
+      "raw_index": 9,
+      "detected": {
+        "start": 2.125909750566893,
+        "end": 2.3000594104308387,
+        "pitch": 67,
+        "confidence": 0.3580918312072754
+      },
+      "before_arranged": {
+        "start": 2.0881632653061226,
+        "end": 2.2922448979591836,
+        "pitch": 67,
+        "confidence": 0.3580918312072754,
+        "string": 1,
+        "fret": 7
+      },
+      "retained_as_rhythm": false,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 2.085909750566893,
+        "novelty": 0.1362498674301969,
+        "share": 0.8034266228472853,
+        "energy": 0.11703080310356413
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.6817122749791247,
+        "attack": 0.0,
+        "harmonics": [
+          0.9169955141303465,
+          0.35030511043381646,
+          0.17100112969549988,
+          0.08464142196133041,
+          0.0
+        ]
+      },
+      "voice_check": {
+        "reject": true,
+        "reason": "confirmed_lead_source",
+        "pan": 0.6817122749791247,
+        "lead_anchors": 10,
+        "backing_anchors": 6,
+        "attack": 0.0,
+        "backing_pan": -0.8303887243648396,
+        "lead_pan": 0.7936562349057433
+      }
+    },
+    {
+      "raw_index": 13,
+      "detected": {
+        "start": 2.311669387755102,
+        "end": 2.5322589569161,
+        "pitch": 72,
+        "confidence": 0.4225800037384033
+      },
+      "before_arranged": {
+        "start": 2.2922448979591836,
+        "end": 2.4963265306122446,
+        "pitch": 72,
+        "confidence": 0.4225800037384033,
+        "string": 0,
+        "fret": 7
+      },
+      "retained_as_rhythm": false,
+      "recovered_as_lead": true,
+      "pitch_attack": {
+        "onset": 2.3416693877550974,
+        "novelty": 0.3355510644339625,
+        "share": 0.75389266043319,
+        "energy": 0.16542262846896133
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.7778465421433041,
+        "attack": 0.8254895675768757,
+        "harmonics": [
+          0.9090390764565622,
+          0.2993293260041021,
+          0.12784776128197622,
+          0.14754921185847364,
+          0.2143224021983249
+        ]
+      },
+      "voice_check": {
+        "reject": true,
+        "reason": "confirmed_lead_source",
+        "pan": 0.7778465421433041,
+        "lead_anchors": 11,
+        "backing_anchors": 9,
+        "attack": 0.8254895675768757,
+        "backing_pan": -0.8110743413249498,
+        "lead_pan": 0.8011900015879596
+      }
+    },
+    {
+      "raw_index": 11,
+      "detected": {
+        "start": 2.311669387755102,
+        "end": 2.8457283446712016,
+        "pitch": 60,
+        "confidence": 0.5277657508850098
+      },
+      "before_arranged": {
+        "start": 2.2922448979591836,
+        "end": 2.4963265306122446,
+        "pitch": 60,
+        "confidence": 0.5277657508850098,
+        "string": 3,
+        "fret": 9
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 2.321669387755098,
+        "novelty": 0.2422224085856685,
+        "share": 0.10219007103083133,
+        "energy": 0.022406301456572093
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.84257817594415,
+        "attack": 0.0,
+        "harmonics": [
+          0.17082292839143107,
+          0.8709582162403544,
+          0.28298800502696214,
+          0.32303962857352003,
+          0.16677679719055197
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.84257817594415,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 10,
+      "detected": {
+        "start": 2.3000594104308387,
+        "end": 2.4393791383219954,
+        "pitch": 67,
+        "confidence": 0.34046557545661926
+      },
+      "before_arranged": {
+        "start": 2.2922448979591836,
+        "end": 2.4393791383219954,
+        "pitch": 67,
+        "confidence": 0.34046557545661926,
+        "string": 1,
+        "fret": 7
+      },
+      "retained_as_rhythm": false,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 2.3200594104308343,
+        "novelty": 0.1697372102239995,
+        "share": 0.7671481677584869,
+        "energy": 0.1110653173609486
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.6007850145546716,
+        "attack": 0.0,
+        "harmonics": [
+          0.833745497881653,
+          0.5163410015420465,
+          0.022452510149824027,
+          0.1943098033466218,
+          0.0
+        ]
+      },
+      "voice_check": {
+        "reject": true,
+        "reason": "confirmed_lead_source",
+        "pan": 0.6007850145546716,
+        "lead_anchors": 5,
+        "backing_anchors": 5,
+        "attack": 0.0,
+        "backing_pan": -0.8497031074047293,
+        "lead_pan": 0.762204244688952
+      }
+    },
+    {
+      "raw_index": 18,
+      "detected": {
+        "start": 2.625138775510204,
+        "end": 2.7180185941043082,
+        "pitch": 70,
+        "confidence": 0.37810784578323364
+      },
+      "before_arranged": {
+        "start": 2.598367346938775,
+        "end": 2.7004081632653056,
+        "pitch": 70,
+        "confidence": 0.37810784578323364,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 2.5451387755102015,
+        "novelty": 0.33616989458941454,
+        "share": 0.751061884627138,
+        "energy": 0.12048877915459827
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.6890450760761304,
+        "attack": 0.819846199352904,
+        "harmonics": [
+          0.7557885560390737,
+          0.10676508491905573,
+          0.5939220654773884,
+          0.18071131818061964,
+          0.17884315704855544
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.6890450760761304,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.819846199352904
+      }
+    },
+    {
+      "raw_index": 17,
+      "detected": {
+        "start": 2.6019188208616777,
+        "end": 2.9850480725623583,
+        "pitch": 58,
+        "confidence": 0.38008689880371094
+      },
+      "before_arranged": {
+        "start": 2.598367346938775,
+        "end": 2.7004081632653056,
+        "pitch": 58,
+        "confidence": 0.38008689880371094,
+        "string": 3,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 2.5519188208616748,
+        "novelty": 0.5425408486116339,
+        "share": 0.20515482005943614,
+        "energy": 0.04337634682029662
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.8798867877632549,
+        "attack": 0.9548045753385199,
+        "harmonics": [
+          0.4546731832129521,
+          0.8144226838416353,
+          0.3509556796286021,
+          0.06919887858682414,
+          0.04505124471023016
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.8798867877632549,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.9548045753385199
+      }
+    },
+    {
+      "raw_index": 20,
+      "detected": {
+        "start": 2.7180185941043082,
+        "end": 2.91538820861678,
+        "pitch": 70,
+        "confidence": 0.43314775824546814
+      },
+      "before_arranged": {
+        "start": 2.7004081632653056,
+        "end": 2.9044897959183675,
+        "pitch": 70,
+        "confidence": 0.43314775824546814,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 2.6580185941043055,
+        "novelty": 0.25672483330998364,
+        "share": 0.777660664409338,
+        "energy": 0.12265994260195696
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.8110743413249498,
+        "attack": 0.19635237773368874,
+        "harmonics": [
+          0.8058991895428598,
+          0.07134055015652699,
+          0.3111798547137582,
+          0.13011361144686218,
+          0.4813258442407859
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.8110743413249498,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.19635237773368874
+      }
+    },
+    {
+      "raw_index": 25,
+      "detected": {
+        "start": 3.1243678004535145,
+        "end": 3.205637641723356,
+        "pitch": 70,
+        "confidence": 0.3365616202354431
+      },
+      "before_arranged": {
+        "start": 3.1085714285714285,
+        "end": 3.205637641723356,
+        "pitch": 70,
+        "confidence": 0.3365616202354431,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 3.15436780045351,
+        "novelty": 0.4828324558991739,
+        "share": 0.7395013003074675,
+        "energy": 0.12435543978378244
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.8497031074047293,
+        "attack": 0.5454520185937699,
+        "harmonics": [
+          0.690574928145817,
+          0.06697326389906022,
+          0.5391143510502463,
+          0.22146331265785305,
+          0.4230018536335137
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.8497031074047293,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.5454520185937699
+      }
+    },
+    {
+      "raw_index": 28,
+      "detected": {
+        "start": 3.1359777777777778,
+        "end": 3.3333473922902495,
+        "pitch": 65,
+        "confidence": 0.6113734245300293
+      },
+      "before_arranged": {
+        "start": 3.1085714285714285,
+        "end": 3.3126530612244895,
+        "pitch": 65,
+        "confidence": 0.6113734245300293,
+        "string": 1,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 3.1059777777777744,
+        "novelty": 0.13804289363923003,
+        "share": 0.7801048108032002,
+        "energy": 0.3069656427658416
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.38772604142136113,
+        "attack": 0.0,
+        "harmonics": [
+          0.8764229967491727,
+          0.39879214469012897,
+          0.17783820605829367,
+          0.18547352058043287,
+          0.0825875398114896
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.38772604142136113,
+        "lead_anchors": 1,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 27,
+      "detected": {
+        "start": 3.1359777777777778,
+        "end": 3.3449573696145123,
+        "pitch": 60,
+        "confidence": 0.5144463777542114
+      },
+      "before_arranged": {
+        "start": 3.1085714285714285,
+        "end": 3.3126530612244895,
+        "pitch": 60,
+        "confidence": 0.5144463777542114,
+        "string": 2,
+        "fret": 4
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 3.075977777777775,
+        "novelty": 0.1606918291815823,
+        "share": 0.059905719889038575,
+        "energy": 0.01543558880024835
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.694130276195945,
+        "attack": 0.0,
+        "harmonics": [
+          0.21659608059117547,
+          0.7856944842730328,
+          0.4558678967025315,
+          0.3346519174891221,
+          0.12634425247053394
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.694130276195945,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 39,
+      "detected": {
+        "start": 3.7745265306122446,
+        "end": 3.902236281179138,
+        "pitch": 70,
+        "confidence": 0.3334704339504242
+      },
+      "before_arranged": {
+        "start": 3.7208163265306125,
+        "end": 3.902236281179138,
+        "pitch": 70,
+        "confidence": 0.3334704339504242,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 3.7845265306122404,
+        "novelty": 0.40984797218619307,
+        "share": 0.8921360468611249,
+        "energy": 0.14227033731595468
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.7132180098698135,
+        "attack": 0.6443489681084495,
+        "harmonics": [
+          0.912628255170547,
+          0.07278575281134386,
+          0.2927159172164315,
+          0.22355732884022683,
+          0.16171399006274884
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.7132180098698135,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.6443489681084495
+      }
+    },
+    {
+      "raw_index": 44,
+      "detected": {
+        "start": 3.9602861678004535,
+        "end": 4.158939682539683,
+        "pitch": 67,
+        "confidence": 0.34673506021499634
+      },
+      "before_arranged": {
+        "start": 3.9248979591836735,
+        "end": 4.1289795918367345,
+        "pitch": 67,
+        "confidence": 0.34673506021499634,
+        "string": 1,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 3.9202861678004504,
+        "novelty": 0.28891687087714185,
+        "share": 0.9173288592467671,
+        "energy": 0.1249816687197259
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.4109034086649384,
+        "attack": 0.12906329029845587,
+        "harmonics": [
+          0.9215377225496556,
+          0.3562131030864061,
+          0.036195554012538475,
+          0.14821884616449177,
+          0.02452563187645492
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.4109034086649384,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.12906329029845587
+      }
+    },
+    {
+      "raw_index": 41,
+      "detected": {
+        "start": 3.9602861678004535,
+        "end": 4.344699319727891,
+        "pitch": 58,
+        "confidence": 0.3609880208969116
+      },
+      "before_arranged": {
+        "start": 3.9248979591836735,
+        "end": 4.1289795918367345,
+        "pitch": 58,
+        "confidence": 0.3609880208969116,
+        "string": 3,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 3.900286167800451,
+        "novelty": 0.0829614286549192,
+        "share": 0.22377394029873648,
+        "energy": 0.05646633404153628
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.618328486099465,
+        "attack": 0.0,
+        "harmonics": [
+          0.4193692517595712,
+          0.7510817484805655,
+          0.5077294482829013,
+          0.0428550964255047,
+          0.019490660191363467
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.618328486099465,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 43,
+      "detected": {
+        "start": 3.9602861678004535,
+        "end": 4.147329705215419,
+        "pitch": 65,
+        "confidence": 0.6377112865447998
+      },
+      "before_arranged": {
+        "start": 3.9248979591836735,
+        "end": 4.1289795918367345,
+        "pitch": 65,
+        "confidence": 0.6377112865447998,
+        "string": 0,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 3.9102861678004506,
+        "novelty": 0.23587810065892775,
+        "share": 0.8736798046351875,
+        "energy": 0.34248279336972426
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.322292388464934,
+        "attack": 0.25258194656913524,
+        "harmonics": [
+          0.8685531523432144,
+          0.412511532024716,
+          0.16073945530732978,
+          0.12238825763672968,
+          0.1861010462126293
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.322292388464934,
+        "lead_anchors": 1,
+        "backing_anchors": 0,
+        "attack": 0.25258194656913524
+      }
+    },
+    {
+      "raw_index": 47,
+      "detected": {
+        "start": 4.135719727891156,
+        "end": 4.228599546485261,
+        "pitch": 70,
+        "confidence": 0.3628765046596527
+      },
+      "before_arranged": {
+        "start": 4.1289795918367345,
+        "end": 4.228599546485261,
+        "pitch": 70,
+        "confidence": 0.3628765046596527,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.095719727891153,
+        "novelty": 0.19714035524888582,
+        "share": 0.9080320953640112,
+        "energy": 0.15777378663725167
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.5121218854535192,
+        "attack": 0.0,
+        "harmonics": [
+          0.7406450977615329,
+          0.09316688952962031,
+          0.6212020622331876,
+          0.10541393662006983,
+          0.21391743664479448
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.5121218854535192,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 46,
+      "detected": {
+        "start": 4.135719727891156,
+        "end": 4.367919274376417,
+        "pitch": 53,
+        "confidence": 0.42039185762405396
+      },
+      "before_arranged": {
+        "start": 4.1289795918367345,
+        "end": 4.3330612244897955,
+        "pitch": 53,
+        "confidence": 0.42039185762405396,
+        "string": 4,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.165719727891151,
+        "novelty": 0.13553798919519067,
+        "share": 0.012865775203461187,
+        "energy": 0.0074592875652796575
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.5467489504757296,
+        "attack": 0.5510558362641829,
+        "harmonics": [
+          0.08926485607510778,
+          0.8730514013558739,
+          0.2276306904164014,
+          0.4192425238310173,
+          0.047254746351943294
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.5467489504757296,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.5510558362641829
+      }
+    },
+    {
+      "raw_index": 50,
+      "detected": {
+        "start": 4.158939682539683,
+        "end": 4.356309297052154,
+        "pitch": 67,
+        "confidence": 0.30725282430648804
+      },
+      "before_arranged": {
+        "start": 4.1289795918367345,
+        "end": 4.3330612244897955,
+        "pitch": 67,
+        "confidence": 0.30725282430648804,
+        "string": 1,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.128939682539679,
+        "novelty": 0.214685163542848,
+        "share": 0.9119951918586175,
+        "energy": 0.09161090896639588
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.3283513015539206,
+        "attack": 0.0,
+        "harmonics": [
+          0.7128223912584976,
+          0.6973601421707215,
+          0.05773218291092135,
+          0.031303081613292365,
+          0.03549905308596361
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.3283513015539206,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 53,
+      "detected": {
+        "start": 4.344699319727891,
+        "end": 4.495629024943311,
+        "pitch": 70,
+        "confidence": 0.35997825860977173
+      },
+      "before_arranged": {
+        "start": 4.3330612244897955,
+        "end": 4.435102040816326,
+        "pitch": 70,
+        "confidence": 0.35997825860977173,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.3746993197278865,
+        "novelty": 0.7397258408046841,
+        "share": 0.7979909624317383,
+        "energy": 0.11060653875250824
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.7098079506957928,
+        "attack": 0.0,
+        "harmonics": [
+          0.883138494026733,
+          0.06143966719897127,
+          0.28262716636706636,
+          0.09511440668106444,
+          0.3568847182714685
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.7098079506957928,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 56,
+      "detected": {
+        "start": 4.495629024943311,
+        "end": 4.762658503401361,
+        "pitch": 70,
+        "confidence": 0.39878958463668823
+      },
+      "before_arranged": {
+        "start": 4.435102040816326,
+        "end": 4.537142857142857,
+        "pitch": 70,
+        "confidence": 0.39878958463668823,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.455629024943308,
+        "novelty": 0.11746628027566448,
+        "share": 0.8903990271340894,
+        "energy": 0.1510015694992441
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.514074462622992,
+        "attack": 0.0,
+        "harmonics": [
+          0.8862118776953656,
+          0.06319869040795709,
+          0.3765084745395782,
+          0.17110499943020027,
+          0.19899467614045444
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.514074462622992,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 55,
+      "detected": {
+        "start": 4.484019047619047,
+        "end": 4.588508843537415,
+        "pitch": 65,
+        "confidence": 0.5806496143341064
+      },
+      "before_arranged": {
+        "start": 4.435102040816326,
+        "end": 4.537142857142857,
+        "pitch": 65,
+        "confidence": 0.5806496143341064,
+        "string": 2,
+        "fret": 9
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.494019047619044,
+        "novelty": 0.07692089212244624,
+        "share": 0.7815256817614379,
+        "energy": 0.465225278470107
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.3618983488158551,
+        "attack": 0.0,
+        "harmonics": [
+          0.8397906523648143,
+          0.23524657864363915,
+          0.4123416669918622,
+          0.24557284766731366,
+          0.09528396291129224
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.3618983488158551,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 57,
+      "detected": {
+        "start": 4.542068934240363,
+        "end": 4.739438548752834,
+        "pitch": 72,
+        "confidence": 0.3033304810523987
+      },
+      "before_arranged": {
+        "start": 4.537142857142857,
+        "end": 4.739438548752834,
+        "pitch": 72,
+        "confidence": 0.3033304810523987,
+        "string": 0,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.572068934240359,
+        "novelty": 0.4586320793479216,
+        "share": 0.6098745908776017,
+        "energy": 0.09564833237028937
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.7882842491538233,
+        "attack": 0.1605120903845274,
+        "harmonics": [
+          0.8435353294756484,
+          0.469810258688433,
+          0.1431330775692144,
+          0.18065978473409267,
+          0.12083638956420976
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.7882842491538233,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.1605120903845274
+      }
+    },
+    {
+      "raw_index": 60,
+      "detected": {
+        "start": 4.576898866213152,
+        "end": 4.9832480725623585,
+        "pitch": 65,
+        "confidence": 0.6890508532524109
+      },
+      "before_arranged": {
+        "start": 4.537142857142857,
+        "end": 4.741224489795918,
+        "pitch": 65,
+        "confidence": 0.6890508532524109,
+        "string": 1,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.606898866213148,
+        "novelty": 0.09178093506779211,
+        "share": 0.7424613888533014,
+        "energy": 0.35666949250633184
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.33888247637666313,
+        "attack": 0.0,
+        "harmonics": [
+          0.7932435262744405,
+          0.41071415317494653,
+          0.3867945247573187,
+          0.18460327677918165,
+          0.1356105387705036
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.33888247637666313,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 62,
+      "detected": {
+        "start": 4.751048526077097,
+        "end": 5.041297959183673,
+        "pitch": 60,
+        "confidence": 0.4032377302646637
+      },
+      "before_arranged": {
+        "start": 4.741224489795918,
+        "end": 4.945306122448979,
+        "pitch": 60,
+        "confidence": 0.4032377302646637,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.711048526077095,
+        "novelty": 0.2489072699432021,
+        "share": 0.10090394888728814,
+        "energy": 0.029125530044024593
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.6077955006272278,
+        "attack": 0.0,
+        "harmonics": [
+          0.2012558044267625,
+          0.6428661649060499,
+          0.24239415020860938,
+          0.6970442709984286,
+          0.03991936142324332
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.6077955006272278,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 68,
+      "detected": {
+        "start": 5.006468027210884,
+        "end": 5.157397732426304,
+        "pitch": 67,
+        "confidence": 0.33709537982940674
+      },
+      "before_arranged": {
+        "start": 4.945306122448979,
+        "end": 5.14938775510204,
+        "pitch": 67,
+        "confidence": 0.33709537982940674,
+        "string": 1,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 4.926468027210882,
+        "novelty": 0.3197216263188161,
+        "share": 0.802627776199946,
+        "energy": 0.06653705479462671
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.2527369518834757,
+        "attack": 0.0,
+        "harmonics": [
+          0.7289336682547958,
+          0.6091602658232774,
+          0.059449254320244865,
+          0.2969874060430364,
+          0.07644438919447799
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.2527369518834757,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 72,
+      "detected": {
+        "start": 5.261887528344671,
+        "end": 5.366377324263039,
+        "pitch": 72,
+        "confidence": 0.3526619076728821
+      },
+      "before_arranged": {
+        "start": 5.251428571428571,
+        "end": 5.353469387755101,
+        "pitch": 72,
+        "confidence": 0.3526619076728821,
+        "string": 0,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 5.291887528344667,
+        "novelty": 0.21247685284724874,
+        "share": 0.7219416383885979,
+        "energy": 0.07969408862738192
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.23285040453171035,
+        "attack": 0.4960938744820448,
+        "harmonics": [
+          0.8617139373786344,
+          0.35956251240221904,
+          0.21225547615322224,
+          0.27770706440538406,
+          0.07739695746428088
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.23285040453171035,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.4960938744820448
+      }
+    },
+    {
+      "raw_index": 75,
+      "detected": {
+        "start": 5.377987301587301,
+        "end": 5.586966893424036,
+        "pitch": 72,
+        "confidence": 0.3109952509403229
+      },
+      "before_arranged": {
+        "start": 5.353469387755101,
+        "end": 5.557551020408163,
+        "pitch": 72,
+        "confidence": 0.3109952509403229,
+        "string": 0,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 5.407987301587297,
+        "novelty": 0.4367584574627045,
+        "share": 0.7756233759046886,
+        "energy": 0.0925519944079161
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.2761588910291597,
+        "attack": 0.4601633975151691,
+        "harmonics": [
+          0.874742318280423,
+          0.4089424404115409,
+          0.08274140044871645,
+          0.1481806346065614,
+          0.19694749863612476
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.2761588910291597,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.4601633975151691
+      }
+    },
+    {
+      "raw_index": 78,
+      "detected": {
+        "start": 5.586966893424036,
+        "end": 5.795946485260771,
+        "pitch": 60,
+        "confidence": 0.3994967043399811
+      },
+      "before_arranged": {
+        "start": 5.557551020408163,
+        "end": 5.761632653061224,
+        "pitch": 60,
+        "confidence": 0.3994967043399811,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 5.526966893424034,
+        "novelty": 0.2540490373897114,
+        "share": 0.10913348064056085,
+        "energy": 0.02692530932769162
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.43772913486077103,
+        "attack": 0.0,
+        "harmonics": [
+          0.2036961658197471,
+          0.5779249319889944,
+          0.5145332747045281,
+          0.5937204045949462,
+          0.08521875031528138
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.43772913486077103,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 84,
+      "detected": {
+        "start": 5.923656235827664,
+        "end": 6.296459410430839,
+        "pitch": 70,
+        "confidence": 0.32501840591430664
+      },
+      "before_arranged": {
+        "start": 5.863673469387755,
+        "end": 5.965714285714285,
+        "pitch": 70,
+        "confidence": 0.32501840591430664,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 5.9336562358276606,
+        "novelty": 0.3467619280371899,
+        "share": 0.7954843124194872,
+        "energy": 0.12436701769969134
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.7064986397604832,
+        "attack": 0.6812233999846576,
+        "harmonics": [
+          0.9439542095022225,
+          0.054704338117422424,
+          0.17543940592272672,
+          0.05753485559200987,
+          0.2680832725025115
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.7064986397604832,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.6812233999846576
+      }
+    },
+    {
+      "raw_index": 85,
+      "detected": {
+        "start": 5.935266213151928,
+        "end": 6.389339229024944,
+        "pitch": 58,
+        "confidence": 0.42906928062438965
+      },
+      "before_arranged": {
+        "start": 5.863673469387755,
+        "end": 5.965714285714285,
+        "pitch": 58,
+        "confidence": 0.42906928062438965,
+        "string": 3,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 5.835266213151926,
+        "novelty": 0.21258223650122393,
+        "share": 0.2780567215776174,
+        "energy": 0.06588026116100494
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.6308416544720578,
+        "attack": 0.0,
+        "harmonics": [
+          0.47443594726607896,
+          0.811182472513771,
+          0.33800082320029484,
+          0.04578896364778821,
+          0.02350196911256343
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.6308416544720578,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 87,
+      "detected": {
+        "start": 5.9946,
+        "end": 6.099089795918368,
+        "pitch": 72,
+        "confidence": 0.32703113555908203
+      },
+      "before_arranged": {
+        "start": 5.965714285714285,
+        "end": 6.067755102040816,
+        "pitch": 72,
+        "confidence": 0.32703113555908203,
+        "string": 0,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.014599999999996,
+        "novelty": 0.26172833516559907,
+        "share": 0.8206706753805858,
+        "energy": 0.0739072390920948
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.5185164538684836,
+        "attack": 0.008695469135839518,
+        "harmonics": [
+          0.8415635259770807,
+          0.23729444596634106,
+          0.31988098844632085,
+          0.2552361313949044,
+          0.2607543827430683
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.5185164538684836,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.008695469135839518
+      }
+    },
+    {
+      "raw_index": 91,
+      "detected": {
+        "start": 6.087479818594105,
+        "end": 6.191969614512471,
+        "pitch": 70,
+        "confidence": 0.37865912914276123
+      },
+      "before_arranged": {
+        "start": 6.067755102040816,
+        "end": 6.169795918367347,
+        "pitch": 70,
+        "confidence": 0.37865912914276123,
+        "string": 0,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.107479818594101,
+        "novelty": 0.39007430720298575,
+        "share": 0.9218728410595121,
+        "energy": 0.1817916820363153
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.7260713799338107,
+        "attack": 0.4462236951093538,
+        "harmonics": [
+          0.9394821199450732,
+          0.049452185107468107,
+          0.20239592189716032,
+          0.03516378232875655,
+          0.2696798600254423
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.7260713799338107,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.4462236951093538
+      }
+    },
+    {
+      "raw_index": 92,
+      "detected": {
+        "start": 6.168749659863946,
+        "end": 6.517048979591837,
+        "pitch": 67,
+        "confidence": 0.3885817229747772
+      },
+      "before_arranged": {
+        "start": 6.169795918367347,
+        "end": 6.373877551020408,
+        "pitch": 67,
+        "confidence": 0.3885817229747772,
+        "string": 0,
+        "fret": 2
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.1087496598639435,
+        "novelty": 0.06760172416930975,
+        "share": 0.7981467921697162,
+        "energy": 0.13088502267920862
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.6123463517147497,
+        "attack": 0.0,
+        "harmonics": [
+          0.9180615296453126,
+          0.34376054908321474,
+          0.17029375072165967,
+          0.0873291480803029,
+          0.04863508034364638
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.6123463517147497,
+        "lead_anchors": 10,
+        "backing_anchors": 1,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 98,
+      "detected": {
+        "start": 6.389339229024944,
+        "end": 6.49382902494331,
+        "pitch": 65,
+        "confidence": 0.48992761969566345
+      },
+      "before_arranged": {
+        "start": 6.373877551020408,
+        "end": 6.475918367346939,
+        "pitch": 65,
+        "confidence": 0.48992761969566345,
+        "string": 1,
+        "fret": 5
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.3193392290249415,
+        "novelty": 0.10231083721086562,
+        "share": 0.9304214685069635,
+        "energy": 0.33992925089548987
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.08146450084786411,
+        "attack": 0.0,
+        "harmonics": [
+          0.8957533367040054,
+          0.28117490631429043,
+          0.2681307573241137,
+          0.10641835400747386,
+          0.18800974110382707
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.08146450084786411,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 96,
+      "detected": {
+        "start": 6.354509297052155,
+        "end": 6.482219047619048,
+        "pitch": 50,
+        "confidence": 0.3854534924030304
+      },
+      "before_arranged": {
+        "start": 6.373877551020408,
+        "end": 6.475918367346939,
+        "pitch": 50,
+        "confidence": 0.3854534924030304,
+        "string": 4,
+        "fret": 4
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.364509297052151,
+        "novelty": 0.2787807937661055,
+        "share": 0.08483217860585131,
+        "energy": 0.008008726064015566
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.44307856739525764,
+        "attack": 0.6706981562936152,
+        "harmonics": [
+          0.3790583247550775,
+          0.15676182636052302,
+          0.2260360297058187,
+          0.8835429981075159,
+          0.0
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.44307856739525764,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.6706981562936152
+      }
+    },
+    {
+      "raw_index": 100,
+      "detected": {
+        "start": 6.505439002267574,
+        "end": 6.598318820861678,
+        "pitch": 65,
+        "confidence": 0.5953337550163269
+      },
+      "before_arranged": {
+        "start": 6.475918367346939,
+        "end": 6.577959183673469,
+        "pitch": 65,
+        "confidence": 0.5953337550163269,
+        "string": 0,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.52543900226757,
+        "novelty": 0.10229695888401685,
+        "share": 0.9369016617512561,
+        "energy": 0.34026759694690184
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.5400197250133316,
+        "attack": 0.0,
+        "harmonics": [
+          0.5404351139549349,
+          0.4099799779357333,
+          0.6657652045073486,
+          0.30139401460745985,
+          0.07592526405893375
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.5400197250133316,
+        "lead_anchors": 3,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 104,
+      "detected": {
+        "start": 6.609928798185941,
+        "end": 6.807298412698413,
+        "pitch": 67,
+        "confidence": 0.41444382071495056
+      },
+      "before_arranged": {
+        "start": 6.577959183673469,
+        "end": 6.807298412698413,
+        "pitch": 67,
+        "confidence": 0.41444382071495056,
+        "string": 0,
+        "fret": 2
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.639928798185937,
+        "novelty": 0.3453005389481081,
+        "share": 0.642388280285594,
+        "energy": 0.05629876966070664
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.1140880268738223,
+        "attack": 0.2918358510829301,
+        "harmonics": [
+          0.7464085774800856,
+          0.5779259419271021,
+          0.2822286429552654,
+          0.14693776724073823,
+          0.08736204419404768
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.1140880268738223,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.2918358510829301
+      }
+    },
+    {
+      "raw_index": 107,
+      "detected": {
+        "start": 6.865348299319728,
+        "end": 6.969838095238095,
+        "pitch": 60,
+        "confidence": 0.46083661913871765
+      },
+      "before_arranged": {
+        "start": 6.884081632653061,
+        "end": 6.969838095238095,
+        "pitch": 60,
+        "confidence": 0.46083661913871765,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 6.865348299319725,
+        "novelty": 0.1817056371839239,
+        "share": 0.18877330176969792,
+        "energy": 0.03095587182205699
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": -0.4557260994964941,
+        "attack": 0.0,
+        "harmonics": [
+          0.11437190379932295,
+          0.5302390477354633,
+          0.677678557107863,
+          0.49233802995176795,
+          0.06419234671924866
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.4557260994964941,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 110,
+      "detected": {
+        "start": 7.016278004535147,
+        "end": 7.805756462585034,
+        "pitch": 55,
+        "confidence": 0.505909264087677
+      },
+      "before_arranged": {
+        "start": 6.986122448979591,
+        "end": 7.190204081632653,
+        "pitch": 55,
+        "confidence": 0.505909264087677,
+        "string": 4,
+        "fret": 9
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.026278004535143,
+        "novelty": 0.31986622411353977,
+        "share": 0.024357021552751365,
+        "energy": 0.008303743347885912
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.367916241976901,
+        "attack": 0.01637296477597261,
+        "harmonics": [
+          0.13440902972914393,
+          0.821736315207349,
+          0.38487511408946856,
+          0.39811969822722026,
+          0.007449391572742041
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.367916241976901,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.01637296477597261
+      }
+    },
+    {
+      "raw_index": 112,
+      "detected": {
+        "start": 7.213647619047619,
+        "end": 7.492287074829932,
+        "pitch": 72,
+        "confidence": 0.47060975432395935
+      },
+      "before_arranged": {
+        "start": 7.190204081632653,
+        "end": 7.394285714285714,
+        "pitch": 72,
+        "confidence": 0.47060975432395935,
+        "string": 0,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.233647619047615,
+        "novelty": 0.5569461664197738,
+        "share": 0.9177391075370529,
+        "energy": 0.34457237557779136
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.2964975292264586,
+        "attack": 0.9460817533264343,
+        "harmonics": [
+          0.9396939790704858,
+          0.2980788776853947,
+          0.10411901802766724,
+          0.07894934967315179,
+          0.10512106662146091
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.2964975292264586,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.9460817533264343
+      }
+    },
+    {
+      "raw_index": 114,
+      "detected": {
+        "start": 7.225257596371883,
+        "end": 7.422627210884354,
+        "pitch": 65,
+        "confidence": 0.6958964467048645
+      },
+      "before_arranged": {
+        "start": 7.190204081632653,
+        "end": 7.394285714285714,
+        "pitch": 65,
+        "confidence": 0.6958964467048645,
+        "string": 2,
+        "fret": 9
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.17525759637188,
+        "novelty": 0.23316728573153883,
+        "share": 0.5169898823049931,
+        "energy": 0.11821214122359248
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.6843856056744327,
+        "attack": 0.5340961867113672,
+        "harmonics": [
+          0.741262015129379,
+          0.5240303800206092,
+          0.31673027991382835,
+          0.19712616095727578,
+          0.19169244167087704
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.6843856056744327,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.5340961867113672
+      }
+    },
+    {
+      "raw_index": 117,
+      "detected": {
+        "start": 7.434237188208617,
+        "end": 7.840586394557823,
+        "pitch": 67,
+        "confidence": 0.35036611557006836
+      },
+      "before_arranged": {
+        "start": 7.394285714285714,
+        "end": 7.598367346938775,
+        "pitch": 67,
+        "confidence": 0.35036611557006836,
+        "string": 1,
+        "fret": 7
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.374237188208615,
+        "novelty": 0.2257306502628319,
+        "share": 0.7240728885467523,
+        "energy": 0.11812136103499125
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.2692333461473322,
+        "attack": 0.0,
+        "harmonics": [
+          0.7774932069465347,
+          0.6059072998928144,
+          0.04144552830772122,
+          0.16157118170822513,
+          0.023615217832863977
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.2692333461473322,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 115,
+      "detected": {
+        "start": 7.422627210884354,
+        "end": 7.840586394557823,
+        "pitch": 60,
+        "confidence": 0.5466846823692322
+      },
+      "before_arranged": {
+        "start": 7.394285714285714,
+        "end": 7.598367346938775,
+        "pitch": 60,
+        "confidence": 0.5466846823692322,
+        "string": 3,
+        "fret": 9
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.332627210884352,
+        "novelty": 0.20632093672281668,
+        "share": 0.0753226501044865,
+        "energy": 0.030808829843595825
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.0020473625570243906,
+        "attack": 0.0,
+        "harmonics": [
+          0.2461686812794041,
+          0.5216271981227381,
+          0.5042067297369548,
+          0.6333368698367584,
+          0.10938934833485081
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.0020473625570243906,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 122,
+      "detected": {
+        "start": 7.666436734693877,
+        "end": 8.004409977324263,
+        "pitch": 70,
+        "confidence": 0.32912561297416687
+      },
+      "before_arranged": {
+        "start": 7.598367346938775,
+        "end": 7.802448979591837,
+        "pitch": 70,
+        "confidence": 0.32912561297416687,
+        "string": 1,
+        "fret": 10
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.656436734693874,
+        "novelty": 0.4281722847551715,
+        "share": 0.9587302655228825,
+        "energy": 0.13160199615676152
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.7562167401530896,
+        "attack": 0.5992315891594506,
+        "harmonics": [
+          0.9627471504639266,
+          0.06942831231423698,
+          0.11652911502299149,
+          0.08434839445553549,
+          0.21818328860735
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.7562167401530896,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.5992315891594506
+      }
+    },
+    {
+      "raw_index": 119,
+      "detected": {
+        "start": 7.631606802721088,
+        "end": 7.7128766439909295,
+        "pitch": 55,
+        "confidence": 0.3192668557167053
+      },
+      "before_arranged": {
+        "start": 7.598367346938775,
+        "end": 7.7128766439909295,
+        "pitch": 55,
+        "confidence": 0.3192668557167053,
+        "string": 4,
+        "fret": 9
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.641606802721085,
+        "novelty": 0.23193157875278078,
+        "share": 0.02952533905974852,
+        "energy": 0.004918142986842486
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.34562713164069037,
+        "attack": 0.0,
+        "harmonics": [
+          0.07323825102052127,
+          0.7973201348367839,
+          0.08142762124868581,
+          0.592141523806914,
+          0.040678242989518616
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.34562713164069037,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 127,
+      "detected": {
+        "start": 7.840586394557823,
+        "end": 8.027629931972788,
+        "pitch": 67,
+        "confidence": 0.3721306324005127
+      },
+      "before_arranged": {
+        "start": 7.802448979591837,
+        "end": 7.9044897959183675,
+        "pitch": 67,
+        "confidence": 0.3721306324005127,
+        "string": 2,
+        "fret": 11
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.80058639455782,
+        "novelty": 0.10798183219352014,
+        "share": 0.7529764377742164,
+        "energy": 0.15202673432755026
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.4089470254583246,
+        "attack": 0.0,
+        "harmonics": [
+          0.8207979992567163,
+          0.4736385059487883,
+          0.3107421400305412,
+          0.07224565120901588,
+          0.013307831881865087
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.4089470254583246,
+        "lead_anchors": 3,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 123,
+      "detected": {
+        "start": 7.8289764172335605,
+        "end": 8.027629931972788,
+        "pitch": 55,
+        "confidence": 0.41229572892189026
+      },
+      "before_arranged": {
+        "start": 7.802448979591837,
+        "end": 7.9044897959183675,
+        "pitch": 55,
+        "confidence": 0.41229572892189026,
+        "string": 4,
+        "fret": 9
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.748976417233559,
+        "novelty": 0.2545588911841436,
+        "share": 0.021887119559687022,
+        "energy": 0.005636871860366584
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": -0.3459527204356791,
+        "attack": 0.0,
+        "harmonics": [
+          0.050230210040999104,
+          0.5097545634927281,
+          0.804123138070123,
+          0.3010667716526778,
+          0.019287011807625615
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.3459527204356791,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 124,
+      "detected": {
+        "start": 7.8289764172335605,
+        "end": 8.248219501133786,
+        "pitch": 65,
+        "confidence": 0.5781096816062927
+      },
+      "before_arranged": {
+        "start": 7.802448979591837,
+        "end": 7.9044897959183675,
+        "pitch": 65,
+        "confidence": 0.5781096816062927,
+        "string": 0,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.728976417233559,
+        "novelty": 0.06251223080803205,
+        "share": 0.6691478075492461,
+        "energy": 0.2639143444613878
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.298668334911731,
+        "attack": 0.0,
+        "harmonics": [
+          0.7451322733475666,
+          0.5008884778153714,
+          0.24075848071773165,
+          0.24722276074128782,
+          0.27350482361675676
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.298668334911731,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 128,
+      "detected": {
+        "start": 7.898636281179138,
+        "end": 7.969580045351474,
+        "pitch": 70,
+        "confidence": 0.3059585988521576
+      },
+      "before_arranged": {
+        "start": 7.9044897959183675,
+        "end": 7.969580045351474,
+        "pitch": 70,
+        "confidence": 0.3059585988521576,
+        "string": 1,
+        "fret": 10
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.898636281179135,
+        "novelty": 0.16307132570293453,
+        "share": 0.9576146177938857,
+        "energy": 0.1550079900423025
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.5939833394704184,
+        "attack": 0.0,
+        "harmonics": [
+          0.6995626691015222,
+          0.10056667532457338,
+          0.2771865404430683,
+          0.0,
+          0.6508963339971421
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.5939833394704184,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 131,
+      "detected": {
+        "start": 8.039239909297052,
+        "end": 8.294659410430839,
+        "pitch": 60,
+        "confidence": 0.6178646087646484
+      },
+      "before_arranged": {
+        "start": 8.006530612244898,
+        "end": 8.108571428571429,
+        "pitch": 60,
+        "confidence": 0.6178646087646484,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 7.9492399092970505,
+        "novelty": 0.08219746126980637,
+        "share": 0.1634328699725622,
+        "energy": 0.0580865217132362
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": -0.02778965448604275,
+        "attack": 0.0,
+        "harmonics": [
+          0.1000267590170148,
+          0.9399396171437511,
+          0.25381668959310116,
+          0.18787794035218608,
+          0.082384047103977
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.02778965448604275,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 133,
+      "detected": {
+        "start": 8.166949659863945,
+        "end": 8.248219501133786,
+        "pitch": 72,
+        "confidence": 0.4556221067905426
+      },
+      "before_arranged": {
+        "start": 8.108571428571429,
+        "end": 8.210612244897959,
+        "pitch": 72,
+        "confidence": 0.4556221067905426,
+        "string": 2,
+        "fret": 16
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.126949659863943,
+        "novelty": 0.17388531347028727,
+        "share": 0.9356614178788698,
+        "energy": 0.3472728758560811
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.005884739427684434,
+        "attack": 0.5115776642238832,
+        "harmonics": [
+          0.9227721220651468,
+          0.29390962027756373,
+          0.1140254286969079,
+          0.028229204488478245,
+          0.2197954946583711
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.005884739427684434,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.5115776642238832
+      }
+    },
+    {
+      "raw_index": 135,
+      "detected": {
+        "start": 8.248219501133786,
+        "end": 8.387539229024943,
+        "pitch": 72,
+        "confidence": 0.4430973529815674
+      },
+      "before_arranged": {
+        "start": 8.210612244897959,
+        "end": 8.31265306122449,
+        "pitch": 72,
+        "confidence": 0.4430973529815674,
+        "string": 2,
+        "fret": 16
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.188219501133783,
+        "novelty": 0.1444505100624319,
+        "share": 0.9356528611185797,
+        "energy": 0.34926608257708774
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.39488333374846823,
+        "attack": 0.0,
+        "harmonics": [
+          0.9014841801299132,
+          0.39404370094920826,
+          0.14168268943740928,
+          0.0873394250389624,
+          0.06598238450825562
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.39488333374846823,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 138,
+      "detected": {
+        "start": 8.306269387755101,
+        "end": 8.433979138321995,
+        "pitch": 67,
+        "confidence": 0.433203786611557
+      },
+      "before_arranged": {
+        "start": 8.31265306122449,
+        "end": 8.41469387755102,
+        "pitch": 67,
+        "confidence": 0.433203786611557,
+        "string": 3,
+        "fret": 16
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.316269387755097,
+        "novelty": 0.11771929368619906,
+        "share": 0.8972755619185071,
+        "energy": 0.20836028344405602
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.4266558874474212,
+        "attack": 0.0,
+        "harmonics": [
+          0.5901847512884216,
+          0.7424907950191031,
+          0.0706718934591414,
+          0.30849050758995117,
+          0.015115186413601692
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.4266558874474212,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 137,
+      "detected": {
+        "start": 8.294659410430839,
+        "end": 8.422369160997732,
+        "pitch": 60,
+        "confidence": 0.48174822330474854
+      },
+      "before_arranged": {
+        "start": 8.31265306122449,
+        "end": 8.41469387755102,
+        "pitch": 60,
+        "confidence": 0.48174822330474854,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.234659410430837,
+        "novelty": 0.45273478774394205,
+        "share": 0.08151038808274165,
+        "energy": 0.031507938915962486
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.15651968460858418,
+        "attack": 0.0,
+        "harmonics": [
+          0.08522571392022703,
+          0.7859142832874128,
+          0.3935390360080477,
+          0.4639342082275321,
+          0.07047974592582854
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.15651968460858418,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 140,
+      "detected": {
+        "start": 8.433979138321995,
+        "end": 8.608128798185941,
+        "pitch": 70,
+        "confidence": 0.4054546654224396
+      },
+      "before_arranged": {
+        "start": 8.41469387755102,
+        "end": 8.608128798185941,
+        "pitch": 70,
+        "confidence": 0.4054546654224396,
+        "string": 2,
+        "fret": 14
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.45397913832199,
+        "novelty": 0.28964239087884963,
+        "share": 0.9698455608651411,
+        "energy": 0.23067911334461288
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.7191822112140408,
+        "attack": 0.8857285207613022,
+        "harmonics": [
+          0.9713864671612961,
+          0.03577157508276043,
+          0.16555309765324594,
+          0.0588228092852213,
+          0.15575870697076363
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.7191822112140408,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.8857285207613022
+      }
+    },
+    {
+      "raw_index": 144,
+      "detected": {
+        "start": 8.631348752834466,
+        "end": 9.037697959183673,
+        "pitch": 67,
+        "confidence": 0.41463610529899597
+      },
+      "before_arranged": {
+        "start": 8.618775510204081,
+        "end": 8.822857142857142,
+        "pitch": 67,
+        "confidence": 0.41463610529899597,
+        "string": 3,
+        "fret": 16
+      },
+      "retained_as_rhythm": false,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.611348752834463,
+        "novelty": 0.17647564367257054,
+        "share": 0.9026609158315596,
+        "energy": 0.2006779876553854
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.6880317561192061,
+        "attack": 0.0,
+        "harmonics": [
+          0.8688110458448203,
+          0.4711617780188194,
+          0.08145081656077954,
+          0.12456898636782512,
+          0.03197307725336115
+        ]
+      },
+      "voice_check": {
+        "reject": true,
+        "reason": "confirmed_lead_source",
+        "pan": 0.6880317561192061,
+        "lead_anchors": 11,
+        "backing_anchors": 4,
+        "attack": 0.0,
+        "backing_pan": -0.7818444101209293,
+        "lead_pan": 0.7367415126011249
+      }
+    },
+    {
+      "raw_index": 148,
+      "detected": {
+        "start": 8.851938321995464,
+        "end": 8.933208163265306,
+        "pitch": 72,
+        "confidence": 0.4467983543872833
+      },
+      "before_arranged": {
+        "start": 8.822857142857142,
+        "end": 8.924897959183673,
+        "pitch": 72,
+        "confidence": 0.4467983543872833,
+        "string": 2,
+        "fret": 16
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.82193832199546,
+        "novelty": 0.0719226988984003,
+        "share": 0.7891612925659727,
+        "energy": 0.34140553419525455
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.22425541303593813,
+        "attack": 0.0,
+        "harmonics": [
+          0.5862693210872773,
+          0.6824152609581158,
+          0.3350609490398612,
+          0.2609234801945256,
+          0.10124619832375967
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.22425541303593813,
+        "lead_anchors": 2,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 146,
+      "detected": {
+        "start": 8.840328344671201,
+        "end": 8.991258049886621,
+        "pitch": 60,
+        "confidence": 0.3951854407787323
+      },
+      "before_arranged": {
+        "start": 8.822857142857142,
+        "end": 8.924897959183673,
+        "pitch": 60,
+        "confidence": 0.3951854407787323,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.7503283446712,
+        "novelty": 0.1485079011247716,
+        "share": 0.13029401500056387,
+        "energy": 0.059091145227757796
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": -0.16232910325979863,
+        "attack": 0.0,
+        "harmonics": [
+          0.14585042677937288,
+          0.7007048045643576,
+          0.5152602854674277,
+          0.4702077744424564,
+          0.03393990192379926
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.16232910325979863,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 150,
+      "detected": {
+        "start": 8.933208163265306,
+        "end": 9.049307936507937,
+        "pitch": 72,
+        "confidence": 0.5701502561569214
+      },
+      "before_arranged": {
+        "start": 8.924897959183673,
+        "end": 9.026938775510205,
+        "pitch": 72,
+        "confidence": 0.5701502561569214,
+        "string": 2,
+        "fret": 16
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.963208163265302,
+        "novelty": 0.09714939376300535,
+        "share": 0.7891081764920258,
+        "energy": 0.26969606019164977
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.5981696753935644,
+        "attack": 0.7960777415954706,
+        "harmonics": [
+          0.8328228582463703,
+          0.46998213815886125,
+          0.16284337413776784,
+          0.1822058925150496,
+          0.16064222616171764
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.5981696753935644,
+        "lead_anchors": 9,
+        "backing_anchors": 2,
+        "attack": 0.7960777415954706
+      }
+    },
+    {
+      "raw_index": 151,
+      "detected": {
+        "start": 8.991258049886621,
+        "end": 9.246677551020408,
+        "pitch": 60,
+        "confidence": 0.4265720248222351
+      },
+      "before_arranged": {
+        "start": 8.924897959183673,
+        "end": 9.026938775510205,
+        "pitch": 60,
+        "confidence": 0.4265720248222351,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.021258049886617,
+        "novelty": 0.5033345948599024,
+        "share": 0.09438052208299023,
+        "energy": 0.03030003557658521
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": -0.05927531932795085,
+        "attack": 0.0,
+        "harmonics": [
+          0.12161073157668541,
+          0.840976106803177,
+          0.2725204088281859,
+          0.4442836003419356,
+          0.07946525650169801
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.05927531932795085,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 149,
+      "detected": {
+        "start": 8.921598185941043,
+        "end": 9.037697959183673,
+        "pitch": 65,
+        "confidence": 0.6109800338745117
+      },
+      "before_arranged": {
+        "start": 8.924897959183673,
+        "end": 9.026938775510205,
+        "pitch": 65,
+        "confidence": 0.6109800338745117,
+        "string": 0,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 8.89159818594104,
+        "novelty": 0.20083832653243802,
+        "share": 0.7452011463300057,
+        "energy": 0.339947766765645
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.050402095236644934,
+        "attack": 0.0,
+        "harmonics": [
+          0.46308318338663124,
+          0.6620567429584496,
+          0.5121034567605321,
+          0.17748471921941064,
+          0.23126620675159992
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.050402095236644934,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 154,
+      "detected": {
+        "start": 9.049307936507937,
+        "end": 9.455657142857142,
+        "pitch": 72,
+        "confidence": 0.42719781398773193
+      },
+      "before_arranged": {
+        "start": 9.026938775510205,
+        "end": 9.231020408163266,
+        "pitch": 72,
+        "confidence": 0.42719781398773193,
+        "string": 2,
+        "fret": 16
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.009307936507934,
+        "novelty": 0.23397617975763393,
+        "share": 0.7907339813438854,
+        "energy": 0.21273935084789342
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.18275564791290663,
+        "attack": 0.0,
+        "harmonics": [
+          0.7786140861219224,
+          0.5977731221102502,
+          0.168401226987197,
+          0.06379881926780206,
+          0.06323082147440764
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.18275564791290663,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 159,
+      "detected": {
+        "start": 9.44404716553288,
+        "end": 9.67624671201814,
+        "pitch": 53,
+        "confidence": 0.42120546102523804
+      },
+      "before_arranged": {
+        "start": 9.435102040816327,
+        "end": 9.537142857142857,
+        "pitch": 53,
+        "confidence": 0.42120546102523804,
+        "string": 3,
+        "fret": 2
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.434047165532876,
+        "novelty": 0.23688063934224202,
+        "share": 0.025151615585289784,
+        "energy": 0.009906495029253939
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.140718021804967,
+        "attack": 0.9782457313437548,
+        "harmonics": [
+          0.12292736638121152,
+          0.8059299599435323,
+          0.516426788069566,
+          0.26194164132246617,
+          0.0074640046516396795
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.140718021804967,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.9782457313437548
+      }
+    },
+    {
+      "raw_index": 158,
+      "detected": {
+        "start": 9.420827210884353,
+        "end": 9.67624671201814,
+        "pitch": 60,
+        "confidence": 0.44978249073028564
+      },
+      "before_arranged": {
+        "start": 9.435102040816327,
+        "end": 9.537142857142857,
+        "pitch": 60,
+        "confidence": 0.44978249073028564,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.430827210884349,
+        "novelty": 0.29543008307383284,
+        "share": 0.10722399304835672,
+        "energy": 0.023623158782618916
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": 0.11897120077763282,
+        "attack": 0.0,
+        "harmonics": [
+          0.09158378249469708,
+          0.7590400380366279,
+          0.42225262859856505,
+          0.47813251883773195,
+          0.09253455307509001
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.11897120077763282,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 162,
+      "detected": {
+        "start": 9.5949768707483,
+        "end": 9.79234648526077,
+        "pitch": 65,
+        "confidence": 0.5238885283470154
+      },
+      "before_arranged": {
+        "start": 9.537142857142857,
+        "end": 9.639183673469388,
+        "pitch": 65,
+        "confidence": 0.5238885283470154,
+        "string": 0,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.604976870748295,
+        "novelty": 0.20465350777697755,
+        "share": 0.7637270918136305,
+        "energy": 0.3572174781800568
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": -0.28068300697943316,
+        "attack": 0.35971531289073055,
+        "harmonics": [
+          0.8925697744974102,
+          0.2956549636324482,
+          0.2854051368912829,
+          0.10284667135722374,
+          0.15451152112365402
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.28068300697943316,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.35971531289073055
+      }
+    },
+    {
+      "raw_index": 165,
+      "detected": {
+        "start": 9.67624671201814,
+        "end": 9.873616326530612,
+        "pitch": 60,
+        "confidence": 0.5439013838768005
+      },
+      "before_arranged": {
+        "start": 9.639183673469388,
+        "end": 9.741224489795918,
+        "pitch": 60,
+        "confidence": 0.5439013838768005,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.676246712018136,
+        "novelty": 0.5705611800435111,
+        "share": 0.06995572517298652,
+        "energy": 0.021689516028667654
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": -0.16092126842514226,
+        "attack": 0.597976617601762,
+        "harmonics": [
+          0.08358690485225449,
+          0.9215081585465973,
+          0.3085693734295018,
+          0.21556801731243455,
+          0.04638226776032223
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.16092126842514226,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.597976617601762
+      }
+    },
+    {
+      "raw_index": 167,
+      "detected": {
+        "start": 9.79234648526077,
+        "end": 10.211589569161,
+        "pitch": 65,
+        "confidence": 0.46703946590423584
+      },
+      "before_arranged": {
+        "start": 9.741224489795918,
+        "end": 9.843265306122449,
+        "pitch": 65,
+        "confidence": 0.46703946590423584,
+        "string": 0,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.692346485260769,
+        "novelty": 0.0,
+        "share": 0.7676695451344048,
+        "energy": 0.3584603850109928
+      },
+      "spectral_fingerprint": {
+        "valid": true,
+        "pan": 0.19312026028198753,
+        "attack": 0.0,
+        "harmonics": [
+          0.9340094929084983,
+          0.25719292822146456,
+          0.09491405051570755,
+          0.13656049619766097,
+          0.1839038300923304
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": 0.19312026028198753,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 0.0
+      }
+    },
+    {
+      "raw_index": 166,
+      "detected": {
+        "start": 9.769126530612244,
+        "end": 9.932950113378686,
+        "pitch": 60,
+        "confidence": 0.4487791657447815
+      },
+      "before_arranged": {
+        "start": 9.741224489795918,
+        "end": 9.843265306122449,
+        "pitch": 60,
+        "confidence": 0.4487791657447815,
+        "string": 1,
+        "fret": 0
+      },
+      "retained_as_rhythm": true,
+      "recovered_as_lead": false,
+      "pitch_attack": {
+        "onset": 9.679126530612242,
+        "novelty": 0.513978849226712,
+        "share": 0.0728739671228878,
+        "energy": 0.022277934158802762
+      },
+      "spectral_fingerprint": {
+        "valid": false,
+        "pan": -0.24030615698836114,
+        "attack": 1.0,
+        "harmonics": [
+          0.07536475995746054,
+          0.9059091627813478,
+          0.27096445222826004,
+          0.314928463928105,
+          0.032358460746382
+        ]
+      },
+      "voice_check": {
+        "reject": false,
+        "reason": "ambiguous",
+        "pan": -0.24030615698836114,
+        "lead_anchors": 0,
+        "backing_anchors": 0,
+        "attack": 1.0
+      }
+    }
+  ],
+  "tests": {
+    "passed": 170
+  }
+}

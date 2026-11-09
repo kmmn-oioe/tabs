@@ -129,6 +129,7 @@ def generate(
         from .rhythm import arrange_rhythm, progression_text
         from .split import split_notes
         lead_scores = None
+        lead_evidence = None
         lead_evidence_method = "disabled"
         lead_method = "リード判定: 検出ノートのみ（音声による存在判定は無効）"
         if opts.audio_lead_detection:
@@ -136,6 +137,7 @@ def generate(
             try:
                 log("音声の定位・倍音・発音から独立したリードの根拠を解析中…", 96)
                 evidence = analyze_lead_audio(stem_path, notes, min_confidence=opts.min_confidence)
+                lead_evidence = evidence
                 lead_scores = evidence.scores
                 lead_evidence_method = evidence.method
                 lead_method = evidence.summary()
@@ -156,6 +158,7 @@ def generate(
         if diagnostics is not None:
             diagnostics["lead_selected"] = [dict(n) for n in lead]
             diagnostics["rhythm_candidates"] = [dict(n) for n in rhythm]
+        lead_voice_anchors = lead
         lead = arrange_melody(lead, opts)
         entry_text = (f"リード開始指定: {opts.lead_start_seconds:g}秒（それ以前は休符）\n"
                       if opts.lead_start_seconds > 0 else "")
@@ -183,13 +186,36 @@ def generate(
                 log("リズム候補の音高別の発音を確認中…", 97)
                 attacks = analyze_rhythm_attacks(stem_path, rhythm_input)
                 supported = filter_rhythm_attacks(rhythm_input, attacks)
+                voice_checks = []
+                recovered = []
+                if lead_evidence is not None:
+                    from .rhythm_audio import rhythm_voice_checks, recover_lead_holes
+                    key = lambda n: (n['pitch'], n['start'], n['confidence'])
+                    by_note = {key(n): f for n, f in zip(notes, lead_evidence.features)}
+                    voice_checks = rhythm_voice_checks(
+                        supported, [by_note[key(n)] for n in supported],
+                        lead_voice_anchors, [by_note[key(n)] for n in lead_voice_anchors])
+                    supported = [dict(n, _audio_rejection=c['reason']) if c['reject'] else n
+                                 for n, c in zip(supported, voice_checks)]
+                    lead, recovered = recover_lead_holes(lead, supported, voice_checks, opts)
+                    if recovered:
+                        lead_text = notes_to_tab(lead, opts, arranged=True, duration=duration)
+                        log(f"声部と発音を確認してリードの空き位置へ移動: {len(recovered)}音", 97)
+                    if diagnostics is not None:
+                        diagnostics['lead_recovered_from_rhythm'] = [dict(n) for n in recovered]
                 rhythm_input, timing = align_rhythm_grid(supported, opts)
                 rhythm_audio_method = f"リズム音声確認: {len(rhythm)} → {len(supported)}候補（基本音・発音の立ち上がり）\n"
+                withheld = sum(c['reject'] for c in voice_checks)
+                if withheld:
+                    rhythm_audio_method += f"声部確認: リード声部に対応する残存候補{withheld}音をリズム出力から保留\n"
+                if recovered:
+                    rhythm_audio_method += f"発音も確認できた{len(recovered)}音をリードの空き位置へ移動\n"
                 if timing['applied']:
                     rhythm_audio_method += f"拍位置調整: 検出の遅れを約{timing['delay_seconds']*1000:.0f}ms補正\n"
                 if diagnostics is not None:
                     diagnostics.update(rhythm_attacks=attacks,
-                                       rhythm_audio_supported=[dict(n) for n in supported],
+                                       rhythm_audio_supported=[dict(n) for n in supported if not n.get('_audio_rejection')],
+                                       rhythm_voice_checks=voice_checks,
                                        rhythm_timing=timing)
             except (OSError, RuntimeError, ValueError, ImportError) as error:
                 rhythm_input = rhythm
