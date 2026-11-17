@@ -4,6 +4,9 @@
 
 音声ファイルやYouTubeのリンクから、曲のギターtab譜(タブ譜)を自動生成するWindowsデスクトップアプリです。
 
+Codex CLIへ作業を引き継ぐ場合は、[引き継ぎ文書](docs/CODEX_HANDOFF.md)と
+[Windowsへの配置手順](docs/WINDOWS_HANDOFF.md)を参照してください。
+
 ## 再生位置の表示
 
 TAB生成後にプレイヤーの再生ボタンを押すと、赤い縦バーと薄黄色のセルが現在位置を示します。
